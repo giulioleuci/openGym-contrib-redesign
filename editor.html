@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-accent="lime">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <title>openGym — Routine editor</title>
+  <link rel="stylesheet" href="editor.css">
+  <script src="editor-icons.js" defer></script>
+  <script src="editor-engine.js" defer></script>
+  <script src="editor.js" defer></script>
+</head>
+<body>
+  <nav class="demo-nav" aria-label="Mock openGym">
+    <a href="index.html">All mocks</a><a href="cards.html">Workout</a><a href="editor.html" aria-current="page">Routine editor</a>
+  </nav>
+  <div class="demo-layout">
+    <main class="editor-phone" aria-label="Interactive editor mock">
+      <div class="statusbar" aria-hidden="true"><span>9:41</span><span class="status-icons"><svg width="18" height="13" viewBox="0 0 18 13" fill="currentColor"><rect x="0" y="8" width="3" height="5" rx=".5"/><rect x="5" y="5" width="3" height="8" rx=".5"/><rect x="10" y="2" width="3" height="11" rx=".5"/></svg><svg width="24" height="13" viewBox="0 0 24 13" fill="none" stroke="currentColor"><rect x="1" y="1" width="19" height="11" rx="3"/><path d="M22 4v5" stroke-width="2"/><rect x="3" y="3" width="15" height="7" rx="1" fill="currentColor" stroke="none"/></svg></span></div>
+      <header id="app-header" class="app-header"></header>
+      <div id="screen" class="editor-screen"></div>
+      <footer id="app-footer" class="app-footer"></footer>
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+      <div class="home-indicator" aria-hidden="true"></div>
+    </main>
+    <aside class="demo-panel" aria-label="Prototype controls">
+      <h1>Routine editor</h1>
+      <p>openGym 1.4.1 · Progression Engine v2</p>
+      <p>Build a routine, set exercise targets and preview all 13 progression templates.</p>
+      <div class="demo-controls">
+        <label>Scenario<select id="demo-scenario"><option value="upper">Complete routine</option><option value="types">All exercise types</option><option value="empty">Empty routine</option><option value="missing">Equipment unavailable</option><option value="imported">Imported program</option><option value="onerm">Missing 1RM</option></select></label>
+        <label>Theme<select id="demo-theme"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+        <label>Accent<select id="demo-accent"><option value="lime">Green</option><option value="sky">Blue</option><option value="orange">Orange</option><option value="violet">Violet</option><option value="pink">Pink</option><option value="red">Red</option><option value="teal">Teal</option><option value="gold">Yellow</option></select></label>
+        <label>Units<select id="demo-unit"><option value="kg">kg · km/h</option><option value="lb">lb · mph</option></select></label>
+        <label>Effort<select id="demo-effort"><option value="rir">RIR</option><option value="rpe">RPE</option><option value="none">Off</option></select></label>
+        <label>Try a template<select id="demo-preset"><option value="">Select…</option></select></label>
+        <button class="button secondary" data-action="reset">Reset mock</button>
+      </div>
+      <div class="demo-notes"><h2>Try it</h2><ul><li>Tap an exercise to edit its targets, progression and options.</li><li>Add or replace from the library. + adds immediately; the name opens configuration.</li><li>Reorder with arrows or drag the handle. Link exercises into a superset.</li><li>Fields adapt to the template. Preview uses a local copy of the app engine.</li></ul></div>
+      <p class="demo-disclaimer">Demo prototype. Changes are saved only in this mock, separately from the app and workout mocks. <a href="EDITOR_DESIGN.md">Features and design decisions</a>.</p>
+    </aside>
+  </div>
+  <details class="mobile-demo"><summary>Mock controls</summary><div id="mobile-controls"></div></details>
+  <dialog id="sheet" aria-labelledby="sheet-title"><div class="sheet-handle" aria-hidden="true"></div><header class="sheet-header"><h2 id="sheet-title"></h2><button class="icon-button" data-action="close-sheet" aria-label="Close"></button></header><div id="sheet-body"></div></dialog>
+</body>
+</html>

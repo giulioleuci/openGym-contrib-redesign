@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>openGym — Cards (design mock)</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.seg-lbl{font-size:var(--fs-label);color:var(--label-2);padding:10px 0 4px;display:flex;justify-content:space-between}.seg-lbl:empty{display:none}   
+#view{padding-top:6px}
+.swipe{overflow:hidden;margin:0 -16px;transition:height var(--med) var(--ease)}
+.track{display:flex;align-items:flex-start;transition:transform var(--med) var(--ease)}
+.slide{flex:0 0 100%;padding:0 16px;touch-action:pan-y;transform:scale(.97);opacity:.85;transition:transform var(--med) var(--ease),opacity var(--med)}   
+.slide.cur{transform:none;opacity:1}
+.swipe.dragging .track,.swipe.dragging .slide{transition:none}
+.inner{display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
+.trow{display:flex;gap:12px;align-items:center}
+.thumb{display:none;width:52px;height:52px;border-radius:var(--r-sm);background:var(--surface);display:grid;place-items:center;color:var(--label-3);flex:none}  
+details.ctx{background:var(--surface);border-radius:var(--r);padding:0 12px}
+details.ctx summary{list-style:none;min-height:44px;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--label-2);cursor:pointer}
+details.ctx summary::-webkit-details-marker{display:none}
+details.ctx summary span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.ctx summary .ic{transition:transform var(--fast)}details.ctx[open] summary .ic{transform:rotate(180deg)}
+.cbody{padding:2px 0 12px;display:grid;gap:8px;font-size:14px}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:8px}.kv>:first-child{color:var(--label);font-weight:600}.kv>:last-child{font-variant-numeric:tabular-nums}
+.nav{display:flex;gap:8px}.nav .btn:first-child{flex:1}.nav .btn:last-child{flex:2}
+.card,.card.ss{background:none;box-shadow:var(--elev-2)}
+.ss-st+.ss-st{margin-top:10px;padding-top:10px;border-top:.5px solid var(--sep-op)}.ss-name{font-weight:600;padding:2px 6px 6px}
+.ss-title{display:flex;flex-direction:column;gap:6px}
+</style></head>
+<body data-mode="cards">
+<div id="notes" hidden><li>Swipe between exercises; collapse the header to give sets more room.</li><li>Supersets keep each station’s equipment and settings together.</li></div>
+<script src="shared.js"></script>
+<script>
+let idx=nextOpen()?.u??0,moved=false;
+const ctxKey=id=>'og-ctx-'+id;
+const started=id=>S.sets[id].some(s=>s.d);
+const pct=u=>{const a=req(UNITS[u].ex);return Math.round(a.filter(s=>s.d).length/a.length*100)};
+const uname=unitName;
+const lbl=()=>CHIPS()?'':`<span>Exercise ${idx+1} / ${UNITS.length}</span><span class="tnum">${pct(idx)}%</span>`;
+
+function single(u){const id=UNITS[u].ex[0],ex=EX[id],sets=S.sets[id],nx=nextOpen(u),i=nx&&nx.e===id?nx.i:sets.length-1;
+  return`<div class="inner">
+  ${mediaHTML(id)}<div class="exh"><div><h2 class="ex-name">${ex.name}${infoBtn(id)}</h2>${eqChip(id)}</div><button class="ibtn" data-act="excfg" data-ex="${id}" aria-label="Exercise settings">${ic('dots',20)}</button></div>
+  ${ex.pin?`<div class="note pin">${ic('note',16)}${ex.pin}</div>`:''}
+  ${planUI(id,{def:started(id)?0:1})}${plateLine(id,i)}
+  <div class="card">${sethead(id)}${sets.map((_,k)=>setRow(id,k)).join('')}</div>${setCtl(id)}`}
+
+function superset(u){const un=UNITS[u],r=curRound(u),m=maxSets(u);
+  return`<div class="inner">${ssMedia(u)}<div class="ss-title"><div class="ss-hd">${ic('link',14,2)}${ssHd(u)}</div><div class="exh"><h2 class="ex-name">${uname(u)}</h2><button class="ibtn" data-act="excfg" data-ex="${un.ex.join(',')}" aria-label="Exercise settings">${ic('dots',20)}</button></div></div>
+  <div class="card ss">${ssBody(u,{abc:true})}</div>`}
+
+function slide(u){return`${UNITS[u].ss?superset(u):single(u)}${exNav(u)}${exFooter()}</div>`}
+
+function fit(){const cur=$$('.slide')[idx];$('.track').style.transform=`translateX(${-idx*100}%)`;$$('.slide').forEach((s,u)=>s.classList.toggle('cur',u===idx));
+  $('.swipe').style.height=cur.offsetHeight+'px';chipsPaint();$('.seg-lbl').innerHTML=lbl()}
+ON_CHIP=u=>go(u);
+mount(()=>{
+  S.cur=idx;
+  $('#view').innerHTML=`${noteCard()}<div class="seg-lbl"></div><div class="swipe"><div class="track">${UNITS.map((_,u)=>`<section class="slide" aria-label="Exercise ${u+1}" ${u===idx?'':'inert'}>${slide(u)}</section>`).join('')}</div></div>`;
+  fit()});
+function go(n){n=Math.max(0,Math.min(UNITS.length-1,n));if(n===idx)return;idx=n;S.cur=n;save();
+  $$('.slide').forEach((s,u)=>u===idx?s.removeAttribute('inert'):s.setAttribute('inert',''));fit();$('#screen').scrollTo({top:0})}
+document.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();return}
+  const g=e.target.closest('[data-go]');if(g)go(+g.dataset.go);const s=e.target.closest('[data-say]');if(s)toast(s.dataset.say)},true);
+
+
+let sx=0,dx=0,down=false;
+document.addEventListener('pointerdown',e=>{const sw=e.target.closest('.swipe');if(!sw||e.target.closest('input,button,summary,a'))return;down=true;sx=e.clientX;dx=0});
+document.addEventListener('pointermove',e=>{if(!down)return;dx=e.clientX-sx;if(Math.abs(dx)<8&&!moved)return;moved=true;
+  const sw=$('.swipe'),w=sw.offsetWidth,p=Math.min(1,Math.abs(dx)/w),nb=$$('.slide')[idx+(dx<0?1:-1)];sw.classList.add('dragging');
+  $('.track').style.transform=`translateX(${-idx*w+dx}px)`;const c=$$('.slide')[idx];c.style.transform=`scale(${1-.03*p})`;c.style.opacity=1-.15*p;
+  if(nb){nb.style.transform=`scale(${.97+.03*p})`;nb.style.opacity=.85+.15*p}});
+document.addEventListener('pointerup',()=>{if(!down)return;down=false;const was=moved;$('.swipe').classList.remove('dragging');
+  $$('.slide').forEach(s=>{s.style.transform='';s.style.opacity=''});
+  if(was){const n=Math.abs(dx)>60?idx+(dx<0?1:-1):idx;const o=idx;idx=o;if(n!==o)go(n);else fit();setTimeout(()=>moved=false,0)}});
+</script></body></html>

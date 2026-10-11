@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>openGym — List (design mock)</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+#hx{font-size:13px;color:var(--label-2);padding:6px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hx b{color:var(--label);font-weight:600}
+.wl{display:flex;flex-direction:column;padding-top:6px}
+
+.wl-unit{padding:6px 0 14px;border-top:.5px solid var(--sep-op);margin-top:6px}
+.wl-unit:first-child{border-top:0;margin-top:0}
+.wl-unit.cur{background:none;border-radius:var(--r-lg);box-shadow:var(--elev-2);padding:6px 12px 14px;margin:12px -4px;border-top:0}   
+.wl-unit.done .uname{color:var(--label-2)}
+.uhd{display:flex;align-items:center;gap:6px}
+.uhd .tap{flex:1;min-width:0;min-height:48px;display:flex;align-items:center;gap:10px;text-align:left}   
+.uhd .tap:active{opacity:.7}
+.ubadge{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;background:var(--surface-2);color:var(--label-2)}
+.done .ubadge{background:var(--acc);color:var(--on-acc)}.cur .ubadge{background:var(--acc-soft);color:var(--acc)}
+.uname{font-size:17px;font-weight:600;letter-spacing:-.015em;text-wrap:balance}
+.usub{font-size:var(--fs-label);color:var(--label-2);margin-top:1px;font-variant-numeric:tabular-nums}
+.ubody{display:flex;flex-direction:column;gap:8px;padding-top:2px}
+.ubody .sethead{padding-top:4px}
+.ss-st+.ss-st{margin-top:10px;padding-top:10px;border-top:.5px solid var(--sep-op)}.ss-name{font-weight:600;padding:2px 6px 6px}
+.jump{position:absolute;right:14px;bottom:calc(var(--tab-h) + var(--rest-h) + 12px);z-index:15;height:44px;padding:0 16px;border-radius:99px;background:var(--acc);color:var(--on-acc);
+  font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 8px 20px -6px #000;transition:transform var(--fast) var(--ease),opacity var(--fast)}
+.jump[hidden]{display:none}
+</style></head>
+<body data-mode="list">
+<div id="notes" hidden><li>See the full session in one list, with the current exercise expanded.</li><li>Completed exercises can collapse; each exercise keeps its own settings.</li></div>
+<script src="shared.js"></script>
+<script>
+const OPEN={},uname=unitName,COLL=()=>sg('og-collapse','1')==='1';
+const udone=u=>UNITS[u].ex.flatMap(e=>S.sets[e]).filter(s=>s.d).length, utot=u=>req(UNITS[u].ex).length;
+const summ=u=>`${utot(u)} sets · ${UNITS[u].ex.map(lastVal).join(' / ')}`;
+
+function body(u){const un=UNITS[u];
+  if(un.ss)return`<div class="ubody">${ssMedia(u)}<div class="ss-hd">${ic('link',14,2)}${ssHd(u)}</div>${ssBody(u,{abc:true})}</div>`;
+  const id=un.ex[0],ex=EX[id],nx=nextOpen(u),i=nx&&nx.e===id?nx.i:S.sets[id].length-1;
+  return`<div class="ubody">${mediaHTML(id)}${eqChip(id)}${planUI(id)}
+  ${ex.pin?`<div class="note pin">${ic('note',16)}${ex.pin}</div>`:''}${plateLine(id,i)}${sethead(id)}${S.sets[id].map((_,k)=>setRow(id,k)).join('')}${setCtl(id)}</div>`}
+
+const un_ss=u=>!!UNITS[u].ss;
+function unit(u){const done=unitDone(u),cur=u===S.cur,open=cur||(done&&COLL()?!!OPEN[u]:true),n=udone(u),t=utot(u);
+  return`<section class="wl-unit${cur?' cur':''}${done?' done':''}" data-u="${u}"${cur?' aria-current="true"':''}>
+  <div class="uhd"><button class="tap" data-pick="${u}" aria-expanded="${open}"><span class="ubadge">${done?ic('check',14,2.6):u+1}</span>
+    <span><div class="uname">${uname(u)}</div><div class="usub">${done&&!open?summ(u):`Exercise ${u+1} / ${UNITS.length} · ${n}/${t} sets`}</div></span></button>
+    ${un_ss(u)?'':infoBtn(UNITS[u].ex[0])}<button class="ibtn" data-act="excfg" data-ex="${UNITS[u].ex.join(',')}" aria-label="Settings ${uname(u)}">${ic('dots',20)}</button></div>
+  ${open?body(u):''}</section>`}
+
+function indicator(){const sc=$('#screen'),h=$('.whdr').offsetHeight,top=sc.getBoundingClientRect().top+h+24;let k=0;
+  $$('.wl-unit').forEach((el,u)=>{if(el.getBoundingClientRect().top<=top)k=u});
+  $('#hx').innerHTML=`↳ <b>${uname(k)}</b> · ${udone(k)}/${utot(k)}`;
+  const n=$('.is-next'),j=$('#jump');if(!n){j.hidden=true;return}
+  const r=n.getBoundingClientRect(),s=sc.getBoundingClientRect();j.hidden=r.top>s.top+h&&r.bottom<s.bottom-60}
+ON_CHIP=u=>{if(unitDone(u)&&u!==S.cur&&COLL()&&!OPEN[u]){OPEN[u]=true;RENDER()}   
+  const el=$(`.wl-unit[data-u="${u}"]`),sc=$('#screen');if(el)sc.scrollTo({top:el.getBoundingClientRect().top-sc.getBoundingClientRect().top+sc.scrollTop-$('.whdr').offsetHeight-8,behavior:'smooth'})};
+let first=true;
+mount(()=>{
+  $('#view').innerHTML=`${exBar()}${noteCard()}<div class="wl">${UNITS.map((_,u)=>unit(u)).join('')}</div>
+  <div style="margin-top:14px">${exFooter()}</div>`;
+  if(!$('#jump'))$('#phone').insertAdjacentHTML('beforeend',`<button class="jump" id="jump" hidden>${ic('down',18,2.2)}Next set</button>`);
+  indicator();
+  if(first){first=false;const c=$('.wl-unit.cur'),sc=$('#screen');if(c)sc.scrollTop=c.getBoundingClientRect().top-sc.getBoundingClientRect().top+sc.scrollTop-$('.whdr').offsetHeight-8;indicator()}});
+$('#screen').addEventListener('scroll',indicator,{passive:true});
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-pick]');if(p){const u=+p.dataset.pick;if(unitDone(u)&&u!==S.cur&&COLL())OPEN[u]=!OPEN[u];else S.cur=u;save();RENDER();return}
+  const s=e.target.closest('[data-say]');if(s)toast(s.dataset.say);
+  if(e.target.closest('#jump')){const n=$('.is-next');n&&n.scrollIntoView({block:'center',behavior:'smooth'})}});
+</script></body></html>

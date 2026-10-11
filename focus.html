@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>openGym — Focus (design mock)</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+#view{display:flex;flex-direction:column;gap:8px;padding-top:8px}
+.focus-card{padding:12px 14px;border-radius:var(--r-lg);background:none;box-shadow:var(--elev-2);display:flex;flex-direction:column;gap:8px}
+.focus-card .ex-name{font-size:19px}.focus-card .note.pin span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.focus-card .note.pin{min-width:0}
+.focus-card.enter{animation:in var(--med) var(--ease)}                                   
+@keyframes in{from{transform:translateY(8px);opacity:0}}
+.ssline{display:flex;align-items:center;gap:8px;padding-bottom:4px;border-bottom:.5px solid var(--sep);font-size:13px}
+.ssline .muted{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ssnav{display:flex;margin-left:auto}.ssnav button{display:grid;place-items:center;width:44px;height:36px;margin:-6px 0;color:var(--label-2)}.ssnav button:disabled{opacity:.3}
+.fhd{display:flex;align-items:flex-start;gap:8px;padding-bottom:8px;border-bottom:.5px solid var(--sep)}.fhd>div{flex:1;min-width:0}
+.fhd .ibtn{margin:-6px -8px -6px 0}
+.fsub{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--label-2);margin-top:2px}
+.fsub .wu{color:var(--orange);display:inline-flex;align-items:center;gap:4px}
+.fctx{display:flex;flex-direction:column;gap:6px}
+.presc{font-size:15px;color:var(--label-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}.presc b{color:var(--label);font-weight:600}
+details.det{background:var(--surface-2);border-radius:var(--r);padding:0 12px}
+details.det summary{list-style:none;min-height:40px;gap:8px;display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--label-2);cursor:pointer}
+details.det summary::-webkit-details-marker{display:none}details.det[open] summary .ic{transform:rotate(180deg)}
+.dbody{display:grid;gap:10px;padding:0 0 12px;font-size:14px}
+.kvb{display:flex;justify-content:space-between;gap:10px;text-align:left;width:100%;color:var(--label);font-variant-numeric:tabular-nums;min-height:32px;align-items:center}
+.kvb span:first-child{color:var(--label-3)}
+.stat{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;height:28px;padding:0 10px;border-radius:99px;background:var(--acc-soft);color:var(--acc);font-size:13px;font-weight:600}
+.stat.lock{background:var(--surface-2);color:var(--label-2)}
+
+.nbs{display:flex;flex-direction:column;gap:6px}
+.nb{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.cb{width:40px;height:40px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:transform var(--fast) var(--ease)}
+.cb:active{transform:scale(.94);background:var(--surface-3)}.cb[disabled]{opacity:.3;pointer-events:none}
+.bv{display:flex;align-items:baseline;justify-content:center;gap:6px;min-width:0;flex:1}
+.bu{font-size:16px;color:var(--label-2);font-weight:500}
+.big{font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1.1;text-align:center;background:none;border:0;outline:0;padding:0;
+  min-width:1.2ch;max-width:100%;-moz-appearance:textfield;appearance:textfield;font-variant-numeric:tabular-nums}
+
+.nbs.dn .big{color:var(--label-2)}.nbs.dn .cb{opacity:.7}.nbs.dn .effcell-stp,.nbs.dn .effcell.is-empty{opacity:.65}
+.big:disabled{color:var(--label-3)}.big::-webkit-inner-spin-button{display:none}
+.plates{display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;color:var(--label-2)}.plates svg{height:30px;width:auto}
+.feff.lk{opacity:.4;pointer-events:none}.feff .effcell,.feff .effcell-stp{height:44px;width:100%;flex:none}.feff .effcell.is-empty{font-size:14px}
+.feff .effcell-stp .val{font-size:18px}.feff .effcell-stp>button[data-act]:not(.val){width:44px;height:44px}
+
+.focus-pager{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px}
+.focus-pager>.arr{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--sep);border-radius:50%;color:var(--label)}
+.focus-pager>.arr:disabled{opacity:.3}
+.dots{display:flex;align-items:center;justify-content:center}
+.dots button{position:relative;width:38px;height:40px}
+.dots button::after{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:var(--label-3);transform:translate(-50%,-50%);transition:width var(--fast),height var(--fast)}
+.dots button.cur::after{width:9px;height:9px;background:var(--acc)}
+.dots button.done::after{box-shadow:0 0 0 2px var(--acc-line)}
+.dots button.wu::after{background:var(--orange)}.dots button.wu.done::after{box-shadow:0 0 0 2px color-mix(in srgb,var(--orange) 45%,transparent)}   
+
+.focus-card.wu .btn.primary{background:var(--orange);color:#000}.focus-card.wu .dots button.cur::after{background:var(--orange)}
+.focus-card.wu .sctl.cur .btn.sm{color:var(--orange)}
+.fact{display:flex;gap:8px;align-items:center}
+.fact .btn.lg{flex:1;height:52px;font-size:17px;border-radius:var(--r-lg)}
+.fact .btn.sk{height:52px;width:52px;padding:0;border-radius:var(--r-lg);border:1px solid var(--sep)}
+.then{text-align:center;font-size:13px;color:var(--label-2);margin-top:-4px}
+</style></head>
+<body data-mode="focus">
+<div id="notes" hidden><li>Design concept: one set at a time, with large values and a fixed completion action.</li><li>Use the exercise pager to move through the same shared session.</li></div>
+<script src="shared.js"></script>
+<script>
+let F=null,BEST=false,DET=false,last='';
+const uname=unitName;
+const cur=()=>{if(F&&S.sets[F.e]?.[F.i])return F;const n=nextOpen();if(n)return F={e:n.e,i:n.i};const e=UNITS[UNITS.length-1].ex[0];return F={e,i:S.sets[e].length-1}};
+const COL={25:'#ff453a',20:'#0a84ff',15:'#ffd60a',10:'#30d158',5:'#e5e5ea',2.5:'#8e8e93',1.25:'#636366'};
+function plateSvg(a){let x=18,o='';for(const p of a){const h=16+p/25*52,w=p>=10?9:p>=5?7:5;o+=`<rect x="${x}" y="${35-h/2}" width="${w}" height="${h}" rx="1.5" fill="${COL[p]}"/>`;x+=w+1.5}
+  return`<svg width="220" height="70" viewBox="0 0 220 70" role="img" aria-label="Plates per side: ${platesTxt(a)}"><rect x="0" y="32" width="220" height="6" rx="3" fill="#48484a"/><rect x="10" y="23" width="6" height="24" rx="1.5" fill="#8e8e93"/>${o}</svg>`}
+
+function render(){
+  const {e,i}=cur(),ex=EX[e],sets=S.sets[e],s=sets[i],u=unitOf(e),un=UNITS[u],k=un.ex.indexOf(e),locked=!s.d&&sets.slice(0,i).some(x=>!x.d);
+  const key=e+i,enter=key!==last?' enter':'';last=key;
+  const where=un.ss?`Round ${i+1} of ${maxSets(u)}`:`Set ${wn(e,i)} of ${wTot(e)}${s.max?' · Max':s.ph?' · '+(s.ph==='top'?'Top set':'Back-off'):''}`;
+  const pl=ex.bar&&lkind(e)==='pairs'?plates(s.w,ex.bar):null,partner=un.ss?EX[un.ex[(k+1)%un.ex.length]].name:null;
+  const UN={w:weMode(e)==='total'?'kg ×2':weMode(e)==='each'?"kg each":'kg',r:'reps',sec:"sec",min:'min',speed:'km/h',inc:'%'};
+  const nb=(f,unit,side)=>{const x=side?s.sides[side]:s,val=(f==='inc'&&x.inc==null)||(f==='r'&&s.max&&!x.r&&!x.d)?'':fmt(f==='w'?wShow(e,x[f]||0):(x[f]||0)),sd=side?` data-side="${side}"`:'';const row=(()=>{const a=(d,n,t)=>`<button class="cb" data-act="${d}" data-f="${f}" data-ex="${e}" data-i="${i}"${sd} ${locked?'disabled':''} aria-label="${t} ${FLD[f].lbl.toLowerCase()}">${ic(n,18,2.4)}</button>`;
+    const oc=side?{cls:'',html:''}:oopCell(e,i,f);return`<div class="nb${oc.cls}">${(f==='r'||f==='sec')&&s.f?`<i class="fmark" aria-hidden="true">${ic('gauge',9,2.8)}</i>`:''}${a('dec','minus',"Decrease")}<label class="bv"><input class="num big" data-f="${f}" data-ex="${e}" data-i="${i}"${sd} inputmode="decimal" value="${val}" placeholder="${f==='inc'?'–':'Max'}" style="width:${Math.max(val.length,2)+.6}ch" ${locked?'disabled':''} aria-label="${FLD[f].lbl}"><span class="bu">${unit}</span></label>${a('inc','plus',"Increase")}${oc.html}</div>`})();
+    return row};
+  const grp=side=>colsOf(e).map(f=>nb(f,UN[f],side)).join('');
+  const dots=sets.map((x,j)=>`<button class="${j===i?'cur':''}${x.d?' done':''}${x.wu?' wu':''}" data-fs="${j}" aria-label="${un.ss?"Round "+(j+1):x.wu?"Warm-ups":"Set "+wn(e,j)}"${j===i?' aria-current="step"':''}></button>`).join('');
+  $('#view').innerHTML=`${noteCard()}<div class="focus-card${enter}${s.wu?' wu':''}">
+    ${un.ss?`<div class="ssline"><span class="ss-hd">${ic('link',13,2)}${esc(un.name||'Superset')}</span><span class="muted">${ex.name} · ${k+1}/${un.ex.length}</span>
+      <span class="ssnav"><button data-fst="-1" ${k?'':'disabled'} aria-label="Previous exercise in superset">${ic('chevL',20)}</button><button data-fst="1" ${k<un.ex.length-1?'':'disabled'} aria-label="Next exercise in superset">${ic('chevR',20)}</button></span></div>`:''}
+    <header class="fhd"><div><h2 class="ex-name">${ex.name}${infoBtn(e)}</h2><div class="fsub"><span aria-live="polite">${s.wu?`<span class="wu">${ic('flame',15)}Warm-ups</span>`:where}</span><span>· ${ex.equip}</span>${s.f?"<span style=\"color:var(--purple);font-weight:600\">· ${FI(13)}To failure</span>":''}${s.d?`<span style="color:var(--acc);font-weight:600">· Completed</span>`:locked?"<span>· Stalled</span>":''}</div></div>
+      <button class="ibtn" data-act="excfg" data-ex="${un.ex.join(',')}" aria-label="Exercise settings">${ic('dots',22)}</button></header>
+    ${mediaHTML(e,un.ss)}
+    <div class="fctx">${ex.pin?`<div class="note pin">${ic('note',16)}<span>${ex.pin}</span></div>`:''}
+      ${planUI(e,{rest:!un.ss})}</div>
+    <div class="nbs${s.d?' dn':''}">${s.sides?['L','R'].map(sd=>`<div class="sidegrp"><div class="sdl">${sd==='L'?"Left":"Right"}${s.sides[sd].d?" · completed":''}</div>${grp(sd)}${EF()!=='off'?`<div class="feff${locked?' lk':''}">${effCell(e,i,{},sd)}</div>`:''}</div>`).join(''):`${colsOf(e).map((f,k)=>nb(f,UN[f])+(k===0&&pl?`<div class="plates">${plateSvg(pl)}<span class="tnum">Per side · ${platesTxt(pl)}</span></div>`:'')).join('')}
+      ${hasEff(e)&&EF()!=='off'&&!s.wu?`<div class="feff${locked?' lk':''}">${effCell(e,i,{})}</div>`:''}`}</div>
+    ${subs(e,i,true)}
+    <div class="focus-pager"><button class="arr" data-fpg="-1" ${i?'':'disabled'} aria-label="${un.ss?"Previous round":"Previous set"}">${ic('chevL',18)}</button><div class="dots" role="group" aria-label="${un.ss?"Rounds":"Sets"}">${dots}</div><button class="arr" data-fpg="1" ${i<sets.length-1?'':'disabled'} aria-label="${un.ss?"Next round":"Next set"}">${ic('chevR',18)}</button></div>
+    ${setCtl(e,'',{i})}
+    <div class="fact"><button class="btn sk" data-fskip="1" aria-label="Skip set">${ic('skip',22)}</button>
+      ${s.d?`<button class="btn lg" data-act="tick" data-ex="${e}" data-i="${i}">${ic('undo',20)}Reopen set</button>`
+        :`<button class="btn primary lg" data-fc="1" ${locked?'disabled':''}>${ic('check',22,2.6)}Complete</button>`}</div></div>
+  ${exNav(u)}${exFooter()}`;}
+
+function fly(r,txt,i){if(!r||matchMedia('(prefers-reduced-motion:reduce)').matches)return;const t=$(`.dots [data-fs="${i}"]`);if(!t)return;const b=t.getBoundingClientRect(),el=document.createElement('div');
+  el.textContent=txt;Object.assign(el.style,{position:'fixed',left:r.left+'px',top:r.top+'px',width:r.width+'px',textAlign:'center',font:'600 44px system-ui',color:'var(--acc)',zIndex:100,pointerEvents:'none'});
+  document.body.appendChild(el);el.animate([{transform:'none',opacity:1},{transform:`translate(${b.left+b.width/2-r.left-r.width/2}px,${b.top-r.top}px) scale(.3)`,opacity:.1}],{duration:380,easing:'cubic-bezier(.32,.72,0,1)'}).onfinish=()=>el.remove()}
+
+function goUnit(u){u=Math.max(0,Math.min(UNITS.length-1,u));const n=nextOpen(u);
+  if(n&&n.u===u)F={e:n.e,i:n.i};else{const e=UNITS[u].ex[0];F={e,i:S.sets[e].length-1}}S.cur=u;save();RENDER();$('#screen').scrollTo({top:0})}
+ON_CHIP=goUnit;
+mount(render);
+document.addEventListener('click',e=>{const t=e.target;
+  if(t.closest('[data-fc]')){const {e:id,i}=cur(),s=S.sets[id][i],u=unitOf(id),r=$('.big')?.getBoundingClientRect(),txt=shortVal(id,s);
+    if(s.sides){for(const sd of ['L','R'])if(!s.sides[sd].d)toggle(id,i,sd)}else toggle(id,i);const n=nextOpen(u);
+    if(unitDone(u)){const vol=UNITS[u].ex.reduce((a,x)=>a+volume(x),0).toLocaleString('en-GB');
+      if(n&&n.u!==u){F={e:n.e,i:n.i};S.cur=n.u;save();toast(`${uname(u)} completed · ${vol} kg → ${uname(n.u)}`)}
+      else toast("Workout completed")}                       
+    else if(n)F={e:n.e,i:n.i};
+    RENDER();if(!unitDone(u))fly(r,txt,i);return}
+  const pg=t.closest('[data-fpg]');if(pg){const {e:id,i}=cur();F={e:id,i:i+ +pg.dataset.fpg};RENDER();return}
+  const sg_=t.closest('[data-fs]');if(sg_){F={e:cur().e,i:+sg_.dataset.fs};RENDER();return}
+  const st=t.closest('[data-fst]');if(st){const {e:id,i}=cur(),un=UNITS[unitOf(id)],ne=un.ex[un.ex.indexOf(id)+ +st.dataset.fst];F={e:ne,i:Math.min(i,S.sets[ne].length-1)};RENDER();return}
+  if(t.closest('[data-fbest]')){BEST=!BEST;RENDER();return}
+  const go=t.closest('[data-go]');if(go){goUnit(+go.dataset.go);return}
+  if(t.closest('[data-fskip]')){const {e:id,i}=cur();if(i<S.sets[id].length-1)F={e:id,i:i+1};toast("Set skipped (demo)");RENDER();return}
+  const s=t.closest('[data-say]');if(s)toast(s.dataset.say)});
+</script></body></html>

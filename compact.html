@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>openGym — Compact (design mock)</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+#hx{padding:8px 0 0}#hx .sethead{padding-bottom:6px}
+
+.cu{padding:2px 0 6px;border-top:.5px solid var(--sep-op)}.cu:first-child{border-top:0}
+.chd{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 6px}
+.chd .uname{flex:1;min-width:0;font-size:17px;font-weight:600;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chd .plan{flex:none;max-width:68%}.chd .pchip{width:auto;min-height:32px;padding:0 10px;font-size:13px}.chd .uname{flex:1 1 0}
+.chd .ibtn{width:36px;height:36px;margin:0 -6px 0 0}
+.setrow{min-height:44px;padding:0 6px;margin:2px 0}
+.stp{height:36px}
+.stp .num.ghost{font-weight:500}                       
+.stp.plain{background:var(--surface)}.stp.plain .num{font-size:18px}
+.dl{display:flex;align-items:center;gap:10px;height:40px;width:100%;padding:0 6px;color:var(--label-2);text-align:left}   
+.dl .b{width:22px;height:22px;border-radius:50%;background:var(--acc);color:var(--on-acc);display:grid;place-items:center;flex:none}
+.dl .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.dl .v{font-size:14px;font-variant-numeric:tabular-nums}
+.round-sum{padding:6px;min-height:36px;font-size:13px}.round-sum .n{width:22px;height:22px}
+.ss-hd{padding:8px 6px 2px}.ss-name{padding:6px 6px 0;font-weight:600;font-size:15px}
+.ss-st+.ss-st{margin-top:4px}
+</style></head>
+<body data-mode="compact">
+<div id="notes" hidden><li>A dense table keeps set values and planned targets in view.</li><li>Shared column headings and optional steppers reduce repetition.</li></div>
+<div id="ctl" hidden><label>Show +/− <input type="checkbox" id="stpt"></label></div>
+<script src="shared.js"></script>
+<script>
+const OPEN={},uname=unitName,COLL=()=>sg('og-collapse','1')==='1';
+const steppers=()=>sg('og-cmp-steppers','0')==='1';
+const o=()=>({steppers:steppers(),ghost:true,dense:true,abc:true,sheet:true,short:true});
+function unit(u){const un=UNITS[u],done=unitDone(u),plan=planShort(un.ex[0]);
+  if(done&&COLL()&&!OPEN[u]){const w=un.ex.map(lastVal).join(' / ');
+    return`<section class="cu" data-u="${u}"><button class="dl" data-open="${u}" aria-expanded="false"><span class="b">${ic('check',13,3)}</span><span class="t">${uname(u)}</span><span class="v">${plan} · ${w}</span></button></section>`}
+  const body=un.ss?`${ssBody(u,o())}`
+    :(modeOf(un.ex[0])==='reps'&&!EX[un.ex[0]].bw&&!EX[un.ex[0]].side&&!weOk(un.ex[0])?'':sethead(un.ex[0]))+S.sets[un.ex[0]].map((_,k)=>setRow(un.ex[0],k,o())).join('')+setCtl(un.ex[0]);   
+  return`<section class="cu" data-u="${u}"><div class="chd"><span class="uname">${un.ss?ssHd(u):uname(u)}</span>${un.ss?'':planUI(un.ex[0],{sheet:true,short:true})}<button class="ibtn" data-act="excfg" data-ex="${un.ex.join(',')}" aria-label="Exercise settings">${ic('dots',18)}</button></div>${body}</section>`}
+ON_CHIP=u=>{if(unitDone(u)&&u!==S.cur&&COLL()&&!OPEN[u]){OPEN[u]=true;RENDER()}
+  const el=$(`.cu[data-u="${u}"]`),sc=$('#screen');if(el)sc.scrollTo({top:el.getBoundingClientRect().top-sc.getBoundingClientRect().top+sc.scrollTop-$('.whdr').offsetHeight-4,behavior:'smooth'})};
+mount(()=>{
+  $('#hx').innerHTML=sethead();
+  $('#view').innerHTML=exBar()+noteCard()+UNITS.map((_,u)=>unit(u)).join('')+`<div style="margin-top:12px">${exFooter()}</div>`;
+  $$('.stp').forEach(e=>e.classList.toggle('plain',!steppers()))});
+$('#stpt').checked=steppers();$('#stpt').onchange=e=>{ss('og-cmp-steppers',e.target.checked?'1':'0');RENDER()};
+document.addEventListener('click',e=>{const p=e.target.closest('[data-open]');if(p){OPEN[+p.dataset.open]=true;RENDER();return}
+  const s=e.target.closest('[data-say]');if(s)toast(s.dataset.say)});
+</script></body></html>

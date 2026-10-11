@@ -1,0 +1,8 @@
+const IC={plus:'M12 5v14M5 12h14',minus:'M5 12h14',check:'M5 12.5l4.5 4.5L19 7.5',chevR:'M9 5l7 7-7 7',chevL:'M15 5l-7 7 7 7',chevD:'M5 9l7 7 7-7',chevU:'M5 15l7-7 7 7',
+  dots:'M12 5.5v.01M12 12v.01M12 18.5v.01',flame:'M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z',
+  link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  note:'M6 3h9l4 4v14H6zM9 12h7M9 16h7',x:'M6 6l12 12M18 6L6 18',skip:'M5 5l9 7-9 7zM18 5v14',pause:'M8 5v14M16 5v14',play:'M7 5l12 7-12 7z',
+  home:'M4 11l8-7 8 7v9H4z',dumb:'M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12',hist:'M4 12a8 8 0 1 0 3-6.2M4 4v4h4M12 8v4l3 2',set:'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4',
+  img:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4',down:'M12 5v14M6 13l6 6 6-6',up:'M12 19V5M6 11l6-6 6 6',info:'M12 3.8a8.2 8.2 0 1 0 0 16.4 8.2 8.2 0 0 0 0-16.4ZM12 11v5.4M12 7.9v.01',star:'M12 3.8l2.4 5 5.5.8-4 3.9.9 5.5-4.8-2.6-4.8 2.6.9-5.5-4-3.9 5.5-.8z',trophy:'M8 4h8v5a4 4 0 0 1-8 0ZM8 6H5v1a3 3 0 0 0 3 3M16 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7',timer:'M12 6.2a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4ZM12 10v3.4h2.8M9.6 3.4h4.8',warn:'M12 3.4 21.2 19.4H2.8ZM12 9.6v4.4M12 16.6v.01',undo:'M9 7L4 12l5 5M4 12h10a6 6 0 0 1 0 12',pencil:'M4 20l4-1L19 8l-3-3L5 16zM14 7l3 3',bolt:'M13 3L5 14h6l-1 7 8-11h-6z',trash:'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13',search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',gauge:'M4 17a8 8 0 1 1 16 0M12 17l4-6'};
+const ic=(n,s=20,sw=1.8)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
+
