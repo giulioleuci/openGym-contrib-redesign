@@ -195,7 +195,7 @@ const rg=(a,f=fmt)=>a[0]===a[1]?f(a[0]):f(a[0])+'–'+f(a[1]);
 const rowsReps=p=>p.rows&&p.perRow!==false?p.rows.map(x=>x[1]==='max'?'Max':x[1]).join('/'):rg(p.r);
 
 const planShort=id=>{const p=EX[id].plan,m=modeOf(id);if(m==='cardio')return`${rg(p.n)}×${p.min} min @ ${fmt(p.speed)} km/h`;
-  if(m==='time')return`${rg(p.n)}×${rg(p.sec)} sec`;return rg(p.n)+'×'+rowsReps(p)+(p.side?` (${rg(p.r.map(v=>v/2))}/lato)`:'')};
+  if(m==='time')return`${rg(p.n)}×${rg(p.sec)} sec`;return rg(p.n)+'×'+rowsReps(p)+(p.side?` (${rg(p.r.map(v=>v/2))}/side)`:'')};
 const loadTxt=(p,id)=>{const f=v=>fmt(Math.round(v*100)/100);return p.pct?`${p.pct}% 1RM`:p.load?(p.rows?[...new Set(p.rows.map(x=>f(x[0])))].join('/'):rg(p.load,f))+' kg':''};
 const hasLoad=p=>!!(p.pct||p.load);
 const effRg=p=>EF()==='rpe'?rg([10-p.rir[1],10-p.rir[0]]):rg(p.rir);   
@@ -224,7 +224,7 @@ function oopPill(id){const l=oopSets(id);if(!l.length)return'';
   return`<button class="oopp ${l.some(i=>findsL(id,i).some(x=>x.dir<0))?'lo':'hi'}" data-act="oopinfo" data-ex="${id}" aria-haspopup="dialog" aria-label="Out of plan: ${l.length} ${l.length===1?"set":"sets"}">${ic('warn',15,2)}${l.length}</button>`}
 function oopSheet(id){const p=EX[id].plan;
   openSheet(`<h3 style="margin-bottom:2px">Out of plan</h3><div class="muted small" style="margin-bottom:10px">${esc(EX[id].name)} · target ${planShort(id)}${hasLoad(p)?' @ '+loadTxt(p,id):''}. These are hints; entered values stay unchanged.</div>
-    <div class="list menu-list">${oopSets(id).map(i=>`<div class="item menu-item"><div class="grow"><div class="tt">Sets ${wn(id,i)} · ${valTxt(id,S.sets[id][i])}</div><div class="oopline" style="margin:4px 0 0">${findsL(id,i).map(oopChip).join('')}</div></div></div>`).join('')}</div>`)}
+    <div class="list menu-list">${oopSets(id).map(i=>`<div class="item menu-item"><div class="grow"><div class="tt">Set ${wn(id,i)} · ${valTxt(id,S.sets[id][i])}</div><div class="oopline" style="margin:4px 0 0">${findsL(id,i).map(oopChip).join('')}</div></div></div>`).join('')}</div>`)}
 const PLV=(()=>{try{return JSON.parse(sg('og-plv','{}'))}catch{return{}}})();
 const kvr=(a,b)=>`<div class="kv"><span>${a}</span><span>${b}</span></div>`;
 function planBody(id,lv){const ex=EX[id],p=ex.plan,pr=PRESET[p.preset],m=modeOf(id),today=wTot(id),e=p.int?.t==='rp'?[1,1]:p.n;
@@ -235,7 +235,7 @@ function planBody(id,lv){const ex=EX[id],p=ex.plan,pr=PRESET[p.preset],m=modeOf(
     ${today<e[0]||today>e[1]?kvr("Today",`${today} sets (planned ${rg(e)})`):''}${lv===1?`<button class="plink" data-act="plv" data-k="${id}" data-to="2">How it works${ic('chevR',14,2)}</button>`:''}</div>`+
   (lv>1?`<div class="pdet">${kvr("Sets",rg(p.n))}${m==='cardio'?kvr("Duration",p.min+' min')+kvr("Speed",fmt(p.speed)+' km/h'):m==='time'?kvr("Duration",rg(p.sec)+" s"):kvr("Reps",rowsReps(p)+(p.side?" (total, half per side)":''))}${hasLoad(p)?kvr("Load",loadTxt(p,id))+(weOk(id)?`<div class="kv"><span>Weight is</span><button class="kvbtn" data-act="excfg" data-ex="${id}" aria-label="Change weight meaning">${WEL[weMode(id)]}${ic('chevR',13,2)}</button></div>`:''):''}${p.rir&&EF()!=='off'&&hasEff(id)?kvr("Effort",EF().toUpperCase()+' '+effRg(p)):''}
     ${m==='cardio'?'':kvr("Rest",p.rest?restTxt(p):"Default · "+fmtRest(DEF_REST))}${m==='reps'?kvr("Warm-ups",p.warm||"None"):''}${p.side?kvr('Sides',"Left and right recorded separately"):''}${(p.kv||[]).map(([a,b])=>kvr(a,b)).join('')}${p.int?kvr("Intensifier",p.int.t==='drop'?`Drop-set · ${p.int.count} drop, −${p.int.pct}% a drop`:`Rest-pause · +${p.int.total} reps in bursts with ${p.int.rest}sec`):''}
-    <div class="how"><b>${pr[0]}</b><p>${hint}</p><button class="plink" data-say="Progression settings">Progression settings${ic('chevR',14,2)}</button></div>${ex.note?`<div class="note">${ic('note',16)}${ex.note}</div>`:''}
+    <div class="how"><b>${pr[0]}</b><p>${hint}</p><button class="plink" data-say="Progression settings open in the app">Progression settings${ic('chevR',14,2)}</button></div>${ex.note?`<div class="note">${ic('note',16)}${ex.note}</div>`:''}
     ${lv===2?`<button class="plink" data-act="plv" data-k="${id}" data-to="1">Fewer details</button>`:''}</div>`:'')}
 
 function planUI(id,o={}){const lv=o.sheet?0:(PLV[id]??(o.def||0)),at=o.sheet?`data-act="plsheet" data-ex="${id}"`:`data-act="plv" data-k="${id}" data-to="${lv?0:1}" aria-expanded="${!!lv}"`;
@@ -260,7 +260,7 @@ function stp(id,i,f,o,side){const s=S.sets[id][i],x=side?s.sides[side]:s,v=f==='
 const rowCells=(id,i,o,side)=>colsOf(id).map(c=>stp(id,i,c,o,side)).join('')+(hasEff(id)&&EF()!=='off'?effCell(id,i,o,side):'');
 function setRow(id,i,o={}){const s=S.sets[id][i],nx=nextOpen(),next=nx&&!s.d&&((nx.e===id&&nx.i===i)||(UNITS[nx.u].ss&&unitOf(id)===nx.u&&i===nx.i)),pop=S.pop===id+':'+i,m=modeOf(id),a=`data-ex="${id}" data-i="${i}"`,
   num=!o.letter?'':`<button class="n" data-act="smenu" ${a} aria-label="Set options ${s.wu?"warm-up":wn(id,i)}">${o.letter}</button>`,
-  chk=(side,d)=>`<button class="chk${pop?' pop':''}" data-act="tick" ${a}${side?` data-side="${side}"`:''} aria-pressed="${!!d}" aria-label="Complete ${side?(side==='L'?"left side":"right side")+" of the set":"sets"} ${s.wu?"warm-up":wn(id,i)}${s.f?", to failure":''}">${ic('check',20,2.6)}</button>`,
+  chk=(side,d)=>`<button class="chk${pop?' pop':''}" data-act="tick" ${a}${side?` data-side="${side}"`:''} aria-pressed="${!!d}" aria-label="Complete ${side?(side==='L'?"left":"right")+" side of ":''}${s.wu?"warm-up":"set "+wn(id,i)}${s.f?", to failure":''}">${ic('check',20,2.6)}</button>`,
   more=`<button class="more" data-act="smenu" ${a} aria-label="More about ${s.wu?"warm-up":"set "+wn(id,i)}: drop set, rest-pause, remove" title="${s.sides||m!=='reps'?"Remove":"Drops · Rest-pause · Remove"}">${ic('dots',20,3.4)}</button>`,
   fm='',cr=modeOf(id)==='cardio'?' c3':'',
   cls=`setrow${cr}${s.d?' done':''}${next?' is-next':''}${s.wu?' wu':''}${s.sides?' sidewrap':''}`;
@@ -318,10 +318,10 @@ const Rest={on:0,left:0,total:0,paused:0,ready:0,open:sg('og-rest-open','0')==='
     const m=Math.floor(Rest.left/60),s=String(Rest.left%60).padStart(2,'0');
     $('#rt').textContent=Rest.ready?"Ready":`${m}:${s}`;$('#rl').textContent=Rest.ready?"rest finished":Rest.paused?"paused":"rest";
     $('#rp').style.width=(Rest.total?(Rest.ready?100:(1-Rest.left/Rest.total)*100):0)+'%';
-    $('[data-r=pause]',r).innerHTML=ic(Rest.paused?'play':'pause',16);$('[data-r=skip]',r).textContent=Rest.ready?"Close":"Skip"},
+    const pb=$('[data-r=pause]',r);pb.innerHTML=ic(Rest.paused?'play':'pause',16);pb.setAttribute('aria-label',Rest.paused?"Resume":"Pause");$('[data-r=skip]',r).textContent=Rest.ready?"Dismiss":"Skip"},
   detail(){const el=$('#rd');if(!el)return;const n=nextOpen();
     if(!n){el.innerHTML="<div class=\"rd-t\">Workout completed</div>";return}
-    const un=UNITS[n.u],lab=ex=>un.ss?`Round ${n.i+1}/${maxSets(n.u)}`:S.sets[n.e][n.i].wu?"Warm-ups":`Sets ${wn(n.e,n.i)}/${wTot(n.e)}`;
+    const un=UNITS[n.u],lab=ex=>un.ss?`Round ${n.i+1}/${maxSets(n.u)}`:S.sets[n.e][n.i].wu?"Warm-ups":`Set ${wn(n.e,n.i)}/${wTot(n.e)}`;
     if(un.ss){   
       el.innerHTML=`<div class="rd-k">Up next · Superset · ${lab()}</div>`+un.ex.filter(e=>S.sets[e][n.i]).map(e=>{const ex=EX[e],s=S.sets[e][n.i];
         return`<div class="rd-row${s.d?' dn':''}"><div class="rd-t">${s.d?ic('check',15,2.6)+' ':''}${ex.name} <span>· ${ex.equip}</span></div><div class="rd-v sm">${valTxt(e,s)}</div>${plateLine(e,n.i)}</div>`}).join('')}
@@ -358,13 +358,13 @@ function chrome(){
   <div class="row"><div class="phone" id="phone">
     <div class="screen" id="screen"><header class="whdr"><div class="whdr-row"><div><div class="wt">Push A</div>
       <div class="wsub"><span id="clk"></span> · <span class="cnt" aria-live="polite"></span></div></div>
-      <button class="fpill" data-act="finish">Finish</button><button class="ibtn" data-act="menu" aria-label="Other" aria-haspopup="true">${ic('dots',22)}</button></div>
+      <button class="fpill" data-act="finish">Finish</button><button class="ibtn" data-act="menu" aria-label="Workout menu" aria-haspopup="true">${ic('dots',22)}</button></div>
       <div class="wprog" role="progressbar"><i></i></div><nav class="chips" id="chips" aria-label="Workout exercises"></nav><div id="hx"></div></header><main id="view"></main></div>
     <div class="menu" id="menu" hidden><button data-act="wset">${ic('set',18)}Workout settings</button><button data-act="addex">${ic('plus',18)}Add exercise</button><button data-act="note">${ic('pencil',18)}Session note</button><div class="mh">View</div>${MODES.map(([k,n])=>`<a href="${k}.html" class="${k===mode?'on':''}">${n}${k===mode?ic('check',16,2.4):''}</a>`).join('')}<button class="dng" data-act="discard">${ic('trash',18)}Discard workout</button></div>
     <div class="rest" id="rest" hidden><button class="rest-handle" data-r="toggle" aria-expanded="false" aria-label="Rest details"><span></span></button>
       <div class="rest-detail" id="rd"></div>
       <div class="rest-main"><button class="rest-t" data-act="rtime" aria-label="Change the time left"><b id="rt">0:00</b><small id="rl">rest</small></button><div class="rest-prog"><i id="rp"></i></div>
-        <button class="rbtn" data-r="-15">−15</button><button class="rbtn" data-r="15">+15</button><button class="rbtn" data-r="pause" aria-label="Pause"></button><button class="rbtn pri" data-r="skip">Skip</button></div></div>
+        <button class="rbtn" data-r="-15" aria-label="Subtract 15 seconds">−15</button><button class="rbtn" data-r="15" aria-label="Add 15 seconds">+15</button><button class="rbtn" data-r="pause" aria-label="Pause"></button><button class="rbtn pri" data-r="skip">Skip</button></div></div>
   </div>
   <aside class="aside"><h3>${name}</h3><p class="muted">openGym 1.4.1 · Progression Engine v2</p><ul>${notes}<li>Try reps, timed holds, cardio, supersets and intensifiers. Set menus expose planned targets and recorded effort.</li><li>Exercise information includes equipment, records, plate loading and estimated 1RM.</li></ul>
     <div class="ctl"><label>Rest bar<select id="rmode"><option value="collapsed">Always collapsed</option><option value="remember">Remember last choice</option><option value="expanded">Always expanded</option></select></label>
@@ -375,7 +375,7 @@ function chrome(){
       <label>My dumbbells<select id="rackmode"><option value="0">Not specified</option><option value="1">2–32 kg in 2 kg steps</option></select></label>
       <label>Show target differences<select id="oopw"><option value="live">As you type</option><option value="done">After completing a set</option></select></label>${ctl}
       <button class="abtn" id="reset">Reset demo</button></div>
-    <div class="muted">Demo data. Complete a set with ✓ to start rest; drag the rest bar handle to expand it.</div></aside></div>`);
+    <div class="muted">Demo data. Complete a set with ✓ to start rest; tap the rest bar handle to expand it.</div></aside></div>`);
   $('#mmode').value=MS();$('#mmode').onchange=e=>{ss('og-media',e.target.value);RENDER()};$('#chmode').value=CHIPS()?'1':'0';$('#chmode').onchange=e=>{ss('og-chips',e.target.value);RENDER()};$('#emode').value=EF();$('#emode').onchange=e=>{ss('og-effort',e.target.value);RENDER()};$('#wemode').value=['each','total'].find(m=>Object.keys(EX).filter(weOk).every(k=>weMode(k)===m))||'as';$('#wemode').onchange=e=>{Object.keys(EX).filter(weOk).forEach(k=>S.weightEntry[k]={mode:e.target.value,_ts:Date.now()});save();RENDER()};$('#rackmode').value=rackOn()?'1':'0';$('#rackmode').onchange=e=>{ss('og-rack',e.target.value)};$('#oopw').value=OOPW();$('#oopw').onchange=e=>{ss('og-oopw',e.target.value);RENDER()};$('#rmode').value=Rest.mode();$('#rmode').onchange=e=>{ss('og-rest-mode',e.target.value)};
   $('#reset').onclick=()=>{try{sessionStorage.clear()}catch{}location.reload()};
   new ResizeObserver(()=>$('#phone').style.setProperty('--rest-h',$('#rest').hidden?'0px':$('#rest').offsetHeight+8+'px')).observe($('#rest'));
@@ -523,8 +523,8 @@ function infoSheet(id){const ex=EX[id],m=modeOf(id),reps=m==='reps',rm=reps&&!ex
     <div class="tags" style="margin:12px 0">${tags.join('')}</div>
     ${DESC[id]?`<div class="exnote">${DESC[id]}</div>`:''}
     ${best?`<div class="small" style="display:flex;align-items:center;gap:5px;margin:8px 0 6px;flex-wrap:wrap">${ic('trophy',14,2)}Best: <b class="accent">${refRow(ex,best)}</b>${last?`<span class="muted"> · last time ${refRow(ex,last)}</span>`:''}</div>`:''}
-    <button class="btn primary" style="width:100%;margin:10px 0 4px" data-say="Add to my plan (demo)">${ic('plus',16,2.2)}Add to my plan</button>
-    <button class="btn" style="width:100%;margin-top:4px" data-say="History (demo)">${ic('hist',16)}History</button>
+    <button class="btn primary" style="width:100%;margin:10px 0 4px" data-say="Add to my plan opens in the app">${ic('plus',16,2.2)}Add to my plan</button>
+    <button class="btn" style="width:100%;margin-top:4px" data-say="History opens in the app">${ic('hist',16)}History</button>
     ${reps?plateBlk():''}${weOk(id)?`<h4 class="sec">Weight means</h4>${weRow(id,true)}`:''}${rm?rmBlk():''}
     ${HOW[id]?`<h4 class="sec">How to</h4><ol class="steps-list">${HOW[id].map(x=>`<li>${x}</li>`).join('')}</ol>`:''}`;
   openSheet(`<div id="exi">${body()}</div>`,(sh,close)=>{const redo=()=>{const y=sh.scrollTop;$('#exi',sh).innerHTML=body();sh.scrollTop=y};
@@ -549,16 +549,16 @@ function addEx(l){const [id,name,equip,tags,w,r,step,bar]=l,ex={name,equip,tags,
 function addExSheet(){openSheet(`<h3>Add exercise</h3><div class="searchbox">${ic('search',18)}<input class="input" id="xs" placeholder="Search among ${LIB.length} exercises…"></div><div class="list menu-list" id="xl"></div>`,(sh,close)=>{
   const list=$('#xl',sh),draw=()=>{const q=$('#xs',sh).value.toLowerCase();
     list.innerHTML=LIB.filter(l=>(l[1]+l[2]+l[3]).toLowerCase().includes(q)).map(l=>{const has=!!EX[l[0]];
-      return`<div class="item menu-item${has?' disabled':''}" tabindex="0" role="button" data-x="${l[0]}"><span class="lrow-i">${ic('dumb',16)}</span><div class="grow"><div class="tt">${l[1]}</div><div class="muted small">${l[2]} · ${l[3].join(', ')}</div></div><span class="plus-b">${ic(has?'check':'plus',18,2.2)}</span></div>`}).join('')||"<div class=\"muted\" style=\"padding:14px\">No match</div>"};
+      return`<div class="item menu-item${has?' disabled':''}" tabindex="0" role="button" data-x="${l[0]}"><span class="lrow-i">${ic('dumb',16)}</span><div class="grow"><div class="tt">${l[1]}</div><div class="muted small">${l[2]} · ${l[3].join(', ')}</div></div><span class="plus-b">${ic(has?'check':'plus',18,2.2)}</span></div>`}).join('')||"<div class=\"muted\" style=\"padding:14px\">No exercises match your search</div>"};
   $('#xs',sh).addEventListener('input',draw);draw();
   sh.addEventListener('click',e=>{const x=e.target.closest('[data-x]');if(!x)return;const l=LIB.find(l=>l[0]===x.dataset.x);addEx(l);close();RENDER();toast(`“${l[1]}” added to Push A`)})})}
 
 
 const exBar=u=>{const nav=u!=null,last=nav&&u===UNITS.length-1;
-  return`<div class="xbar">${nav?`<button class="btn sq" data-go="${u-1}" ${u?'':'disabled'} aria-label="Previous exercise">${ic('chevL',18)}</button><button class="btn nx${unitDone(u)?' primary':''}" data-go="${u+1}" ${last?'disabled':''}>${last?"Last":"Next"}${last?'':ic('chevR',18)}</button>`:'<span class="grow"></span>'}${noteBtn('xs',true)}<button class="btn sq" data-act="addex" aria-label="Add exercise" title="Add exercise">${ic('plus',18)}</button></div>`};
+  return`<div class="xbar">${nav?`<button class="btn sq" data-go="${u-1}" ${u?'':'disabled'} aria-label="Previous exercise">${ic('chevL',18)}</button><button class="btn nx${unitDone(u)?' primary':''}" data-go="${u+1}" ${last?'disabled':''}>${last?"Last exercise":"Next"}${last?'':ic('chevR',18)}</button>`:'<span class="grow"></span>'}${noteBtn('xs',true)}<button class="btn sq" data-act="addex" aria-label="Add exercise" title="Add exercise">${ic('plus',18)}</button></div>`};
 const exNav=exBar;
 const exFooter=()=>{const all=UNITS.every((_,k)=>unitDone(k)),dn=UNITS.filter((_,k)=>unitDone(k)).length;
-  return`<div class="fin"><button class="btn${all?' primary':' ghost'}" data-act="finish">Finish workout · ${dn}/${UNITS.length}</button></div>`};
+  return`<div class="fin"><button class="btn${all?' primary':' ghost'}" data-act="finish">Finish workout · ${dn}/${UNITS.length} exercises</button></div>`};
 
 
 const MS=()=>{const v=sg('og-media','full');return v==='mini'||v==='off'?v:'full'};
@@ -574,7 +574,7 @@ const ssMedia=u=>MS()==='off'?'':`<div class="ssmedia">${UNITS[u].ex.map(e=>medi
 
 const menuItem=(m,ico,t,cls)=>`<div class="item menu-item${cls||''}" tabindex="0" role="button" data-m="${m}"><span class="lrow-i">${ic(ico,16)}</span><div class="grow"><div class="tt">${t}</div></div></div>`;
 function finishSheet(){const c=counts(),left=c.t-c.d;
-  openSheet(`<h3 style="margin-bottom:2px">${!c.d?"Nothing recorded yet":left?"Finish early?":"Finish workout?"}</h3><div class="muted small" style="margin-bottom:10px">${!c.d?"You haven’t checked off any sets. Finish the workout anyway?":left?`${left} ${left===1?"unchecked set":"unchecked sets"}. Finish now?`:"All sets are complete."}</div>
+  openSheet(`<h3 style="margin-bottom:2px">${!c.d?"Nothing logged yet":left?"Finish early?":"Finish workout?"}</h3><div class="muted small" style="margin-bottom:10px">${!c.d?"You haven’t checked off any sets. Finish the workout anyway?":left?`${left} ${left===1?"set still unchecked":"sets still unchecked"}. Finish the workout now?`:"All sets are complete."}</div>
     <div class="list menu-list">${menuItem('save','check',"Finish and save")}${menuItem('rm','trash',"Discard workout",' danger')}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();m==='save'?finishSummary():confirmDiscard()}))}
 
 const setsLine=(a,bw)=>{const ws=new Set(a.map(x=>x.w)),rp=x=>x.r+(x.f?' '+FI(11):'');return bw||!ws.size||[...ws][0]==null?a.map(rp).join(', '):ws.size===1?`${fmt(a[0].w)} kg × ${a.map(rp).join(', ')}`:a.map(x=>`${fmt(x.w)}×${rp(x)}`).join(' · ')};
@@ -590,18 +590,18 @@ function finishSummary(){const c=counts(),ids=Object.keys(S.sets),vol=ids.reduce
     <h4 class="sec">Last time and next time</h4><div class="list">${lastNext().map(r=>`<div class="item" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${esc(EX[r.id].name)}</b><span style="color:${TR[r.trend][1]};display:inline-flex" aria-label="${r.trend>0?"Better than last time":r.trend<0?"Below last time":"Same as last time"}">${ic(TR[r.trend][0],18,2.2)}</span></div>
       <div class="small">Today: ${setsLine(r.today,r.bw)}</div><div class="small muted">Last time: ${setsLine(r.last,r.bw)}</div><div class="small accent">Next time: ${r.bw?r.next.r+' reps':fmt(r.next.w)+' kg × '+r.next.r} · ${W[r.next.k]}</div></div>`).join('')||"<div class=\"muted small\" style=\"padding:10px\">Complete a few sets to see the comparison.</div>"}</div>
     ${cardio.length?`<h4 class="sec">Cardio</h4><div class="list">${cardio.map(id=>`<div class="item" style="display:block"><b>${esc(EX[id].name)}</b><div class="small">${S.sets[id].filter(x=>x.d).map(x=>valBase(id,x)).join('  ·  ')}</div></div>`).join('')}</div>`:''}
-    <div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Well done!</button>`,(sh,close)=>sh.addEventListener('click',e=>{if(e.target.closest('[data-x]'))close()}))}
+    <div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Done</button>`,(sh,close)=>sh.addEventListener('click',e=>{if(e.target.closest('[data-x]'))close()}))}
 function confirmDiscard(){openSheet(`<h3 style="margin-bottom:2px">Discard workout?</h3><div class="muted small" style="margin-bottom:10px">The sets you logged in this session will be lost.</div>
-  <div class="list menu-list">${menuItem('go','trash',"Dismiss",' danger')}${menuItem('no','x',"Undo")}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();if(m==='go')toast("Workout discarded (demo)")}))}
+  <div class="list menu-list">${menuItem('go','trash',"Discard",' danger')}${menuItem('no','x',"Cancel")}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();if(m==='go')toast("Workout discarded")}))}
 const RS=()=>+sg('og-rest-sec',DEF_REST);
 function wsetSheet(){const sw=(k,d)=>sg(k,d)==='1',seg=(k,v,o)=>`<div class="sgm" data-k="${k}">${o.map(([x,l])=>`<button data-v="${x}" class="${x===v?'on':''}">${l}</button>`).join('')}</div>`,
-  row=(t,sub,c)=>`<div class="wrow"><div class="grow"><div class="tt">${t}</div>${sub?`<div class="muted small">${sub}</div>`:''}</div>${c}</div>`,tg=(k,d)=>`<button class="sw${sw(k,d)?' on':''}" role="switch" aria-checked="${sw(k,d)}" aria-label="${k}" data-sw="${k}"></button>`;
-  openSheet(`<div class="wsh"><h3>Workout settings</h3><button class="btn sm primary" data-x>Done</button></div><div class="muted small" style="margin-bottom:8px">Changes stick for your next workouts too.</div><div class="list wlist">
-    ${row("Rest timer",fmtRest(RS()),`<button class="btn sm" data-w="1">${ic('chevR',14,2)}</button>`)}
-    ${row("Rest end sound",SND[sndKind()][0],`<button class="btn sm" data-snd aria-label="Choose sound">${ic('chevR',14,2)}</button>${tg('og-snd','1')}`)}${row("Vibrate",'',tg('og-vib','1'))}${row("Flash screen",'',tg('og-fl','0'))}${row("Keep screen awake","Keep the screen awake during workouts",tg('og-awake','1'))}
+  row=(t,sub,c)=>`<div class="wrow"><div class="grow"><div class="tt">${t}</div>${sub?`<div class="muted small">${sub}</div>`:''}</div>${c}</div>`,tg=(k,d,l)=>`<button class="sw${sw(k,d)?' on':''}" role="switch" aria-checked="${sw(k,d)}" aria-label="${l}" data-sw="${k}"></button>`;
+  openSheet(`<div class="wsh"><h3>Workout settings</h3><button class="btn sm primary" data-x>Done</button></div><div class="muted small" style="margin-bottom:8px">Changes also apply to your next workouts.</div><div class="list wlist">
+    ${row("Rest timer",fmtRest(RS()),`<button class="btn sm" data-w="1" aria-label="Change rest timer">${ic('chevR',14,2)}</button>`)}
+    ${row("Rest end sound",SND[sndKind()][0],`<button class="btn sm" data-snd aria-label="Choose sound">${ic('chevR',14,2)}</button>${tg('og-snd','1',"Rest end sound")}`)}${row("Vibrate",'',tg('og-vib','1',"Vibrate"))}${row("Flash screen",'',tg('og-fl','0',"Flash screen"))}${row("Keep screen awake","Stops the screen from turning off during a workout",tg('og-awake','1',"Keep screen awake"))}
     ${row('View','',seg('mode',document.body.dataset.mode,MODES))}${row("Effort per set",'',seg('og-effort',EF(),[['off',"Off"],['rir','RIR'],['rpe','RPE']]))}
-    ${row("Collapse completed exercises","In List and Compact, a completed exercise collapses to one row",tg('og-collapse','1'))}
-    ${row("Swipe gestures","Sets, routines and rounds: swipe left to remove, right to copy",tg('og-swipe','1'))}${row("Exercise animations",'',seg('og-media',MS(),[['full',"Full"],['mini',"Small"],['off',"Hidden"]]))}</div>`,(sh,close)=>{
+    ${row("Collapse completed exercises","In List and Compact, a completed exercise collapses to one row",tg('og-collapse','1',"Collapse completed exercises"))}
+    ${row("Swipe gestures","Sets, routines and rounds: swipe left to remove, right to copy",tg('og-swipe','1',"Swipe gestures"))}${row("Exercise animations",'',seg('og-media',MS(),[['full',"Full"],['mini',"Small"],['off',"Hidden"]]))}</div>`,(sh,close)=>{
     sh.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
       if(b.dataset.x!=null){close();return}
       if(b.dataset.sw){const k=b.dataset.sw,on=!b.classList.contains('on');ss(k,on?'1':'0');b.classList.toggle('on',on);b.setAttribute('aria-checked',on);return}

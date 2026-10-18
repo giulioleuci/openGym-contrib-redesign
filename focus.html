@@ -5,7 +5,7 @@
 <style>
 
 #view{display:flex;flex-direction:column;gap:8px;padding-top:8px}
-.focus-card{padding:12px 14px;border-radius:var(--r-lg);background:none;box-shadow:var(--elev-2);display:flex;flex-direction:column;gap:8px}
+.focus-card{padding:12px 14px;border-radius:var(--r-lg);background:none;display:flex;flex-direction:column;gap:8px}
 .focus-card .ex-name{font-size:19px}.focus-card .note.pin span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.focus-card .note.pin{min-width:0}
 .focus-card.enter{animation:in var(--med) var(--ease)}                                   
 @keyframes in{from{transform:translateY(8px);opacity:0}}
@@ -14,7 +14,7 @@
 .ssnav{display:flex;margin-left:auto}.ssnav button{display:grid;place-items:center;width:44px;height:36px;margin:-6px 0;color:var(--label-2)}.ssnav button:disabled{opacity:.3}
 .fhd{display:flex;align-items:flex-start;gap:8px;padding-bottom:8px;border-bottom:.5px solid var(--sep)}.fhd>div{flex:1;min-width:0}
 .fhd .ibtn{margin:-6px -8px -6px 0}
-.fsub{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--label-2);margin-top:2px}
+.fsub{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:14px;color:var(--label-2);margin-top:2px}
 .fsub .wu{color:var(--orange);display:inline-flex;align-items:center;gap:4px}
 .fctx{display:flex;flex-direction:column;gap:6px}
 .presc{font-size:15px;color:var(--label-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}.presc b{color:var(--label);font-weight:600}
@@ -84,7 +84,7 @@ function render(){
   $('#view').innerHTML=`${noteCard()}<div class="focus-card${enter}${s.wu?' wu':''}">
     ${un.ss?`<div class="ssline"><span class="ss-hd">${ic('link',13,2)}${esc(un.name||'Superset')}</span><span class="muted">${ex.name} · ${k+1}/${un.ex.length}</span>
       <span class="ssnav"><button data-fst="-1" ${k?'':'disabled'} aria-label="Previous exercise in superset">${ic('chevL',20)}</button><button data-fst="1" ${k<un.ex.length-1?'':'disabled'} aria-label="Next exercise in superset">${ic('chevR',20)}</button></span></div>`:''}
-    <header class="fhd"><div><h2 class="ex-name">${ex.name}${infoBtn(e)}</h2><div class="fsub"><span aria-live="polite">${s.wu?`<span class="wu">${ic('flame',15)}Warm-ups</span>`:where}</span><span>· ${ex.equip}</span>${s.f?"<span style=\"color:var(--purple);font-weight:600\">· ${FI(13)}To failure</span>":''}${s.d?`<span style="color:var(--acc);font-weight:600">· Completed</span>`:locked?"<span>· Stalled</span>":''}</div></div>
+    <header class="fhd"><div><h2 class="ex-name">${ex.name}${infoBtn(e)}</h2><div class="fsub"><span aria-live="polite">${s.wu?`<span class="wu">${ic('flame',15)}Warm-ups</span>`:where}</span><span>· ${ex.equip}</span>${s.f?`<span style="color:var(--purple);font-weight:600">· ${FI(13)}To failure</span>`:''}${s.d?`<span style="color:var(--acc);font-weight:600">· Completed</span>`:locked?"<span>· Complete earlier sets first</span>":''}</div></div>
       <button class="ibtn" data-act="excfg" data-ex="${un.ex.join(',')}" aria-label="Exercise settings">${ic('dots',22)}</button></header>
     ${mediaHTML(e,un.ss)}
     <div class="fctx">${ex.pin?`<div class="note pin">${ic('note',16)}<span>${ex.pin}</span></div>`:''}
@@ -111,7 +111,7 @@ document.addEventListener('click',e=>{const t=e.target;
   if(t.closest('[data-fc]')){const {e:id,i}=cur(),s=S.sets[id][i],u=unitOf(id),r=$('.big')?.getBoundingClientRect(),txt=shortVal(id,s);
     if(s.sides){for(const sd of ['L','R'])if(!s.sides[sd].d)toggle(id,i,sd)}else toggle(id,i);const n=nextOpen(u);
     if(unitDone(u)){const vol=UNITS[u].ex.reduce((a,x)=>a+volume(x),0).toLocaleString('en-GB');
-      if(n&&n.u!==u){F={e:n.e,i:n.i};S.cur=n.u;save();toast(`${uname(u)} completed · ${vol} kg → ${uname(n.u)}`)}
+      if(n&&n.u!==u){F={e:n.e,i:n.i};S.cur=n.u;save();toast(`${uname(u)} completed · ${vol} kg. Up next: ${uname(n.u)}`)}
       else toast("Workout completed")}                       
     else if(n)F={e:n.e,i:n.i};
     RENDER();if(!unitDone(u))fly(r,txt,i);return}
@@ -120,6 +120,6 @@ document.addEventListener('click',e=>{const t=e.target;
   const st=t.closest('[data-fst]');if(st){const {e:id,i}=cur(),un=UNITS[unitOf(id)],ne=un.ex[un.ex.indexOf(id)+ +st.dataset.fst];F={e:ne,i:Math.min(i,S.sets[ne].length-1)};RENDER();return}
   if(t.closest('[data-fbest]')){BEST=!BEST;RENDER();return}
   const go=t.closest('[data-go]');if(go){goUnit(+go.dataset.go);return}
-  if(t.closest('[data-fskip]')){const {e:id,i}=cur();if(i<S.sets[id].length-1)F={e:id,i:i+1};toast("Set skipped (demo)");RENDER();return}
+  if(t.closest('[data-fskip]')){const {e:id,i}=cur();if(i<S.sets[id].length-1)F={e:id,i:i+1};toast("Set skipped");RENDER();return}
   const s=t.closest('[data-say]');if(s)toast(s.dataset.say)});
 </script></body></html>

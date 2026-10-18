@@ -9,7 +9,7 @@
 
 .wl-unit{padding:6px 0 14px;border-top:.5px solid var(--sep-op);margin-top:6px}
 .wl-unit:first-child{border-top:0;margin-top:0}
-.wl-unit.cur{background:none;border-radius:var(--r-lg);box-shadow:var(--elev-2);padding:6px 12px 14px;margin:12px -4px;border-top:0}   
+.wl-unit.cur{background:none;border-radius:var(--r-lg);padding:6px 12px 14px;margin:12px -4px;border-top:0}   
 .wl-unit.done .uname{color:var(--label-2)}
 .uhd{display:flex;align-items:center;gap:6px}
 .uhd .tap{flex:1;min-width:0;min-height:48px;display:flex;align-items:center;gap:10px;text-align:left}   
@@ -44,12 +44,12 @@ function unit(u){const done=unitDone(u),cur=u===S.cur,open=cur||(done&&COLL()?!!
   return`<section class="wl-unit${cur?' cur':''}${done?' done':''}" data-u="${u}"${cur?' aria-current="true"':''}>
   <div class="uhd"><button class="tap" data-pick="${u}" aria-expanded="${open}"><span class="ubadge">${done?ic('check',14,2.6):u+1}</span>
     <span><div class="uname">${uname(u)}</div><div class="usub">${done&&!open?summ(u):`Exercise ${u+1} / ${UNITS.length} · ${n}/${t} sets`}</div></span></button>
-    ${un_ss(u)?'':infoBtn(UNITS[u].ex[0])}<button class="ibtn" data-act="excfg" data-ex="${UNITS[u].ex.join(',')}" aria-label="Settings ${uname(u)}">${ic('dots',20)}</button></div>
+    ${un_ss(u)?'':infoBtn(UNITS[u].ex[0])}<button class="ibtn" data-act="excfg" data-ex="${UNITS[u].ex.join(',')}" aria-label="Exercise settings: ${uname(u)}">${ic('dots',20)}</button></div>
   ${open?body(u):''}</section>`}
 
 function indicator(){const sc=$('#screen'),h=$('.whdr').offsetHeight,top=sc.getBoundingClientRect().top+h+24;let k=0;
   $$('.wl-unit').forEach((el,u)=>{if(el.getBoundingClientRect().top<=top)k=u});
-  $('#hx').innerHTML=`↳ <b>${uname(k)}</b> · ${udone(k)}/${utot(k)}`;
+  $('#hx').innerHTML=`↳ <b>${uname(k)}</b> · ${udone(k)}/${utot(k)} sets`;
   const n=$('.is-next'),j=$('#jump');if(!n){j.hidden=true;return}
   const r=n.getBoundingClientRect(),s=sc.getBoundingClientRect();j.hidden=r.top>s.top+h&&r.bottom<s.bottom-60}
 ON_CHIP=u=>{if(unitDone(u)&&u!==S.cur&&COLL()&&!OPEN[u]){OPEN[u]=true;RENDER()}   

@@ -8,7 +8,8 @@
 .swipe{overflow:hidden;margin:0 -16px;transition:height var(--med) var(--ease)}
 .track{display:flex;align-items:flex-start;transition:transform var(--med) var(--ease)}
 .slide{flex:0 0 100%;padding:0 16px;touch-action:pan-y;transform:scale(.97);opacity:.85;transition:transform var(--med) var(--ease),opacity var(--med)}   
-.slide.cur{transform:none;opacity:1}
+.slide{content-visibility:auto;contain-intrinsic-size:auto 600px}
+.slide.cur{transform:none;opacity:1;content-visibility:visible}
 .swipe.dragging .track,.swipe.dragging .slide{transition:none}
 .inner{display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
 .trow{display:flex;gap:12px;align-items:center}
@@ -19,9 +20,7 @@ details.ctx summary::-webkit-details-marker{display:none}
 details.ctx summary span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 details.ctx summary .ic{transition:transform var(--fast)}details.ctx[open] summary .ic{transform:rotate(180deg)}
 .cbody{padding:2px 0 12px;display:grid;gap:8px;font-size:14px}
-.kv{display:grid;grid-template-columns:96px 1fr;gap:8px}.kv>:first-child{color:var(--label);font-weight:600}.kv>:last-child{font-variant-numeric:tabular-nums}
-.nav{display:flex;gap:8px}.nav .btn:first-child{flex:1}.nav .btn:last-child{flex:2}
-.card,.card.ss{background:none;box-shadow:var(--elev-2)}
+.card,.card.ss{background:none}
 .ss-st+.ss-st{margin-top:10px;padding-top:10px;border-top:.5px solid var(--sep-op)}.ss-name{font-weight:600;padding:2px 6px 6px}
 .ss-title{display:flex;flex-direction:column;gap:6px}
 </style></head>
@@ -34,7 +33,7 @@ const ctxKey=id=>'og-ctx-'+id;
 const started=id=>S.sets[id].some(s=>s.d);
 const pct=u=>{const a=req(UNITS[u].ex);return Math.round(a.filter(s=>s.d).length/a.length*100)};
 const uname=unitName;
-const lbl=()=>CHIPS()?'':`<span>Exercise ${idx+1} / ${UNITS.length}</span><span class="tnum">${pct(idx)}%</span>`;
+const lbl=()=>CHIPS()?'':`<span>Exercise ${idx+1} / ${UNITS.length}</span><span class="tnum">${pct(idx)}% of sets done</span>`;
 
 function single(u){const id=UNITS[u].ex[0],ex=EX[id],sets=S.sets[id],nx=nextOpen(u),i=nx&&nx.e===id?nx.i:sets.length-1;
   return`<div class="inner">
