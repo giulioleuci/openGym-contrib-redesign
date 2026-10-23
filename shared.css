@@ -394,3 +394,7 @@ button.rest-t{text-align:left}
 ::selection{background:var(--acc-line)}
 input,textarea{caret-color:var(--acc)}
 input[type=range],input[type=checkbox]{accent-color:var(--acc)}
+.rmchips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.rmchips>span{flex-basis:100%}
+.rmchip{height:40px;padding:0 12px;font-size:14px;font-variant-numeric:tabular-nums}
+.rmchip[aria-pressed=true]{background:var(--acc);color:var(--on-acc)}
+.rmcalc{font-size:13px;color:var(--label-2);font-variant-numeric:tabular-nums;margin-top:-2px}

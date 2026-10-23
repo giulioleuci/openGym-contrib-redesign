@@ -95,7 +95,7 @@ const EX={
   push:{name:"Cable pushdown",equip:"Cables",tags:["Triceps"],plan:PLAN('linear',3,12,1,25,120,{deload:{stalls:3,from:27.5,to:25},fail:1,kv:[["Last set to failure","Selected"]]}),step:2.5,ref:[[25,12],[25,11],[22.5,12]],best:[27.5,10]},
   ohp:{name:'Military press',equip:"Barbell",tags:["Shoulders"],plan:PLAN('five_three_one',3,5,null,[30,37.5],150,{rows:[[30,5],[35,5],[37.5,5]]}),bar:20,step:2.5,note:"Brace your glutes without arching your back.",ref:[[30,5],[35,5],[37.5,5]],best:[42.5,6]},
   legp:{name:'Leg press',equip:"Machine",tags:["Legs"],plan:PLAN('double',3,[10,15],[1,2],120,120,{warm:"Automatic · 2 sets",kv:[["Back-off sets","Each set one step lighter (−5 kg)"]]}),step:5,ref:[[120,12],[120,11],[120,10]],best:[130,10]},
-  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:75,rm:false,warm:"Automatic · 3 sets"}),step:2.5,note:"Load is 75% of your 1RM.",ref:[[100,5],[100,5],[100,5]],best:[105,5]},
+  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:75,warm:"Automatic · 3 sets"}),step:2.5,note:"Load is 75% of your 1RM.",ref:[[100,5],[100,5],[100,5]],best:[105,5]},
   bulg:{name:"Dumbbell bulgarian split squat",equip:"Dumbbells",tags:["Legs","Glutes"],side:1,plan:PLAN('linear',3,16,1,14,90,{side:1}),step:2,ref:[[14,16],[14,16],[12,16]],best:[16,16]},
   pullup:{name:"Pull-up",equip:"Bodyweight",tags:["Back"],bw:1,plan:PLAN('bodyweight_ladder',[3,6],[6,20],[0,1],null,90,{completed:1}),step:1,ref:[[8],[7],[6]],best:[10]},
   curl:{name:"Dumbbell biceps curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('triple',[3,4],[8,12],[1,2],12,75),step:1,ref:[[12,10],[12,9],[11,10]],best:[14,8]},
@@ -231,9 +231,9 @@ function planBody(id,lv){const ex=EX[id],p=ex.plan,pr=PRESET[p.preset],m=modeOf(
   const hint=p.preset==='autoregulated'?`You set every value by feel (${m==='time'?'seconds':'reps'} and load); nothing is advanced for you.`:p.preset==='double'?`Reach the top of the ${m==='time'?'time':'rep'} range, then add weight and start again.`:p.preset==='triple'&&m==='time'?'Fill sets and duration up to the top of the range, then add weight.':pr[1];
   return`<div class="pctx"><div class="kv"><span>${refLbl()}</span><button class="kvbtn" data-act="logref" aria-label="Show ${refBest()?"last time":"best"} instead">${refTxt(ex)}${ic('undo',13,2)}</button></div>${kvr("Progression",pr[0])}
     ${p.deload?`<div class="pnote">Reduced after ${p.deload.stalls} off-target sessions: ${fmt(p.deload.from)} → ${fmt(p.deload.to)} kg.</div>`:''}${p.out?"<div class=\"pnote\">Suggested from a recorded off-target session.</div>":''}
-    ${p.pct&&p.rm===false?"<div class=\"pnote\">No recorded 1RM: enter your working load.</div>":''}${p.completed?"<div class=\"pnote acc\">Progression completed.</div>":''}
+    ${p.pct&&!rmRec(id)?`<div class="pnote">No recorded 1RM: enter your working load.</div><button class="plink" data-act="rmprompt" data-ex="${id}">Enter 1RM${ic('chevR',14,2)}</button>`:''}${p.completed?"<div class=\"pnote acc\">Progression completed.</div>":''}
     ${today<e[0]||today>e[1]?kvr("Today",`${today} sets (planned ${rg(e)})`):''}${lv===1?`<button class="plink" data-act="plv" data-k="${id}" data-to="2">How it works${ic('chevR',14,2)}</button>`:''}</div>`+
-  (lv>1?`<div class="pdet">${kvr("Sets",rg(p.n))}${m==='cardio'?kvr("Duration",p.min+' min')+kvr("Speed",fmt(p.speed)+' km/h'):m==='time'?kvr("Duration",rg(p.sec)+" s"):kvr("Reps",rowsReps(p)+(p.side?" (total, half per side)":''))}${hasLoad(p)?kvr("Load",loadTxt(p,id))+(weOk(id)?`<div class="kv"><span>Weight is</span><button class="kvbtn" data-act="excfg" data-ex="${id}" aria-label="Change weight meaning">${WEL[weMode(id)]}${ic('chevR',13,2)}</button></div>`:''):''}${p.rir&&EF()!=='off'&&hasEff(id)?kvr("Effort",EF().toUpperCase()+' '+effRg(p)):''}
+  (lv>1?`<div class="pdet">${kvr("Sets",rg(p.n))}${m==='cardio'?kvr("Duration",p.min+' min')+kvr("Speed",fmt(p.speed)+' km/h'):m==='time'?kvr("Duration",rg(p.sec)+" s"):kvr("Reps",rowsReps(p)+(p.side?" (total, half per side)":''))}${hasLoad(p)?kvr("Load",loadTxt(p,id))+(p.pct&&rmRec(id)?`<div class="rmcalc">${rmCalc(p.pct,rmRec(id))}</div>`:'')+(weOk(id)?`<div class="kv"><span>Weight is</span><button class="kvbtn" data-act="excfg" data-ex="${id}" aria-label="Change weight meaning">${WEL[weMode(id)]}${ic('chevR',13,2)}</button></div>`:''):''}${p.rir&&EF()!=='off'&&hasEff(id)?kvr("Effort",EF().toUpperCase()+' '+effRg(p)):''}
     ${m==='cardio'?'':kvr("Rest",p.rest?restTxt(p):"Default · "+fmtRest(DEF_REST))}${m==='reps'?kvr("Warm-ups",p.warm||"None"):''}${p.side?kvr('Sides',"Left and right recorded separately"):''}${(p.kv||[]).map(([a,b])=>kvr(a,b)).join('')}${p.int?kvr("Intensifier",p.int.t==='drop'?`Drop-set · ${p.int.count} drop, −${p.int.pct}% a drop`:`Rest-pause · +${p.int.total} reps in bursts with ${p.int.rest}sec`):''}
     <div class="how"><b>${pr[0]}</b><p>${hint}</p><button class="plink" data-say="Progression settings open in the app">Progression settings${ic('chevR',14,2)}</button></div>${ex.note?`<div class="note">${ic('note',16)}${ex.note}</div>`:''}
     ${lv===2?`<button class="plink" data-act="plv" data-k="${id}" data-to="1">Fewer details</button>`:''}</div>`:'')}
@@ -373,10 +373,11 @@ function chrome(){
       <label>Effort<select id="emode"><option value="off">Off</option><option value="rir">RIR</option><option value="rpe">RPE</option></select></label>
       <label>Weight means (dumbbells)<select id="wemode"><option value="as">As entered</option><option value="each">One dumbbell</option><option value="total">Both</option></select></label>
       <label>My dumbbells<select id="rackmode"><option value="0">Not specified</option><option value="1">2–32 kg in 2 kg steps</option></select></label>
+      <label>Squat 1RM<select id="sqrm"><option value="none">Not recorded</option><option value="est">Estimated from the log</option></select></label>
       <label>Show target differences<select id="oopw"><option value="live">As you type</option><option value="done">After completing a set</option></select></label>${ctl}
       <button class="abtn" id="reset">Reset demo</button></div>
     <div class="muted">Demo data. Complete a set with ✓ to start rest; tap the rest bar handle to expand it.</div></aside></div>`);
-  $('#mmode').value=MS();$('#mmode').onchange=e=>{ss('og-media',e.target.value);RENDER()};$('#chmode').value=CHIPS()?'1':'0';$('#chmode').onchange=e=>{ss('og-chips',e.target.value);RENDER()};$('#emode').value=EF();$('#emode').onchange=e=>{ss('og-effort',e.target.value);RENDER()};$('#wemode').value=['each','total'].find(m=>Object.keys(EX).filter(weOk).every(k=>weMode(k)===m))||'as';$('#wemode').onchange=e=>{Object.keys(EX).filter(weOk).forEach(k=>S.weightEntry[k]={mode:e.target.value,_ts:Date.now()});save();RENDER()};$('#rackmode').value=rackOn()?'1':'0';$('#rackmode').onchange=e=>{ss('og-rack',e.target.value)};$('#oopw').value=OOPW();$('#oopw').onchange=e=>{ss('og-oopw',e.target.value);RENDER()};$('#rmode').value=Rest.mode();$('#rmode').onchange=e=>{ss('og-rest-mode',e.target.value)};
+  $('#mmode').value=MS();$('#mmode').onchange=e=>{ss('og-media',e.target.value);RENDER()};$('#chmode').value=CHIPS()?'1':'0';$('#chmode').onchange=e=>{ss('og-chips',e.target.value);RENDER()};$('#emode').value=EF();$('#emode').onchange=e=>{ss('og-effort',e.target.value);RENDER()};$('#wemode').value=['each','total'].find(m=>Object.keys(EX).filter(weOk).every(k=>weMode(k)===m))||'as';$('#wemode').onchange=e=>{Object.keys(EX).filter(weOk).forEach(k=>S.weightEntry[k]={mode:e.target.value,_ts:Date.now()});save();RENDER()};$('#rackmode').value=rackOn()?'1':'0';$('#rackmode').onchange=e=>{ss('og-rack',e.target.value)};$('#sqrm').value=sg('og-sqrm','none');$('#sqrm').onchange=e=>{ss('og-sqrm',e.target.value);if(S.oneRm)delete S.oneRm.squat;save();RENDER()};$('#oopw').value=OOPW();$('#oopw').onchange=e=>{ss('og-oopw',e.target.value);RENDER()};$('#rmode').value=Rest.mode();$('#rmode').onchange=e=>{ss('og-rest-mode',e.target.value)};
   $('#reset').onclick=()=>{try{sessionStorage.clear()}catch{}location.reload()};
   new ResizeObserver(()=>$('#phone').style.setProperty('--rest-h',$('#rest').hidden?'0px':$('#rest').offsetHeight+8+'px')).observe($('#rest'));
 }
@@ -394,6 +395,7 @@ document.addEventListener('click',e=>{
   if(a==='rtoggle'){ROPEN[b.dataset.key]=b.dataset.open!=='1';RENDER();return}
   if(a==='mplay'){MPLAY=!MPLAY;RENDER();return}
   if(a==='plv'){PLV[b.dataset.k]=+b.dataset.to;ss('og-plv',JSON.stringify(PLV));RENDER();return}
+  if(a==='rmprompt'){rmPrompt(b.dataset.ex);return}
   if(a==='plsheet'){openSheet(`<h3>${EX[id].name}</h3><div class="pchips">${esc(chipTxt(id))}</div>${planBody(id,3)}`);return}
   if(a==='logref'){ss('og-logref',refBest()?'last':'best');RENDER();return}
   if(a==='smenu'){setMenu(id,i);return}
@@ -497,26 +499,45 @@ const HOW={bench:["Lie on the bench with your eyes under the bar, feet planted a
 const DESC={bench:"A horizontal press for the chest, front deltoids and triceps.",legp:"A machine leg press that trains the quadriceps with less load on the back.",lat:"Lateral deltoid isolation with a light load and controlled movement.",plank:"An isometric hold for the core."};
 
 const FORM={epley:(w,r)=>w*(1+r/30),brzycki:(w,r)=>w*36/(37-r),lombardi:(w,r)=>w*Math.pow(r,.1),oconner:(w,r)=>w*(1+r/40),mayhew:(w,r)=>w*100/(52.2+41.9*Math.exp(-.055*r)),wathan:(w,r)=>w*100/(48.8+53.8*Math.exp(-.075*r)),lander:(w,r)=>w*100/(101.3-2.67123*r)};
-const FNAME={epley:'Epley',brzycki:'Brzycki',lombardi:'Lombardi',oconner:'O’Conner',mayhew:'Mayhew',wathan:'Wathan',lander:'Lander',weighted:"Average of seven"};
-const formula=()=>FNAME[sg('og-1rm','epley')]?sg('og-1rm','epley'):'epley';
-const rmEst=(w,r)=>{if(!(w>0)||r<1||r>12)return null;const f=formula(),v=r===1?w:f==='weighted'?Object.values(FORM).reduce((a,g)=>a+g(w,r),0)/7:FORM[f](w,r);return Math.round(v*10)/10};
+const FNAME={weighted:"Blend of all",epley:'Epley',brzycki:'Brzycki',lombardi:'Lombardi',oconner:'O’Conner',mayhew:'Mayhew',wathan:'Wathan',lander:'Lander'};
+const formula=()=>FNAME[sg('og-1rm','weighted')]?sg('og-1rm','weighted'):'weighted';
+// The blend weighs the seven formulas and the RIR scale by how far each is trusted at this many reps (as the app does).
+const RIR_PCT=[100,95.5,92.2,89.2,86.3,83.7,81.1,78.6,76.2,73.9,71.7,69.5,67.5,65.5,63.6];
+const WT={epley:[.95,6,.12,.4],brzycki:[1.1,8,.18,.3],lombardi:[.85,5,.1,.4],oconner:[.9,6,.12,.4],mayhew:[.95,8,.1,.5],wathan:[.9,7,.12,.4],lander:[.85,7,.15,.35],rir:[1,10,.15,.4]};
+const wtOf=(k,r)=>{const[a,t,st,fl]=WT[k];return a*(r<=t?1:Math.max(fl,1-(r-t)*st))};
+const rirEst=(w,r)=>w*100/RIR_PCT[Math.min(Math.max(Math.round(r)-1,0),RIR_PCT.length-1)];
+const rmCap=()=>formula()==='weighted'?15:12;
+// {low, mid, high}: the estimate and how far the models disagree about the same set. A single to failure has no spread.
+const rmRange=(w,r,rir=0)=>{if(!(w>0)||r<1)return null;const f=formula(),wt=f==='weighted',eff=wt?r+rir:Math.round(r);if(eff>rmCap())return null;
+  const rd=v=>Math.round(v*10)/10;if(eff<=1)return{low:rd(w),mid:rd(w),high:rd(w)};
+  const ks=Object.keys(FORM),vals=[...ks.map(k=>FORM[k](w,eff)),rirEst(w,eff)],den=ks.reduce((a,k)=>a+wtOf(k,eff),0)+wtOf('rir',eff),
+    mid=rd(wt?(ks.reduce((a,k)=>a+FORM[k](w,eff)*wtOf(k,eff),0)+rirEst(w,eff)*wtOf('rir',eff))/den:FORM[f](w,eff));
+  return{low:Math.min(rd(Math.min(...vals)),mid),mid,high:Math.max(rd(Math.max(...vals)),mid)}};
+const rmEst=(w,r)=>rmRange(w,r)?.mid??null;
+const spread=o=>o&&o.high>o.low?` (${fmt(o.low)}–${fmt(o.high)})`:'';
+const rmShow=o=>o?fmt(o.mid)+spread(o):'–';
+// The 1RM a % plan reads: typed by the lifter, else (demo control) estimated from the log.
+const rmRec=id=>{const m=S.oneRm&&S.oneRm[id];if(m>0)return{low:m,mid:m,high:m,manual:true};const b=EX[id].best;return EX[id].plan.pct&&sg('og-sqrm','none')==='est'&&b?rmRange(b[0],b[1]):null};
+// What a % of the 1RM comes to, with the spread of the 1RM carried through.
+const rmCalc=(pct,r)=>{const k=v=>Math.round(v*pct/10)/10;return`${pct}% of ${rmShow(r)} → ${rmShow({low:k(r.low),mid:k(r.mid),high:k(r.high)})} kg`};
 const lkind=id=>S.loadKind?.[id]?.kind||(EX[id].bar?'pairs':/machine/i.test(EX[id].equip)?'single':'none');
 function infoSheet(id){const ex=EX[id],m=modeOf(id),reps=m==='reps',rm=reps&&!ex.bw,fav=()=>!!(S.fav&&S.fav[id]);
   const seen=new Set(),tags=[];const add=(l,c,ico)=>{const k=l.toLowerCase();if(seen.has(k))return;seen.add(k);tags.push(`<span class="tag${c||''}">${ico?ic(ico,14,2):''}${esc(l)}</span>`)};
   add(ex.tags[0],' acc');ex.tags.slice(1).forEach(l=>add(l));add(ex.equip,'','dumb');
   const best=ex.best,last=ex.ref&&ex.ref[0];
   const bw=ex.best&&ex.best[0]!=null&&m==='reps'&&!ex.bw?ex.best[0]:0,br=ex.best&&ex.best[1]||0,bshow=bw?wShow(id,bw):0;
-  let rw=bw?bshow:20,rr=br||5;
+  let rw=bw?bshow:20,rr=br||5,ri=0;
   const plateBlk=()=>{const k=lkind(id);return`<h4 class="sec">Plate loading</h4>
     <div class="sgm wesgm" role="group" aria-label="Plate loading">${[['pairs',"Per side"],['single',"Single stack"],['none',"Off"]].map(([v,l])=>`<button data-lk="${v}" aria-pressed="${k===v}" class="${k===v?'on':''}">${l}</button>`).join('')}</div>
     <div class="muted small" style="margin:8px 0 10px">${k==='pairs'?"Plates split over both sides of a bar.":k==='single'?"One stack: a belt, a landmine, a plate-loaded machine, a sled.":"No plate line under the sets."}</div>
     ${k!=='none'&&ex.bar?`<div class="kv"><span>Bar (kg)</span><span class="tnum">${fmt(ex.bar)}</span></div><div class="muted small" style="margin:6px 0 0">Default for this bar type. Record the total weight; this setting affects only the plate breakdown.</div>`:`<div class="muted small">Always record the total weight. This setting only affects the plate breakdown below each set.</div>`}`};
-  const rmBlk=()=>{const est=rmEst(rw,rr),eb=bw?rmEst(bshow,br):null;return`<h4 class="sec">Estimated 1RM</h4>
-    ${eb?`<div class="small" style="margin-bottom:8px">From your log: <b class="accent">${fmt(eb)} kg</b><span class="muted"> · ${fmt(bshow)} kg × ${br}</span></div>`:''}
+  const rmBlk=()=>{const est=rmRange(rw,rr,ri),eb=bw?rmRange(bshow,br):null;return`<h4 class="sec">Estimated 1RM</h4>
+    ${eb?`<div class="small" style="margin-bottom:8px">From your log: <b class="accent">${rmShow(eb)} kg</b><span class="muted"> · ${fmt(bshow)} kg × ${br}</span></div>`:''}
     <div class="rm2"><div class="rmc"><span class="muted small">Weight (kg)</span><div class="stp"><button data-rm="w:-2.5" aria-label="Decrease weight">${ic('minus',18,2.2)}</button><span class="num rmv">${fmt(rw)}</span><button data-rm="w:2.5" aria-label="Increase weight">${ic('plus',18,2.2)}</button></div></div>
-      <div class="rmc"><span class="muted small">Reps</span><div class="stp"><button data-rm="r:-1" aria-label="Decrease reps">${ic('minus',18,2.2)}</button><span class="num rmv">${rr}</span><button data-rm="r:1" aria-label="Increase reps">${ic('plus',18,2.2)}</button></div></div></div>
-    <div class="row between" style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px"><span class="muted small">Estimate</span><b class="accent" style="font-size:20px">${est===null?'–':fmt(est)+' kg'}</b></div>
-    <div class="row between" style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0"><span class="muted small">Formula</span><select class="input fsel" data-formula aria-label="1RM formula">${Object.keys(FNAME).map(k=>`<option value="${k}"${k===formula()?' selected':''}>${FNAME[k]}</option>`).join('')}</select></div>\n    <div class="small muted">${est===null?"Enter a weight and 1–12 reps. Estimates become less reliable beyond this range.":`${formula()==='weighted'?"Average of seven formulas":"Formula by "+FNAME[formula()]}: estimated from a set rather than a tested max. Applies to the whole profile.`}</div>`};
+      <div class="rmc"><span class="muted small">Reps</span><div class="stp"><button data-rm="r:-1" aria-label="Decrease reps">${ic('minus',18,2.2)}</button><span class="num rmv">${rr}</span><button data-rm="r:1" aria-label="Increase reps">${ic('plus',18,2.2)}</button></div></div>
+      ${formula()==='weighted'?`<div class="rmc"><span class="muted small">RIR</span><div class="stp"><button data-rm="i:-1" aria-label="Decrease RIR">${ic('minus',18,2.2)}</button><span class="num rmv">${ri}</span><button data-rm="i:1" aria-label="Increase RIR">${ic('plus',18,2.2)}</button></div></div>`:''}</div>
+    <div class="row between" style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px"><span class="muted small">Estimate</span><b class="accent" style="font-size:20px">${est===null?'–':rmShow(est)+' kg'}</b></div>
+    <div class="row between" style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0"><span class="muted small">Formula</span><select class="input fsel" data-formula aria-label="1RM formula">${Object.keys(FNAME).map(k=>`<option value="${k}"${k===formula()?' selected':''}>${FNAME[k]}</option>`).join('')}</select></div>\n    <div class="small muted">${est===null?`Enter a weight and 1–${rmCap()} reps. Estimates become less reliable beyond this range.`:`${formula()==='weighted'?"A blend of seven formulas and your RIR":"Formula by "+FNAME[formula()]}: estimated from a set rather than a tested max. The range is how far the formulas disagree. Applies to the whole profile.`}</div>`};
   const body=()=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><h3 class="exdetail-name" style="margin-bottom:10px">${esc(ex.name)}</h3>
       <button class="ibtn fav-btn${fav()?' on':''}" data-fav aria-pressed="${fav()}" aria-label="${fav()?"Remove from favourites":"Add to favourites"}" style="margin:-6px -8px 0 0">${ic('star',22,1.8)}</button></div>
     <div class="exmedia" style="height:190px;cursor:default" role="img" aria-label="${esc(ex.name)}"><div class="mfig">${ic('dumb',64,1.3)}</div></div>
@@ -531,9 +552,20 @@ function infoSheet(id){const ex=EX[id],m=modeOf(id),reps=m==='reps',rm=reps&&!ex
     sh.addEventListener('click',e=>{const sy=e.target.closest('[data-say]');if(sy){toast(sy.dataset.say);return}
       if(e.target.closest('[data-fav]')){(S.fav=S.fav||{})[id]=!fav();save();toast(fav()?"Added to favourites":"Removed from favourites");redo();return}
       const lk=e.target.closest('[data-lk]');if(lk){(S.loadKind=S.loadKind||{})[id]={kind:lk.dataset.lk,_ts:Date.now()};save();redo();RENDER();return}
-      const r=e.target.closest('[data-rm]');if(r){const[f,d]=r.dataset.rm.split(':');if(f==='w')rw=Math.max(0,rw+ +d);else rr=Math.max(1,Math.min(30,rr+ +d));redo();return}
+      const r=e.target.closest('[data-rm]');if(r){const[f,d]=r.dataset.rm.split(':');if(f==='w')rw=Math.max(0,rw+ +d);else if(f==='i')ri=Math.max(0,Math.min(5,ri+ +d));else rr=Math.max(1,Math.min(30,rr+ +d));redo();return}
       const b=e.target.closest('[data-we]');if(b){S.weightEntry[id]={mode:b.dataset.we,_ts:Date.now()};save();redo();RENDER()}});
     sh.addEventListener('change',e=>{if(e.target.matches('[data-formula]')){ss('og-1rm',e.target.value);redo()}}) })}
+
+// "One-rep max needed": a % plan with no recorded 1RM. The log's estimate is offered as its low, central and high end; a tap fills the field.
+function rmPrompt(id){const ex=EX[id],b=ex.best,r=b&&rmRange(b[0],b[1]);
+  openSheet(`<h3>One-rep max needed</h3><div class="muted small" style="margin-bottom:12px">${esc(ex.name)} is planned as a % of your 1RM. Enter it for exact weights, or skip and fill the weights in yourself.</div>
+    <label class="muted small" for="rmv">${esc(ex.name)} (kg)</label><input class="input" id="rmv" inputmode="decimal" autocomplete="off" style="margin-top:6px">
+    ${r?`<div class="rmchips"><span class="muted small">From your log:</span>${(r.high>r.low?[['Low',r.low],['Central',r.mid],['High',r.high]]:[['Use',r.mid]]).map(([l,v])=>`<button class="btn rmchip" data-rv="${v}" aria-pressed="false">${l} ${fmt(v)}</button>`).join('')}</div>`:''}
+    <div style="height:18px"></div><button class="btn primary" style="width:100%" data-f="save">Save</button><button class="btn ghost" style="width:100%;margin-top:6px" data-f="skip">Skip</button>`,
+  (sh,close)=>{const inp=$('#rmv',sh),mark=()=>sh.querySelectorAll('.rmchip').forEach(c=>c.setAttribute('aria-pressed',String(+inp.value===+c.dataset.rv)));
+    sh.addEventListener('click',e=>{const c=e.target.closest('[data-rv]');if(c){inp.value=c.dataset.rv;mark();inp.focus()}});inp.addEventListener('input',mark);
+    $('[data-f=skip]',sh).onclick=close;
+    $('[data-f=save]',sh).onclick=()=>{const v=parseFloat(inp.value.replace(',','.'));if(v>0){(S.oneRm=S.oneRm||{})[id]=v;save();toast("1RM saved")}close();RENDER()}})}
 
 
 function noteSheet(){openSheet(`<h3>Session note</h3><textarea class="input" id="sn" rows="4" maxlength="500" placeholder="How the session went as a whole.">${esc(S.note||'')}</textarea><div style="height:18px"></div><button class="btn primary" style="width:100%" data-f="save">Save</button>`,
@@ -583,10 +615,12 @@ function lastNext(){const out=[];for(const id in S.sets){const ex=EX[id],m=modeO
       all=done.length>=S.sets[id].filter(x=>!x.wu).length&&done.every(x=>x.r>=(ex.plan.r[1])),top=today[today.length-1];
     out.push({id,today,last,bw,trend:tr,next:all?bw?{r:top.r+1,k:"up"}:{w:Math.round((top.w+ex.step)*100)/100,r:ex.plan.r[0],k:"up"}:{w:top.w,r:top.r,k:'ancora'}})}return out}
 function finishSummary(){const c=counts(),ids=Object.keys(S.sets),vol=ids.reduce((a,id)=>a+volume(id),0),prs=ids.filter(id=>modeOf(id)==='reps'&&EX[id].best&&S.sets[id].some(x=>x.d&&!x.wu&&x.w>EX[id].best[0])),
-    cardio=ids.filter(id=>modeOf(id)==='cardio'&&S.sets[id].some(x=>x.d)),W={up:"step up",ancora:"unchanged"},TR={1:['up','var(--acc)'],0:['minus','var(--label-2)'],'-1':['down','var(--orange)']};
+    cardio=ids.filter(id=>modeOf(id)==='cardio'&&S.sets[id].some(x=>x.d)),
+    e1=ids.filter(id=>modeOf(id)==='reps'&&!EX[id].bw&&EX[id].best&&!prs.includes(id)).map(id=>({id,o:S.sets[id].filter(x=>x.d&&!x.wu).map(x=>rmRange(x.w,x.r)).reduce((a,o)=>o&&(!a||o.mid>a.mid)?o:a,null),was:rmRange(EX[id].best[0],EX[id].best[1])})).filter(x=>x.o&&(!x.was||x.o.mid>x.was.mid)),W={up:"step up",ancora:"unchanged"},TR={1:['up','var(--acc)'],0:['minus','var(--label-2)'],'-1':['down','var(--orange)']};
   openSheet(`<div style="text-align:center"><div style="color:var(--acc);display:flex;justify-content:center">${ic('trophy',44,1.6)}</div><h3 style="margin:8px 0 12px">Workout complete!</h3></div>
     <div class="tiles"><div class="tile"><div class="l">Duration</div><div class="v">${clock().replace(/^0:/,'')}</div></div><div class="tile"><div class="l">Volume</div><div class="v">${Math.round(vol).toLocaleString('en-GB')} kg</div></div><div class="tile"><div class="l">Sets</div><div class="v">${c.d}/${c.t}</div></div><div class="tile"><div class="l">PRs</div><div class="v">${prs.length||'–'}</div></div></div>
     ${prs.map(id=>`<div class="small accent" style="display:flex;gap:5px;align-items:center;margin-top:6px">${ic('trophy',13,2)}New PR: ${esc(EX[id].name)}</div>`).join('')}
+    ${e1.map(x=>`<div class="small accent" style="display:flex;gap:5px;align-items:center;margin-top:6px">${ic('gauge',13,2)}Best estimated 1RM: ${esc(EX[x.id].name)} · ${rmShow(x.o)} kg</div>`).join('')}
     <h4 class="sec">Last time and next time</h4><div class="list">${lastNext().map(r=>`<div class="item" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${esc(EX[r.id].name)}</b><span style="color:${TR[r.trend][1]};display:inline-flex" aria-label="${r.trend>0?"Better than last time":r.trend<0?"Below last time":"Same as last time"}">${ic(TR[r.trend][0],18,2.2)}</span></div>
       <div class="small">Today: ${setsLine(r.today,r.bw)}</div><div class="small muted">Last time: ${setsLine(r.last,r.bw)}</div><div class="small accent">Next time: ${r.bw?r.next.r+' reps':fmt(r.next.w)+' kg × '+r.next.r} · ${W[r.next.k]}</div></div>`).join('')||"<div class=\"muted small\" style=\"padding:10px\">Complete a few sets to see the comparison.</div>"}</div>
     ${cardio.length?`<h4 class="sec">Cardio</h4><div class="list">${cardio.map(id=>`<div class="item" style="display:block"><b>${esc(EX[id].name)}</b><div class="small">${S.sets[id].filter(x=>x.d).map(x=>valBase(id,x)).join('  ·  ')}</div></div>`).join('')}</div>`:''}
