@@ -1,4 +1,4 @@
-/* openGym 1.4.1 · Progression Engine v2. Shared demo workout session and phone shell. */
+/* openGym 1.4.3 · Progression Engine v2. Shared demo workout session and phone shell. */
 
 
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -183,7 +183,7 @@ function toggle(id,i,side){
   s.t=1;S.pop=id+':'+i;
   if(s.d&&!was){const roundDone=un.ex.every(e=>!S.sets[e][i]||S.sets[e][i].d),n=nextOpen(unitOf(id));
     if(n)S.cur=n.u;
-    if(!n)Rest.stop();else if(roundDone)Rest.start(restAt(id,i))}
+    if(!n)Rest.stop();else if(roundDone){const r=S.sets[id][i].rest;r===0?Rest.stop():Rest.start(r||restAt(id,i))}}
   save()}
 
 
@@ -290,8 +290,9 @@ function setMenu(id,i){const s=S.sets[id][i],warm=s.wu,work=S.sets[id].filter(x=
     ${!warm&&reps&&!s.sides&&!s.drops&&!s.clusters&&work.length>1?it('wu','flame',"Make warm-up set"):''}${warm&&reps?it('wk','dumb',"Count as a working set"):''}
     ${!warm&&modeOf(id)!=='cardio'?it('fail','gauge',"To failure",hasEff(id)&&EF()!=='off'?`Nothing left: counts as ${EF().toUpperCase()} ${effShow(0)} if unrated`:modeOf(id)==='time'?'Hold until you cannot continue.':'Continue until you cannot complete another rep.','',!!s.f):''}
     ${!warm&&!s.clusters&&!s.sides&&reps?it('drop','down',"Drops",'+ Drop'):''}${!warm&&!s.drops&&!s.sides&&reps?it('burst','bolt','Rest-pause','+ Burst'):''}
-    ${it('copy','plus',"Copy this set")}${it('rm','trash',"Remove this set",'',(!warm&&work.length<=1)?' disabled':'')}</div>`,(sh,close)=>{
+    ${!warm?it('rst','timer',"Rest after this set",S.sets[id][i].rest==null?"Uses the exercise's rest":S.sets[id][i].rest?fmtRest(S.sets[id][i].rest)+' today':"No timer today"):''}${it('copy','plus',"Copy this set")}${it('rm','trash',"Remove this set",'',(!warm&&work.length<=1)?' disabled':'')}</div>`,(sh,close)=>{
     sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();const a=S.sets[id];
+      if(m==='rst'){restSheet(id,i);return}
       if(m==='fail'){if(s.f)delete s.f;else s.f=1}
       else if(m==='drop'||m==='burst')addExtra(id,i,m==='drop'?'d':'c')
       else if(m==='wu'||m==='wk'){const[r]=a.splice(i,1);if(m==='wu')r.wu=1;else delete r.wu;a.splice(a.filter(x=>x.wu).length,0,r)}   
@@ -350,7 +351,7 @@ document.addEventListener('click',e=>{const c=e.target.closest('[data-chip]');if
 const MODES=[['cards','Cards'],['list','List'],['compact','Compact'],['focus','Focus']];
 const T0=+sg('og-t0',Date.now());ss('og-t0',T0);
 const clock=()=>{const t=34*60+12+Math.floor((Date.now()-T0)/1000);return`${Math.floor(t/3600)}:${String(Math.floor(t/60)%60).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`};
-function head(){const c=counts();$('.cnt')&&($('.cnt').textContent=`${c.d}/${c.t} sets`);$('#clk')&&($('#clk').textContent=clock());$('.wprog i')&&($('.wprog i').style.width=(c.d/c.t*100)+'%')}
+function head(){const c=counts();$('.cnt')&&($('.cnt').textContent=`${c.d}/${c.t} sets · ${Math.round(Object.keys(S.sets).reduce((a,id)=>a+volume(id),0)).toLocaleString('en-GB')} kg`);$('#clk')&&($('#clk').textContent=clock());$('.wprog i')&&($('.wprog i').style.width=(c.d/c.t*100)+'%')}
 function chrome(){
   const mode=document.body.dataset.mode,name=MODES.find(m=>m[0]===mode)[1],notes=$('#notes')?.innerHTML||'',ctl=$('#ctl')?.innerHTML||'';
   document.body.insertAdjacentHTML('afterbegin',`
@@ -366,7 +367,7 @@ function chrome(){
       <div class="rest-main"><button class="rest-t" data-act="rtime" aria-label="Change the time left"><b id="rt">0:00</b><small id="rl">rest</small></button><div class="rest-prog"><i id="rp"></i></div>
         <button class="rbtn" data-r="-15" aria-label="Subtract 15 seconds">−15</button><button class="rbtn" data-r="15" aria-label="Add 15 seconds">+15</button><button class="rbtn" data-r="pause" aria-label="Pause"></button><button class="rbtn pri" data-r="skip">Skip</button></div></div>
   </div>
-  <aside class="aside"><h3>${name}</h3><p class="muted">openGym 1.4.1 · Progression Engine v2</p><ul>${notes}<li>Try reps, timed holds, cardio, supersets and intensifiers. Set menus expose planned targets and recorded effort.</li><li>Exercise information includes equipment, records, plate loading and estimated 1RM.</li></ul>
+  <aside class="aside"><h3>${name}</h3><p class="muted">openGym 1.4.3 · Progression Engine v2</p><ul>${notes}<li>Try reps, timed holds, cardio, supersets and intensifiers. Set menus expose planned targets and recorded effort.</li><li>Exercise information includes equipment, records, plate loading and estimated 1RM.</li></ul>
     <div class="ctl"><label>Rest bar<select id="rmode"><option value="collapsed">Always collapsed</option><option value="remember">Remember last choice</option><option value="expanded">Always expanded</option></select></label>
       <label>Exercise animations<select id="mmode"><option value="full">Full</option><option value="mini">Small</option><option value="off">Hidden</option></select></label>
       <label>Exercise chips<select id="chmode"><option value="1">Shown</option><option value="0">Hidden</option></select></label>
@@ -615,7 +616,7 @@ function lastNext(){const out=[];for(const id in S.sets){const ex=EX[id],m=modeO
       all=done.length>=S.sets[id].filter(x=>!x.wu).length&&done.every(x=>x.r>=(ex.plan.r[1])),top=today[today.length-1];
     out.push({id,today,last,bw,trend:tr,next:all?bw?{r:top.r+1,k:"up"}:{w:Math.round((top.w+ex.step)*100)/100,r:ex.plan.r[0],k:"up"}:{w:top.w,r:top.r,k:'ancora'}})}return out}
 function finishSummary(){const c=counts(),ids=Object.keys(S.sets),vol=ids.reduce((a,id)=>a+volume(id),0),prs=ids.filter(id=>modeOf(id)==='reps'&&EX[id].best&&S.sets[id].some(x=>x.d&&!x.wu&&x.w>EX[id].best[0])),
-    cardio=ids.filter(id=>modeOf(id)==='cardio'&&S.sets[id].some(x=>x.d)),
+    cardio=ids.filter(id=>modeOf(id)==='cardio'&&S.sets[id].some(x=>x.d)),added=(S.added||[]).filter(a=>S.sets[a.id]&&S.sets[a.id].some(x=>x.d)),
     e1=ids.filter(id=>modeOf(id)==='reps'&&!EX[id].bw&&EX[id].best&&!prs.includes(id)).map(id=>({id,o:S.sets[id].filter(x=>x.d&&!x.wu).map(x=>rmRange(x.w,x.r)).reduce((a,o)=>o&&(!a||o.mid>a.mid)?o:a,null),was:rmRange(EX[id].best[0],EX[id].best[1])})).filter(x=>x.o&&(!x.was||x.o.mid>x.was.mid)),W={up:"step up",ancora:"unchanged"},TR={1:['up','var(--acc)'],0:['minus','var(--label-2)'],'-1':['down','var(--orange)']};
   openSheet(`<div style="text-align:center"><div style="color:var(--acc);display:flex;justify-content:center">${ic('trophy',44,1.6)}</div><h3 style="margin:8px 0 12px">Workout complete!</h3></div>
     <div class="tiles"><div class="tile"><div class="l">Duration</div><div class="v">${clock().replace(/^0:/,'')}</div></div><div class="tile"><div class="l">Volume</div><div class="v">${Math.round(vol).toLocaleString('en-GB')} kg</div></div><div class="tile"><div class="l">Sets</div><div class="v">${c.d}/${c.t}</div></div><div class="tile"><div class="l">PRs</div><div class="v">${prs.length||'–'}</div></div></div>
@@ -624,7 +625,9 @@ function finishSummary(){const c=counts(),ids=Object.keys(S.sets),vol=ids.reduce
     <h4 class="sec">Last time and next time</h4><div class="list">${lastNext().map(r=>`<div class="item" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${esc(EX[r.id].name)}</b><span style="color:${TR[r.trend][1]};display:inline-flex" aria-label="${r.trend>0?"Better than last time":r.trend<0?"Below last time":"Same as last time"}">${ic(TR[r.trend][0],18,2.2)}</span></div>
       <div class="small">Today: ${setsLine(r.today,r.bw)}</div><div class="small muted">Last time: ${setsLine(r.last,r.bw)}</div><div class="small accent">Next time: ${r.bw?r.next.r+' reps':fmt(r.next.w)+' kg × '+r.next.r} · ${W[r.next.k]}</div></div>`).join('')||"<div class=\"muted small\" style=\"padding:10px\">Complete a few sets to see the comparison.</div>"}</div>
     ${cardio.length?`<h4 class="sec">Cardio</h4><div class="list">${cardio.map(id=>`<div class="item" style="display:block"><b>${esc(EX[id].name)}</b><div class="small">${S.sets[id].filter(x=>x.d).map(x=>valBase(id,x)).join('  ·  ')}</div></div>`).join('')}</div>`:''}
-    <div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Done</button>`,(sh,close)=>sh.addEventListener('click',e=>{if(e.target.closest('[data-x]'))close()}))}
+    ${added.length?`<h4 class="sec">New in this workout</h4><div class="list">${added.map(a=>`<div class="item" style="display:block"><b>${esc(a.ex.name)}</b><div class="small">${S.sets[a.id].filter(x=>x.d&&!x.wu).length} sets done</div><button class="btn" style="margin-top:8px" data-add="${a.id}">Add to Push A</button></div>`).join('')}</div>`:''}
+    <div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Done</button>`,(sh,close)=>sh.addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(b){b.disabled=true;b.textContent='Added to Push A';return}if(e.target.closest('[data-x]'))close()}))}
+function restSheet(id,i){const s=S.sets[id][i];openSheet(`<h3 style="margin-bottom:2px">Rest after this set</h3><div class="muted small" style="margin-bottom:10px">${esc(EX[id].name)} · Set ${wn(id,i)}. Applies to today's workout only.</div><div class="list menu-list">${[[null,"Exercise default"],[0,"No timer"],[30,"0:30"],[60,"1:00"],[90,"1:30"],[120,"2:00"],[180,"3:00"],[300,"5:00"]].map(([v,l])=>`<div class="item menu-item" tabindex="0" role="button" data-v="${v}"><div class="grow"><div class="tt">${l}</div></div><span class="menu-on${(s.rest??null)===v?' is-on':''}">${ic('check',16,2.4)}</span></div>`).join('')}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const v=e.target.closest('[data-v]')?.dataset.v;if(v==null)return;if(v==='null')delete s.rest;else s.rest=+v;close();save();RENDER()}))}
 function confirmDiscard(){openSheet(`<h3 style="margin-bottom:2px">Discard workout?</h3><div class="muted small" style="margin-bottom:10px">The sets you logged in this session will be lost.</div>
   <div class="list menu-list">${menuItem('go','trash',"Discard",' danger')}${menuItem('no','x',"Cancel")}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();if(m==='go')toast("Workout discarded")}))}
 const RS=()=>+sg('og-rest-sec',DEF_REST);
