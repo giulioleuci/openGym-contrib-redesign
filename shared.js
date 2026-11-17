@@ -92,32 +92,32 @@ const hasEff=id=>modeOf(id)==='reps';
 const DEF_REST=90;   
 const EX={
   bench:{name:"Barbell bench press",equip:"Barbell",tags:["Chest","Triceps"],plan:PLAN('linear',4,8,2,60,120,{warm:"Automatic · 1 set"}),bar:20,step:2.5,
-    pin:"Retract your shoulder blades and plant your feet.",note:"Pause for 1 second at the chest.",ref:[[60,8],[60,8],[57.5,9]],best:[62.5,8]},
+    pin:"Retract your shoulder blades and plant your feet.",note:"Pause for 1 second at the chest.",ref:[[57.5,8],[57.5,8],[57.5,8],[57.5,8]],best:[62.5,8]},
   fly:{name:"Cable fly",equip:"Cables",tags:["Chest"],plan:PLAN('manual',3,12,1,15,90),step:2.5,note:"Keep elbows slightly bent.",ref:[[15,12],[15,12],[12.5,13]],best:[17.5,10]},
-  push:{name:"Cable pushdown",equip:"Cables",tags:["Triceps"],plan:PLAN('linear',3,12,1,25,120,{deload:{stalls:3,from:27.5,to:25},fail:1,kv:[["Last set to failure","Selected"]]}),step:2.5,ref:[[25,12],[25,11],[22.5,12]],best:[27.5,10]},
-  ohp:{name:'Military press',equip:"Barbell",tags:["Shoulders"],plan:PLAN('five_three_one',3,5,null,[30,37.5],150,{rows:[[30,5],[35,5],[37.5,5]]}),bar:20,step:2.5,note:"Brace your glutes without arching your back.",ref:[[30,5],[35,5],[37.5,5]],best:[42.5,6]},
-  legp:{name:'Leg press',equip:"Machine",tags:["Legs"],plan:PLAN('double',3,[10,15],[1,2],120,120,{warm:"Automatic · 2 sets",kv:[["Back-off sets","Each set one step lighter (−5 kg)"]]}),step:5,ref:[[120,12],[120,11],[120,10]],best:[130,10]},
-  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:80,warm:"Automatic · 3 sets",programme:{week:2,weeks:6,rpe:8}}),step:2.5,note:"Load is 80% of your 1RM.",ref:[[95,5],[95,5],[95,5]],best:[105,5]},
+  push:{name:"Cable pushdown",equip:"Cables",tags:["Triceps"],plan:PLAN('linear',3,12,1,25,120,{deload:{stalls:3,from:27.5,to:25},fail:1,kv:[["Last set to failure","Selected"]]}),step:2.5,ref:[[27.5,10],[27.5,9],[27.5,8]],best:[27.5,10]},
+  ohp:{name:'Military press',equip:"Barbell",tags:["Shoulders"],plan:PLAN('five_three_one',3,5,null,[30,37.5],150,{rows:[[30,5],[35,5],[37.5,5]]}),bar:20,step:2.5,note:"Brace your glutes without arching your back.",ref:[[27.5,5],[32.5,5],[35,5]],best:[42.5,6]},
+  legp:{name:'Leg press',equip:"Machine",tags:["Legs"],plan:PLAN('double',3,[10,15],[1,2],120,120,{warm:"Automatic · 2 sets",kv:[["Back-off sets","Each set one step lighter (−5 kg)"]]}),step:5,ref:[[115,15],[110,15],[105,15]],best:[130,10]},
+  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:80,warm:"Automatic · 3 sets",programme:{week:2,weeks:6,rpe:8}}),step:2.5,note:"Load is 80% of your 1RM.",ref:[[90,5],[90,5],[90,5]],best:[105,5]},
   bulg:{name:"Dumbbell bulgarian split squat",equip:"Dumbbells",tags:["Legs","Glutes"],side:1,plan:PLAN('linear',3,16,1,14,90,{side:1}),step:2,ref:[[14,16],[14,16],[12,16]],best:[16,16]},
-  pullup:{name:"Pull-up",equip:"Bodyweight",tags:["Back"],bw:1,plan:PLAN('bodyweight_ladder',[3,6],[6,20],[0,1],null,90,{kv:[['Current rung','Pull-up'],['Next rung','Wide-grip pull-up']]}),step:1,ref:[[8],[7],[6]],best:[10]},
-  curl:{name:"Dumbbell biceps curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('triple',[3,4],[8,12],[1,2],12,75),step:1,ref:[[12,10],[12,9],[11,10]],best:[14,8]},
+  pullup:{name:"Pull-up",equip:"Bodyweight",tags:["Back"],bw:1,plan:PLAN('bodyweight_ladder',[3,6],[6,20],[0,1],null,90,{kv:[['Current rung','Pull-up'],['Next rung','Wide-grip pull-up']]}),step:1,ref:[[7],[7],[6]],best:[10]},
+  curl:{name:"Dumbbell biceps curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('triple',[3,4],[8,12],[1,2],12,75),step:1,ref:[[12,10],[12,9],[12,10]],best:[14,8]},
   plank:{name:'Front plank',equip:"Bodyweight",tags:['Core'],mode:'time',bw:1,plan:PLAN('hold_seconds',3,[0,0],null,null,60,{sec:[30,45]}),step:5,ref:[[40],[35],[30]],best:[50]},
-  rowb:{name:"Barbell bent over row",equip:"Barbell",tags:["Back"],plan:PLAN('accumulation_intensification',3,[8,12],null,[52.5,52.5],120,{phase:"Accumulation",kv:[['Phase',"Accumulation · reps 8 → 12 at 65% of training max"],["Training max",'80 kg (90% 1RM)'],["Then","Intensification 3 × 4 at 80%, after 4 successful sessions"]]}),bar:20,step:2.5,ref:[[52.5,9],[52.5,9],[52.5,8]],best:[60,8]},
+  rowb:{name:"Barbell bent over row",equip:"Barbell",tags:["Back"],plan:PLAN('accumulation_intensification',3,[8,12],null,[52.5,52.5],120,{phase:"Accumulation",kv:[['Phase',"Accumulation · reps 8 → 12 at 65% of training max"],["Training max",'80 kg (90% 1RM)'],["Then","Intensification 3 × 4 at 80%, after 4 successful sessions"]]}),bar:20,step:2.5,ref:[[52.5,9],[52.5,9],[52.5,9]],best:[60,8]},
   crunch:{name:"Cable kneeling crunch",equip:"Cables",tags:['Core'],plan:PLAN('density',3,10,null,30,85,{kv:[["Density","Rest −5 sec after each successful session, down to 45 sec"]]}),step:2.5,ref:[[30,10],[30,10],[30,10]],best:[35,8]},
   run:{name:"Run on treadmill",equip:"Machine",tags:['Cardio'],mode:'cardio',plan:PLAN('manual',1,[0,0],null,null,0,{min:20,speed:8,kv:[["Incline","Optional, in % (0–40): enter it on the set"]]}),step:1,ref:[[20,8,2]],best:[25,8,3]},
-  incl:{name:"Dumbbell incline bench press",equip:"Dumbbells",tags:["Chest","Shoulders"],plan:PLAN('pyramid',3,8,2,[16,24],150,{rows:[[16,8],[20,8],[24,8]],perRow:false,kv:[["Direction","Lightest first: 70 · 85 · 100% of the anchor load"],["Decide the session","Sets at 100%"]]}),step:2,ref:[[16,8],[20,8],[24,7]],best:[26,6]},
-  latm:{name:'Lat machine',equip:"Cables",tags:["Back"],plan:PLAN('pyramid_reps',4,[8,12],null,[40,50],120,{rows:[[40,12],[45,10],[50,8],[50,'max']],kv:[["Set Max","Last set: as many reps as possible. Record at this weight: 11 reps at 50 kg"],["Load per set",'40 / 45 / 50 / 50 kg']]}),step:2.5,note:"Last set: as many reps as possible.",rec:'11 reps at 50 kg',ref:[[40,12],[45,10],[50,8],[50,10]],best:[50,11]},
-  rdl:{name:"Barbell Romanian deadlift",equip:"Barbell",tags:["Hamstrings","Glutes"],plan:PLAN('top_set_backoff',[4,4],[6,8],null,[90,100],180,{rows:[[100,6],[90,8],[90,8],[90,8]],tsb:{n:3,r:8,pct:90,rest:120},warm:"Automatic · 2 sets",kv:[['Top set',"1 × 6 @ 100 kg · rest 3min"],['Back-off',"3 × 8 @ 90% (90 kg) · rest 2min"],["Top set decides","Load increases after a successful top set"]]}),bar:20,step:2.5,ref:[[100,6],[90,8],[90,8],[90,7]],best:[100,6]},
-  lat:{name:"Dumbbell lateral raise",equip:"Dumbbells",tags:["Shoulders"],plan:PLAN('double',[3,4],[12,15],[0,1],8,75,{out:1}),step:1,ref:[[8,12],[8,11],[8,10]],best:[10,8]}
+  incl:{name:"Dumbbell incline bench press",equip:"Dumbbells",tags:["Chest","Shoulders"],plan:PLAN('pyramid',3,8,2,[16,24],150,{rows:[[16,8],[20,8],[24,8]],perRow:false,kv:[["Direction","Lightest first: 70 · 85 · 100% of the anchor load"],["Decide the session","Sets at 100%"]]}),step:2,ref:[[14,8],[18,8],[22,8]],best:[26,6]},
+  latm:{name:'Lat machine',equip:"Cables",tags:["Back"],plan:PLAN('pyramid_reps',4,[8,12],null,[40,50],120,{rows:[[40,12],[45,10],[50,8],[50,'max']],kv:[["Set Max","Last set: as many reps as possible. Record at this weight: 11 reps at 50 kg"],["Load per set",'40 / 45 / 50 / 50 kg']]}),step:2.5,note:"Last set: as many reps as possible.",rec:'11 reps at 50 kg',ref:[[40,12],[45,10],[50,8],[50,9]],best:[50,11]},
+  rdl:{name:"Barbell Romanian deadlift",equip:"Barbell",tags:["Hamstrings","Glutes"],plan:PLAN('top_set_backoff',[4,4],[6,8],null,[90,100],180,{rows:[[100,6],[90,8],[90,8],[90,8]],tsb:{n:3,r:8,pct:90,rest:120},warm:"Automatic · 2 sets",kv:[['Top set',"1 × 6 @ 100 kg · rest 3min"],['Back-off',"3 × 8 @ 90% (90 kg) · rest 2min"],["Top set decides","Load increases after a successful top set"]]}),bar:20,step:2.5,ref:[[97.5,6],[87.5,8],[87.5,8],[87.5,8]],best:[100,6]},
+  lat:{name:"Dumbbell lateral raise",equip:"Dumbbells",tags:["Shoulders"],plan:PLAN('double',[3,4],[12,15],[0,1],8,75,{out:1}),step:1,ref:[[8,14],[8,13],[8,12]],best:[10,8]}
 };
 
 const BWX=(name,tags,x={})=>({name,equip:"Bodyweight",tags,bw:1,step:1,...x});
 Object.assign(EX,{
   dl:{name:"Barbell deadlift",equip:"Barbell",tags:["Back","Hamstrings","Glutes"],plan:PLAN('greyskull',3,5,null,110,180,{kv:[["Last set","AMRAP: add weight when you reach 5 or more"]]}),bar:20,step:2.5,rec:'8 reps at 105 kg',ref:[[105,5],[105,5],[105,8]],best:[105,8]},
-  hack:{name:"Hack squat",equip:"Machine",tags:["Legs","Glutes"],plan:PLAN('double',3,[8,12],[1,2],100,120),step:10,ref:[[100,12],[100,11],[100,10]],best:[120,10]},
-  calf:{name:"Standing calf raise",equip:"Machine",tags:["Legs"],plan:PLAN('undulating',4,[8,15],[1,2],80,60,{kv:[["Session","Heavy: 4 × 8 at the top of the load range"],["Wave","Heavy · Medium · Light across the week"]]}),step:5,ref:[[80,8],[80,8],[80,8],[80,7]],best:[90,8]},
-  hammer:{name:"Dumbbell hammer curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('double_controlled',3,[8,12],[1,2],12,60),step:1,ref:[[12,10],[12,10],[11,11]],best:[14,8]},
-  skull:{name:"EZ-bar skull crusher",equip:"Barbell",tags:["Triceps"],plan:PLAN('linear',3,10,2,25,60),bar:10,step:2.5,ref:[[25,10],[25,10],[25,9]],best:[30,8]},
+  hack:{name:"Hack squat",equip:"Machine",tags:["Legs","Glutes"],plan:PLAN('double',3,[8,12],[1,2],100,120),step:10,ref:[[100,12],[100,12],[100,11]],best:[120,10]},
+  calf:{name:"Standing calf raise",equip:"Machine",tags:["Legs"],plan:PLAN('undulating',4,[8,15],[1,2],80,60,{kv:[["Session","Heavy: 4 × 8 at the top of the load range"],["Wave","Heavy · Medium · Light across the week"]]}),step:5,ref:[[70,12],[70,12],[70,12],[70,11]],best:[90,8]},
+  hammer:{name:"Dumbbell hammer curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('double_controlled',3,[8,12],[1,2],12,60),step:1,ref:[[12,9],[12,9],[11,10]],best:[14,8]},
+  skull:{name:"EZ-bar skull crusher",equip:"Barbell",tags:["Triceps"],plan:PLAN('linear',3,10,2,25,60),bar:10,step:2.5,ref:[[22.5,10],[22.5,10],[22.5,10]],best:[30,8]},
   face:{name:"Face pull",equip:"Cables",tags:["Shoulders"],plan:PLAN('double',3,[15,20],[0,1],20,60),step:2.5,ref:[[20,17],[20,16],[20,15]],best:[25,15]},
   dip:BWX("Parallel bar dip",["Chest","Triceps"],{plan:PLAN('double',3,[8,12],[1,2],null,90),ref:[[10],[9],[8]],best:[12]}),
   pist:BWX("Pistol squat",["Legs"],{side:1,plan:PLAN('linear',3,6,2,null,90,{side:1}),ref:[[6],[6],[5]],best:[8]}),
@@ -153,20 +153,20 @@ const SCN_ALL={
   lower:{title:"Lower A",label:"Lower A",units:[{ex:['squat']},{ex:['dl']},{ex:['hack']},{ex:['rdl']},{ex:['calf']},{ex:['crunch']}],
     seed:S=>{S.tempo={squat:'3-1-1-0'};S.stk={hack:{on:1,w:[40,60,80,100,120,140,160,180]}};S.noRest={calf:true}},
     init:()=>({cur:0,pop:null,sets:{
-      squat:dn([{w:50,r:5,wu:1},{w:70,r:3,wu:1},{w:90,r:2,wu:1},{w:95,r:5,e:2},{w:95,r:6,e:2,note:"Belt from here on",film:1},{w:95,r:4,e:1}],6),
-      dl:dn([{w:60,r:5,wu:1},{w:90,r:3,wu:1},{w:110,r:5},{w:110,r:5},{w:110,r:5,max:1}],4,{3:{e:2},4:{e:1}}),
-      hack:mk(100,10,3),rdl:[{w:40,r:8,wu:1},{w:70,r:4,wu:1},{w:100,r:6,ph:'top'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'}],calf:mk(80,8,4),crunch:mk(30,10,3)}})},
+      squat:dn([{w:50,r:5,wu:1},{w:70,r:3,wu:1},{w:90,r:2,wu:1},{w:95,r:5,e:2},{w:95,r:6,e:2,note:"Belt from here on",film:1},{w:95,r:3,e:1}],6),
+      dl:dn([{w:60,r:5,wu:1},{w:90,r:3,wu:1},{w:110,r:5},{w:110,r:5},{w:110,r:5,max:1}],4,{3:{e:2,w:105,r:6}}),
+      hack:mk(100,12,3),rdl:[{w:40,r:8,wu:1},{w:70,r:4,wu:1},{w:100,r:6,ph:'top'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'}],calf:dn(mk(80,8,4),1,{0:{w:75,r:10,e:2}}),crunch:mk(30,10,3)}})},
   upper:{title:"Upper B",label:"Upper B",units:[{ex:['incl']},{ex:['latm']},{ex:['lat']},{ex:['fly','push'],ss:1,name:"Chest finisher",rest:100},{ex:['curl','hammer','skull'],ss:1,name:"Arms triset",rest:90},{ex:['face']}],
     init:()=>({cur:0,pop:null,sets:{
       incl:dn([{w:16,r:8},{w:20,r:8},{w:24,r:7}],3,{0:{e:3},1:{e:2,note:"Left shoulder pinched"},2:{e:1,film:1}}),
       latm:dn([{w:40,r:12},{w:45,r:10},{w:50,r:8},{w:50,r:0,max:1}],2),lat:withInt('lat',mk(8,12,1)),
       fly:mk(15,12,3),push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;return a})(),
-      curl:mk(12,10,3),hammer:mk(12,10,3),skull:mk(25,10,3),face:mk(20,15,3)}})},
+      curl:mk(12,10,3),hammer:mk(12,10,3),skull:mk(25,10,3),face:[{w:20,r:17},{w:20,r:16},{w:20,r:16}]}})},
   pull:{title:"Pull & core",label:"Calisthenics",units:[{ex:['pullup']},{ex:['dip','lsit'],ss:1,name:"Dips and L-sit",rest:90},{ex:['pist']},{ex:['tuck']},{ex:['sidep']},{ex:['plank']}],
     init:()=>({cur:0,pop:null,sets:{
-      pullup:dn([{r:8},{r:7},{r:6}],2,{0:{e:2},1:{e:1}}),dip:mk(null,10,3).map(({r})=>({r})),lsit:[{sec:15},{sec:15},{sec:15}],
-      pist:Array.from({length:3},()=>({r:6,sides:{L:{r:3},R:{r:3}}})),tuck:[{sec:8},{sec:8},{sec:8},{sec:8}],
-      sidep:Array.from({length:3},()=>({sec:30,sides:{L:{sec:30},R:{sec:30}}})),plank:[{sec:30},{sec:25},{sec:30}]}})},
+      pullup:dn([{r:8},{r:7},{r:6}],2,{0:{e:2},1:{e:1}}),dip:mk(null,10,3).map(({r})=>({r})),lsit:[{sec:20},{sec:20},{sec:18}],
+      pist:Array.from({length:3},()=>({r:6,sides:{L:{r:3},R:{r:3}}})),tuck:[{sec:10},{sec:10},{sec:9},{sec:9}],
+      sidep:Array.from({length:3},()=>({sec:30,sides:{L:{sec:30},R:{sec:30}}})),plank:[{sec:45},{sec:40},{sec:35}]}})},
   cond:{title:"Conditioning",label:"Circuits & cardio",units:[{ex:['kb','burp','box'],ss:1,name:"Full-body circuit",run:'circ',rest:60},{ex:['pu','gob'],ss:1,name:"EMOM · 8 min",run:'emom'},{ex:['lunge','sit'],ss:1,name:"AMRAP · 10 min",run:'amrap'},{ex:['mc'],ss:1,name:"Tabata · 20/10 × 8",run:'tab'},{ex:['bike']},{ex:['walk']}],
     init:()=>({cur:0,pop:null,sets:{
       kb:dn(mk(24,15,3),3),burp:dn(mk(null,12,3).map(({r})=>({r})),2),box:mk(null,8,3).map(({r})=>({r})),
@@ -177,12 +177,12 @@ const UNITS=SCN_ALL[SCN].units;
 const SKEY='og-demo5-'+SCN;
 function INIT0(){return{cur:0,pop:null,sets:{
   bench:[{w:40,r:10,wu:1,d:1,t:1},{w:60,r:8,d:1,t:1,e:3},{w:60,r:6,d:1,t:1,e:1},{w:65,r:11,d:1,t:1,e:0,f:1},{w:60,r:8}],
-  fly:[{w:15,r:12},{w:15,r:12},{w:12.5,r:14}],push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;return a})(),ohp:[{w:30,r:5},{w:35,r:5},{w:37.5,r:5}],lat:withInt('lat',mk(8,12,1)),
+  fly:[{w:15,r:12},{w:15,r:12},{w:12.5,r:14}],push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;a[0].d=a[0].t=1;return a})(),ohp:[{w:30,r:5},{w:35,r:5},{w:37.5,r:5}],lat:withInt('lat',mk(8,12,1)),
   legp:[{w:60,r:10,wu:1},{w:90,r:6,wu:1},{w:120,r:12},{w:115,r:12},{w:110,r:12}],
   incl:[{w:16,r:8},{w:20,r:8},{w:24,r:8}],latm:[{w:40,r:12},{w:45,r:10},{w:50,r:8},{w:50,r:0,max:1}],
   rdl:[{w:40,r:8,wu:1},{w:70,r:4,wu:1},{w:100,r:6,ph:'top'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'}],rowb:mk(52.5,10,3),crunch:mk(30,10,3),squat:mk(0,5,3),
   bulg:Array.from({length:3},()=>({w:14,r:16,sides:{L:{w:14,r:8},R:{w:14,r:8}}})),
-  pullup:Array.from({length:3},()=>({r:8})),curl:mk(12,10,3),plank:[{sec:30},{sec:25},{sec:30}],run:[{min:20,speed:8,inc:2}]}}}
+  pullup:Array.from({length:3},()=>({r:8})),curl:mk(12,10,3),plank:[{sec:45},{sec:40},{sec:35}],run:[{min:20,speed:8,inc:2}]}}}
 const INIT=()=>{const d=SCN_ALL[SCN].init();return d};
 let S;try{S=JSON.parse(sg(SKEY,'null'))}catch{}if(!S){S=INIT();SCN_ALL[SCN].seed?.(S)}S.weightEntry=S.weightEntry||{};S.fav=S.fav||{face:1,dip:1};S.stk=S.stk||{};S.noRest=S.noRest||{};S.tempo=S.tempo||{};S.runs=S.runs||{};S.bk=S.bk||{};
 
