@@ -1,0 +1,632 @@
+.bodymap{
+  display:flex;gap:6px;justify-content:center;align-items:flex-start;
+  --bm-base:color-mix(in srgb,var(--label) 11%,var(--surface));
+}
+.bm-v{flex:1;min-width:0;height:auto;max-height:min(46vh,340px)}
+.bm-ph{height:200px}                       /* holds the space while the geometry loads */
+/* The thumbnail beside a routine's name (components/MiniBodyMap.jsx): front and back, row height. */
+.bm-mini-wrap{flex:none;display:flex}
+.bodymap.bm-mini{gap:2px;--bm-base:color-mix(in srgb,var(--label) 26%,var(--surface))}
+.bodymap.bm-mini .bm-v{flex:none;height:46px;width:auto;max-height:none}
+.bodymap.bm-mini .bm-ph{height:46px;width:44px}
+.bodymap.bm-mini .bm-sil{fill:color-mix(in srgb,var(--label) 34%,var(--surface))}
+.bodymap.bm-mini .bm-v path{stroke-width:3}
+/* The live session's body (#670, components/SessionMuscles.jsx): at the end of the exercise
+   chips, and no taller than their 37px row, so it moves nothing in any layout. */
+.iconbtn.whdr-map{width:auto;height:32px;padding:0 2px;border-radius:10px}
+.wchips-row{display:flex;align-items:center;gap:4px}
+.wchips-row>.wchips{flex:1;min-width:0}
+.whdr-map .bodymap.bm-mini{gap:1px}
+.whdr-map .bodymap.bm-mini .bm-v{height:30px}
+.whdr-map .bodymap.bm-mini .bm-ph{height:30px;width:29px}
+/* Still to come is a whisper of the accent, so the worked muscles (l3, l4) stand out from it. */
+.bm-session .bm-m.l1{fill:color-mix(in srgb,var(--acc) 20%,var(--bm-base))}
+.sm-legend .hm-c.l1{background:linear-gradient(var(--acc-soft),var(--acc-soft)),var(--surface-2);background:color-mix(in srgb,var(--acc) 20%,var(--surface-2))}
+.mrow .v.sess{min-width:64px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sm-legend{justify-content:center;gap:6px;margin:10px 0 6px}
+.sm-legend .hm-c:not(:first-child){margin-inline-start:8px}
+.bm-sil{fill:color-mix(in srgb,var(--label) 18%,var(--surface))}
+.bm-m{fill:var(--bm-base);transition:fill var(--med) var(--ease)}
+.bm-m.l1{fill:color-mix(in srgb,var(--acc) 32%,var(--bm-base))}
+.bm-m.l2{fill:color-mix(in srgb,var(--acc) 56%,var(--bm-base))}
+.bm-m.l3{fill:color-mix(in srgb,var(--acc) 78%,var(--bm-base))}
+.bm-m.l4{fill:var(--acc)}
+/* Fatigue view: attention ramp - fatigued muscles highlighted (owner tweak 2026-08-06) */
+.hm-fatigue .bm-m.l4{fill:var(--red)}
+.hm-fatigue .bm-m.l3{fill:var(--orange)}
+.hm-fatigue .bm-m.l2{fill:var(--yellow)}
+.hm-fatigue .bm-m.l1{fill:color-mix(in srgb,var(--yellow) 32%,var(--bm-base))}
+/* Safari before 16.2 (the iOS app goes back to 15.5) has no color-mix(). Most declarations that
+   mix have a plain one in front of them for it (color-mix-fallback.test.js keeps it that way), but
+   two kinds cannot: a custom property (the mixed one parses, then fails where it is used) and a
+   fill or a color, whose plain twin the CSS minifier drops as a duplicate. Those get their
+   stand-ins here, after the rules they stand in for; lib/accent.js sets the accent's tints exactly. */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  :root{--acc-soft:var(--label-4);--acc-line:var(--label-3)}
+  .bodymap{--bm-base:var(--surface-2)}
+  .bodymap.bm-mini{--bm-base:var(--surface-3)}
+  .bodymap.bm-mini .bm-sil{fill:var(--surface-3)}
+  .bm-session .bm-m.l1{fill:var(--acc-soft)}
+  .bm-sil{fill:var(--surface-3)}
+  .bm-m.l1{fill:var(--acc-line)}
+  .bm-m.l2{fill:var(--acc)}
+  .bm-m.l3{fill:var(--acc)}
+  .hm-fatigue .bm-m.l1{fill:rgba(255,214,10,0.32)}
+}
+.hm-fatigue .hm-c.l4{background:var(--red)}
+.hm-fatigue .hm-c.l3{background:var(--orange)}
+.hm-fatigue .hm-c.l2{background:var(--yellow)}
+/* Strength view: top band pops gold (owner tweak 2026-08-06) */
+.hm-strength .bm-m.l4{fill:var(--yellow);filter:drop-shadow(0 0 1.5px var(--yellow))}
+.hm-strength .hm-c.l4{background:var(--yellow)}
+
+.bm-m.sel{stroke:var(--label);stroke-width:7}
+.bodymap.tappable .bm-m{cursor:pointer}
+.bodymap.tappable .bm-m:focus-visible{outline:none;stroke:var(--label);stroke-width:7;filter:drop-shadow(0 0 2px var(--surface))}
+/* A hairline in the surface colour separates neighbouring muscles; the artwork has no
+   outline path of its own, so without this the body reads as one flat blob. */
+.bm-v path{stroke:var(--surface);stroke-width:2.5;stroke-linejoin:round}
+
+.mrow{display:flex;align-items:center;gap:9px;padding:5px 0}
+.mrow .nm{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .bar{width:74px;height:5px;border-radius:3px;background:var(--surface-2);flex:none;overflow:hidden}
+.mrow .bar i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.mrow .v{font-size:12px;color:var(--label-2);min-width:52px;text-align: end;flex:none}
+/* The Week view's "done/planned · %" (#573): wider than a set count, and as wide on every row, so
+   the bars line up the way they do in 30d, 90d and All. coach.css has a `.cmp` of its own (the
+   Coach's comparison rows) with a rule line and padding, loaded on every page: reset both here. */
+.mrow .v.cmp{min-width:92px;font-variant-numeric:tabular-nums;white-space:nowrap;border-top:none;padding:0}
+/* Selected-muscle fatigue detail: the legend's three bands as one bar, the value above
+   its marker, the 0–100% endpoints under it and each zone named beneath itself. Ready is
+   the map's unshaded base, so the left zone stays neutral; margins leave room for the
+   value bubble above the bar. */
+.fname{font-size:14px;padding:5px 0 0}
+.fbarwrap{position:relative;height:8px;margin-top:20px}
+.fbar{position:relative;display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--surface-2)}
+.fbar .zone{height:100%}
+.fbar .zone.ready{width:25%;background:var(--surface-3);background:color-mix(in srgb,var(--label) 14%,var(--surface-2))}
+.fbar .zone.recovering{width:25%;background:var(--yellow)}
+.fbar .zone.fatigued{width:50%;background:var(--red)}
+.fbarwrap .knob{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:var(--label);box-shadow:0 0 0 1.5px var(--surface);pointer-events:none}
+.fbarwrap .fval{position:absolute;bottom:100%;margin-bottom:3px;transform:translateX(-50%);font-size:11px;font-weight:600;color:var(--label);white-space:nowrap;pointer-events:none}
+[dir="rtl"] .fbarwrap .fval{transform:translateX(50%)}
+.fends{display:flex;justify-content:space-between;font-size:10px;color:var(--label-3);margin-top:3px}
+.fzones{display:flex;font-size:10px;color:var(--label-3);line-height:1.2}
+/* A zone is a quarter of the bar, 64px on a 320px phone: "Восстанавливается" or "En
+   recuperación" don't fit and were cut to "Восстанав…". A name may spill past its zone instead,
+   centred on it, and Ready starts at the bar's start so the middle one has room on both sides. */
+.fzones .z{display:flex;justify-content:center;white-space:nowrap}
+.fzones .z.ready{justify-content:flex-start}
+.fzones .z.ready{width:25%}
+.fzones .z.recovering{width:25%}
+.fzones .z.fatigued{width:50%}
+/* A headline number inside a card — tile weight without a tile around it, for the pair of
+   readings at the top of the effort card. */
+.stat-v{font-size:26px;font-weight:600;letter-spacing:-.026em;line-height:1.1}
+.mchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.mchip{font-size:12px;padding:4px 9px;border-radius:99px;background:var(--surface-2);color:var(--label-2)}
+.mchip.miss{background:rgba(255,159,10,0.16);background:color-mix(in srgb,var(--orange) 16%,transparent);color:var(--orange)}
+button.mchip{border:none;font:inherit;font-size:12px;cursor:pointer}
+/* "Exercises ›" on an untrained muscle picked on the map (#553), at the end of its row. On a
+   narrow phone the row has no room for it (the name shrank to nothing at 320 and 360px, and the
+   Russian chip poked out of the card), so it wraps to a line of its own, still at the end; the
+   name keeps enough width to be read. The ::after stretches the tap area to 33px without making
+   the chip look any bigger. */
+.mchip.mfind{flex:none;display:inline-flex;align-items:center;gap:2px;padding-inline-end:6px;position:relative}
+.mchip.mfind::after{content:"";position:absolute;inset:-5px 0}
+.mrow.has-find{flex-wrap:wrap;row-gap:4px}
+.mrow.has-find .nm{flex-basis:0;min-width:64px}
+.mrow.has-find .mfind{margin-inline-start:auto}
+
+/* --- stat tiles --- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.tile{background:var(--surface);border-radius:var(--r-card);padding:14px}
+.tile .l{
+  color:var(--label-2);font-size:13px;font-weight:400;letter-spacing:-.004em;
+  text-transform:none;display:flex;align-items:center;gap:5px;
+}
+.tile .l .icn{font-size:14px;color:var(--label)}
+.tile .v{font-size:26px;font-weight:600;letter-spacing:-.026em;margin-top:5px;line-height:1.1}
+.tile.tappable:active{background:var(--surface-2)}
+/* the workout summary: time and volume share the first row, sets get the wider cell of the second
+   because "15 sets · 15 work" does not fit a half */
+.center .tiles.fin{grid-template-columns:repeat(6,1fr)}
+.tiles.fin .tile{grid-column:span 3;min-width:0}
+.tiles.fin .tile.wide{grid-column:span 4}
+.tiles.fin .tile.narrow{grid-column:span 2}
+
+/* --- PR badge --- */
+.pr{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,214,10,0.18);background:color-mix(in srgb,var(--yellow) 18%,transparent);color:var(--yellow);
+  border-radius:6px;padding:3px 8px;font-size:12px;font-weight:500;
+}
+.pr .icn{font-size:13px}
+
+/* --- toast --- */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(6px);
+  bottom:calc(96px + var(--sab));z-index:200;
+  background:var(--surface-2);background:color-mix(in srgb,var(--surface-2) 88%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  /* 22px, not a pill radius: one line (about 41px high) still reads as a pill, and a toast that
+     wraps to four lines is a rounded box instead of a circle over the page. */
+  border-radius:var(--r-xl);padding:11px 20px;font-size:15px;font-weight:500;
+  box-shadow:0 10px 30px -6px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity var(--med),transform var(--med) var(--ease);
+  /* As wide as its text up to 88vw. Without a width, left:50% left it half the screen to wrap
+     in, so a long message stood as a narrow column. */
+  width:max-content;max-width:88vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* With an action (Undo): the message, then the button at the end, and the toast takes taps. */
+#toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:4px 6px 4px 6px;text-align:start}
+#toast.has-action .toast-msg{flex:1;min-width:0;padding:7px 0}
+#toast .toast-act{flex:none;display:inline-flex;align-items:center;gap:5px;color:var(--acc);font-weight:700;padding:8px 12px;border-radius:14px;min-height:36px}
+#toast .toast-act:active{background:var(--label-4);background:color-mix(in srgb,var(--label) 10%,transparent)}
+#toast .toast-act .icn{font-size:16px}
+#toast .toast-x{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--label-2)}
+#toast .toast-x:active{background:var(--label-4);background:color-mix(in srgb,var(--label) 10%,transparent)}
+#toast .toast-x .icn{font-size:15px}
+body.no-tabbar #toast{bottom:calc(24px + var(--sab))}
+body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
+
+/* ---------------------------------------------------------------- misc --- */
+.empty{text-align:center;color:var(--label-2);padding:44px 20px;font-size:15px;line-height:1.45}
+.empty .ico{font-size:34px;color:var(--label-2);margin-bottom:12px;display:flex;justify-content:center}
+.steps-list{
+  padding-inline-start:18px;color:var(--label-2);font-size:15px;line-height:1.5;
+  display:flex;flex-direction:column;gap:9px;
+}
+.steps-list::marker{color:var(--label-3)}
+
+/* --- month calendar --- */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.cal-h{text-align:center;font-size:11px;color:var(--label-3);font-weight:500;text-transform:uppercase;padding:2px 0}
+.cal-d{
+  aspect-ratio:1;border-radius:10px;background:var(--surface);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-weight:400;font-size:15px;color:var(--label);transition:background var(--fast);
+}
+.cal-d:active{background:var(--surface-2)}
+.cal-d.has{background:var(--acc-soft);color:var(--acc)}
+.cal-d.today{box-shadow:inset 0 0 0 1.8px var(--acc)}
+.cal-d i{width:5px;height:5px;border-radius:50%;background:transparent}
+.cal-d i.done{background:var(--acc)}
+.cal-d i.plan{background:var(--label-3)}
+.cal-d i.ovr{background:var(--orange)}
+.cal-d i.noted{background:var(--indigo)}
+.cal-legend{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:12px;color:var(--label-3)}
+.cal-legend i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-inline-end:5px}
+
+/* --- accent swatches --- */
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.swatch{width:32px;height:32px;border-radius:50%;flex:none;position:relative;transition:transform var(--fast)}
+.swatch:active{transform:scale(.9)}
+/* The ring takes no taps: over the own colour it lay on the colour input, so the picker never opened. */
+.swatch.on::after{content:'';position:absolute;inset:-4px;border-radius:50%;box-shadow:0 0 0 2px var(--label);pointer-events:none}
+/* The user's own colour (Settings → Accent color): a rainbow ring until there is one, then filled
+   with it. The native colour input lies over it, invisible, so the tap lands on the input itself. */
+.swatch-own{display:inline-flex;align-items:center;justify-content:center;font-size:15px;--icon-stroke:2.4}
+.swatch-own.unset{
+  background:radial-gradient(circle,var(--surface) 0 52%,transparent 54%),
+    conic-gradient(#ff453a,#ff9f0a,#ffd60a,#30d158,#40c8e0,#0a84ff,#bf5af2,#ff375f,#ff453a);
+  color:var(--label-2);
+}
+.swatch-input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;border-radius:50%;cursor:pointer;-webkit-appearance:none;appearance:none}
+.swatch-note{margin-top:-4px}
+/* Settings → App icon: the previews in the shape of a home-screen icon, the chosen one ringed like a swatch. */
+.app-icons{flex-basis:100%;padding-inline-start:41px;display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:12px}
+.app-icon{position:relative;aspect-ratio:1;max-width:60px;border-radius:23%;padding:0;transition:transform var(--fast)}
+.app-icon img{width:100%;height:100%;display:block;border-radius:inherit;box-shadow:0 0 0 .5px var(--sep)}
+.app-icon:active{transform:scale(.92)}
+.app-icon:disabled{opacity:1}
+.app-icon.on::after{content:'';position:absolute;inset:-4px;border-radius:27%;box-shadow:0 0 0 2px var(--acc);pointer-events:none}
+
+/* --- supersets --- */
+.ss-label{
+  font-size:12px;font-weight:600;letter-spacing:-.004em;text-transform:none;
+  color:var(--acc);margin-block:8px 5px;margin-inline-start:4px;display:flex;align-items:center;gap:5px;
+}
+.ss-label .icn{font-size:13px}
+/* The routine editor's label opens the superset's name and rest (#292). */
+.ss-label-btn{background:none;border:0;padding:4px 6px;margin-inline-start:-2px;border-radius:8px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;min-height:28px;max-width:100%}
+.ss-label-btn:active{background:var(--surface-2)}
+.ss-label-btn .ss-label-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ss-label-btn .dim{font-weight:500;white-space:nowrap}
+/* A1, A2…: a member's place in the round (#293). */
+.ss-pos{flex:none;min-width:26px;height:22px;padding:0 5px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--acc);background:var(--acc-soft, var(--surface-2))}
+.item.in-ss{box-shadow:inset 3px 0 0 var(--acc)}
+/* A past workout's detail: each exercise opens its history, and a superset's exercises share the
+   routine editor's label and bar. */
+.wd-ex{margin-bottom:12px;cursor:pointer;border-radius:10px}
+.wd-ex>.grow{flex:1;min-width:0}
+.wd-ex:active{background:var(--surface-2)}
+.wd-ss{box-shadow:inset 3px 0 0 var(--acc);padding-inline-start:11px;margin-bottom:12px}
+.wd-ss .ss-label{margin:0 0 8px}
+.wd-ss .wd-ex:last-child{margin-bottom:0}
+.ss-card{
+  border-radius:var(--r-lg);padding:14px;
+  background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--acc-line);
+}
+.workout-swipe-surface{touch-action:pan-y}
+.workout-swipe-stack{position:relative;isolation:isolate;overflow:hidden}
+.workout-swipe-stack>.workout-swipe-card,.workout-swipe-stack>.workout-swipe-preview{min-width:0}
+.workout-swipe-card{position:relative;z-index:2;background:var(--bg)}
+.workout-swipe-preview{position:absolute;z-index:1;top:0;inset-inline-start:0;width:100%;pointer-events:none;background:var(--bg)}
+/* A superset nests a card inside the page's own gutter, so its inset is paid twice. On a
+   narrow phone that left the weight and reps steppers too tight to show a three-digit
+   number — reported as "the reps textbox becomes too small when superset on mobile". The
+   card only gives up its own padding; the rows inside keep their spacing.
+   The give-back runs to 404 px rather than 400, because it may not end before the full insets
+   fit: at 401 px they snapped back to 16 + 14 + 14 per side and took 48 px off the row while the
+   screen had gained one, so a plain row with an effort column in a superset in the list view —
+   285 px of cells in a 281 px card — was 4, 3, 2 and 1 px wider than its card's content box at
+   401–404 px and its done tick sat in the card's side padding. 405 px is the width where those
+   285 px and the three full insets first add up to the screen, so that is where it ends. */
+@media (max-width:404px){
+  .ss-card{padding:10px 8px}
+  /* The sets card nested in a superset card or a list unit pays a second inset, and in a superset
+     in the list view a third; with an L/R row's set number, badge, two steppers, effort and tick
+     it is the line that decides whether the numbers fit. 8 px each, and the superset card inside
+     a unit keeps 4 (none below 360), so every set row has the same 256 px at 320 as in a plain
+     card, and 296–304 at 368. */
+  .wl-unit .card,.ss-card .card{padding-inline:8px}
+  .wl-unit .ss-card{padding-inline:4px}
+}
+@media (max-width:359px){
+  .wl-unit .ss-card{padding-inline:0}
+}
+.ss-hd{
+  font-size:12px;font-weight:600;color:var(--acc);margin-bottom:12px;
+  text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.ss-ex{position:relative}
+.ss-amp{text-align:center;font-size:15px;font-weight:600;color:var(--acc);margin:14px 0 8px}
+
+/* --- workout list view: every unit stacked, the current one outlined --- */
+/* minmax(0, …): a grid's default `auto` track is at least as wide as its widest content, so a set
+   row whose cells have floors (see .setrow .stp) would widen the whole unit past the screen and
+   push the ticks off it. Capped, a row that does not fit overflows its own card instead. */
+.workout-list{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.wl-unit{
+  border-radius:var(--r-lg);padding:14px 14px 4px;
+  background:var(--surface-2);
+}
+/* scrolled to when the list opens (#224): clear the sticky header above it. Workout.jsx
+   measures the header (--whdr-h on .workout-list, safe area included) because it grows when
+   the session name wraps; the fallback is the height of a one-line header. */
+.wl-unit{scroll-margin-top:calc(var(--whdr-h, var(--sat) + var(--conn) + 80px) + 16px)}
+/* A superset is one unit, so finishing a member and moving to the next scrolls to that member's
+   own row (Workout.jsx), not the unit: the row needs the same clearance under the sticky header,
+   since scroll-margin does not inherit from the .wl-unit around it. Scoped to the list so Cards,
+   which has no pinned header, is untouched. */
+.workout-list .ss-ex,.workout-list .setrow,.workout-list .setrow-side{scroll-margin-top:calc(var(--whdr-h, var(--sat) + var(--conn) + 80px) + 16px)}
+.wl-unit.cur{box-shadow:inset 0 0 0 1.5px var(--acc-line)}
+.wl-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.wl-summary{display:grid;gap:8px;padding-bottom:10px}
+/* the folded unit is a button (a tap opens it again): full width, text where it always sat */
+button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var(--r-sm)}
+
+/* --- the chip per exercise at the top of a running workout (#323) --- */
+/* One numbered chip per unit, filled as far as it is done: an outline waiting, half full started,
+   full when every work set is ticked, so the state reads without the colour. The current one has
+   the accent ring. Every chip is the same height whatever its state, and the row scrolls sideways
+   (.chips), so nothing here can move the page while you type. 28px chips with the strip's own
+   padding keep the row at about the height of the line it replaces. */
+.chips.wchips{gap:6px;padding:4px 5px 5px;margin-bottom:2px}   /* room for the current chip's ring: the strip clips */
+.wchip{
+  flex:none;position:relative;display:inline-flex;align-items:center;justify-content:center;gap:2px;
+  min-width:28px;height:28px;padding:0 8px;border-radius:99px;
+  font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--label-2);
+  background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--sep);
+}
+.wchip .icn{width:12px;height:12px}
+.wchip.partial{background:linear-gradient(to top,rgba(255,159,10,0.45) 50%,var(--surface) 50%);background:linear-gradient(to top,color-mix(in srgb,var(--orange) 45%,var(--surface)) 50%,var(--surface) 50%);box-shadow:inset 0 0 0 1.5px var(--orange);color:var(--label)}
+.wchip.done{background:var(--green);background:color-mix(in srgb,var(--green) 70%,var(--surface));box-shadow:none;color:var(--label)}
+.wchip.cur{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--acc);color:var(--label)}
+.wchip.partial.cur{box-shadow:inset 0 0 0 1.5px var(--orange),0 0 0 2px var(--bg),0 0 0 3.5px var(--acc)}
+/* part of the give-back above — one edge for all three insets of a row in the list view */
+@media (max-width:404px){
+  .wl-unit{padding:10px 8px 2px}
+}
+
+/* --- home: today's session row --- */
+.today-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:12px;padding:12px 14px;border-radius:var(--r);background:var(--surface-2);
+  transition:background var(--fast);width:100%;text-align: start;cursor:pointer;
+}
+.today-row:active{background:var(--surface-3)}
+.today-row .lbl2{font-size:11px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--label-3)}
+.today-row .ttl{
+  font-weight:500;font-size:17px;line-height:1.25;text-transform:capitalize;
+  letter-spacing:-.012em;margin-top:2px;
+  /* two lines before the ellipsis: "Leg Day — in progress" grows past one line in hu/tr/th/pt-BR */
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Below 360px the mini body map and the Start tag leave the name about 120px, so "Push Day"
+   already wrapped in ru. The map is a nice-to-have there; the name is what the row is for. */
+@media (max-width:359px){
+  .today-row .bm-mini-wrap{display:none}
+}
+
+/* Only where a pointer really hovers — on a phone :hover sticks to the row after the tap.
+   Lighter than :active, which goes all the way to --surface-3, so the two stay distinct. */
+@media (hover:hover){
+  .today-row:hover{background:var(--surface-3);background:color-mix(in srgb,var(--surface-2),var(--surface-3) 60%)}
+  :root[data-theme="light"] .today-row:hover{background:var(--surface-3);background:color-mix(in srgb,var(--surface-2),var(--surface-3) 85%)}
+}
+
+/* --------------------------------------------------- desktop (≥1000px) --- */
+.cols{display:block}
+@media (min-width:1000px){
+  #app{max-width:1080px;padding-top:calc(var(--conn) + 32px);padding-bottom:calc(128px + var(--sab))}
+  .conn-row{max-width:640px}   /* the width of the .narrow pages below it */
+  body.resting #app{padding-bottom:calc(220px + var(--sab))}
+  body.no-tabbar #app{padding-bottom:calc(40px + var(--sab))}
+  body.no-tabbar.resting #app{padding-bottom:calc(130px + var(--sab))}
+  .workout-end-spacer{height:40px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .cols>*{min-width:0}
+  /* Two columns on the full-width pages (Library, History, Stats, Plan, Muscles). A .narrow page
+     is a single 640px column and keeps its lists in one too. The #app in that selector is what
+     lets it win: `.narrow .list` alone lost to `#app .list` on specificity, so Home, Workout,
+     Admin and the rest showed their lists two-up on a computer. Sheets live in #modal-root,
+     outside #app, and are one column at every width. */
+  #app .list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #modal-root .list,#app .narrow .list{display:flex;flex-direction:column}
+  .narrow{max-width:640px;margin:0 auto}
+  .tiles{grid-template-columns:repeat(4,1fr)}
+  .cols .tiles,.center .tiles{grid-template-columns:1fr 1fr}   /* a 300px dialog has no room for four */
+  #tabbar{
+    left:50%;right:auto;bottom:16px;transform:translateX(-50%);width:520px;
+    border:var(--hair) solid var(--sep-op);border-radius:var(--r-xl);
+    padding:7px 10px 9px;box-shadow:0 12px 40px -10px rgba(0,0,0,.5);
+  }
+  #tabbar button.start{margin-top:-26px}
+  .sheet{left:50%;right:auto;margin-left:-320px;width:640px;border-radius:var(--r-xl) var(--r-xl) 0 0}
+  .center{width:340px}
+  .center.wide{width:440px}
+  #timer{left:50%;right:auto;margin-left:-260px;width:520px;bottom:112px}
+  body.no-tabbar #timer{left:50%;right:auto;bottom:16px;border-radius:var(--r-xl);padding-bottom:10px;box-shadow:0 12px 40px -10px rgba(0,0,0,.5)}
+  .exmedia img,.exmedia video{height:380px}
+  .hm-wrap{display:flex;flex-direction:column;align-items:center}
+}
+
+/* ------------------------------------------------------- gym check-in -- */
+/* Mobile-only feature (views/CheckIn.jsx): saved membership codes shown as QR, swiped
+   through horizontally. The rail is a scroll-snap track — one card per viewport, no JS
+   carousel — with a trailing "+" card to add another. */
+.ci-rail{
+  display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding:4px 0 8px;margin:0 -16px;padding-left:16px;padding-right:16px;
+}
+.ci-rail::-webkit-scrollbar{display:none}
+.ci-card{
+  scroll-snap-align:center;flex:0 0 100%;box-sizing:border-box;
+  background:var(--surface);border-radius:var(--r-xl);padding:22px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  transition:transform var(--fast),box-shadow var(--fast),opacity var(--fast);
+}
+/* header row: edit — title — trash. The two icon buttons are equal fixed widths so the title,
+   flexed between them, stays optically centered on the card no matter how long it is. */
+.ci-card-hd{display:flex;align-items:center;gap:8px;width:100%}
+.ci-card-btn{width:30px;height:30px;font-size:14px;flex:none}
+.ci-card .ci-label{flex:1;min-width:0;font-size:19px;font-weight:600;letter-spacing:-.014em;text-align:center;overflow-wrap:anywhere}
+.ci-card .ci-value{font-size:14px;color:var(--label-2);word-break:break-all;text-align:center;font-variant-numeric:tabular-nums}
+/* reorder row under a card (only shown with >1 card): ◀ position ▶ to nudge the card one slot
+   along the rail. A plain, reliable control — no drag gesture to fight the horizontal scroll. */
+.ci-reorder{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:2px}
+.ci-reorder .ci-pos{font-size:13px;color:var(--label-2);font-variant-numeric:tabular-nums;min-width:44px;text-align:center}
+.ci-reorder .iconbtn:disabled{opacity:.3;pointer-events:none}
+/* The QR itself: lean-qr paints 1 module per pixel, so scale it up with the browser's
+   nearest-neighbour so every module stays a crisp square instead of a blurred blob. White
+   quiet-zone padding is baked in by the renderer; the plate underneath just frames it. */
+.ci-qr-plate{background:#fff;border-radius:var(--r-lg);padding:16px}
+.qr-canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;transition:opacity var(--fast)}
+/* the trailing add card — a big + on a dashed outline, same footprint as a real card */
+.ci-add{
+  scroll-snap-align:center;flex:0 0 100%;box-sizing:border-box;
+  min-height:280px;border-radius:var(--r-xl);
+  border:2px dashed var(--surface-3);background:none;color:var(--label-2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.ci-add:active{background:var(--surface);transform:scale(.99)}
+.ci-add .icn{font-size:40px;--icon-stroke:1.8}
+.ci-add .ci-add-t{font-size:16px;font-weight:500}
+/* dots under the rail — which card you're on. Purely a hint; the rail itself is the control. */
+.ci-dots{display:flex;justify-content:center;gap:7px;margin-top:4px}
+.ci-dot{width:7px;height:7px;border-radius:50%;background:var(--surface-3);transition:background var(--fast),transform var(--fast)}
+.ci-dot.on{background:var(--acc);transform:scale(1.15)}
+/* browser camera sheet (components/CameraScan.jsx): the video fills a portrait plate, a dashed
+   square in the middle says "put the code here" — decoding reads the whole frame regardless. */
+.cam-wrap{position:relative;width:100%;aspect-ratio:3/4;max-height:58vh;border-radius:var(--r-lg);overflow:hidden;background:#000}
+.cam-wrap video{width:100%;height:100%;object-fit:cover;display:block}
+.cam-frame{position:absolute;inset:0;margin:auto;width:62%;aspect-ratio:1;border:2px dashed rgba(255,255,255,.75);border-radius:14px;pointer-events:none}
+/* ---------------------------------------------------------------- Plan -- */
+/* Schedule | Routines (views/Plan.jsx). A settings-like page, one column at every width. */
+.plan-views{margin-bottom:18px}
+.plan-views button{min-height:34px;font-size:15px}
+.plan .plan-mode .lrow-t{white-space:nowrap}
+/* The control takes the rest of the row when it fits, and a full line of its own when it does
+   not, rather than squeezing "Fixed Week" onto two lines. */
+.plan-mode .seg-inline{flex:1 1 200px;min-width:0}
+.plan-mode .seg-inline button{white-space:nowrap}
+.plan-mode-locked{margin-inline-start:auto;text-align:end}
+.plan-sec-h{margin:22px 0 8px;gap:8px;flex-wrap:wrap}
+/* Long words (German "Hinzufügen") push the loop's buttons off a 320 px screen; they drop
+   to their own line instead and stay on the trailing edge. */
+.plan-sec-h>.plan-sec-acts{margin-inline-start:auto}
+.plan-sec-h h4.sec{margin:0}
+.plan-routines-bar{margin-top:0}
+.plan-textbtn{color:var(--acc);font-size:16px;padding:6px 4px;position:relative}
+.plan-textbtn::before{content:'';position:absolute;inset:-6px}
+.plan .sect-f{margin:0 0 4px}
+.plan .list+.sect-f{padding-top:8px}
+/* a weekday: short day name, the routine's glyph (a moon on a rest day), what is on it */
+.plan-day-n{min-width:30px;flex:none;white-space:nowrap;font-size:15px;font-weight:600;color:var(--label-2)}
+.plan-day-n.today{color:var(--acc)}
+/* Arabic names the whole day: one column wide enough for the longest keeps the glyphs aligned */
+[dir="rtl"] .plan-day-n{min-width:88px}
+.item .lrow-i.rest{background:var(--surface-3);color:var(--label-2)}
+/* the loop: a numbered position, lit when up next, a tick once done this round */
+.plan-order{
+  width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:13px;font-weight:600;color:var(--label-2);background:var(--surface-3);--icon-stroke:2.6;
+}
+.plan-order.next{background:var(--acc);color:var(--on-acc)}
+.rotation-row.is-done .tt{color:var(--label-2)}
+/* Edit mode, as on an iPhone: a red minus at the start, a handle at the end */
+.plan-minus{
+  width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:var(--red);color:#fff;font-size:14px;--icon-stroke:2.6;position:relative;
+}
+.plan-minus::before{content:'';position:absolute;inset:-10px}
+.plan-handle{
+  flex:none;align-self:stretch;display:flex;align-items:center;padding:0 6px;margin:-10px -6px -10px 0;
+  color:var(--label-3);font-size:18px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+}
+.plan-handle:active{cursor:grabbing;color:var(--label-2)}
+.plan [data-reorder-row]{transition:transform var(--fast) var(--ease)}
+.plan-link{margin-top:24px}
+.plan-empty{padding:28px 20px}
+/* Stats: the card Plan links to clears the sticky banners when it is scrolled to */
+#weekly-volume{scroll-margin-top:calc(var(--sat) + var(--conn) + 96px)}
+
+/* ------------------------------------------------- duration wheel picker -- */
+/* components/DurationWheel.jsx: two scroll-snap wheels under one highlight band. --dw-item is
+   WHEEL_ITEM there. The band sits behind the rows; the rows fade and lean back toward the edges
+   (painted from JS while scrolling), and the mask softens the top and bottom rows further. */
+.dw{--dw-item:40px;position:relative;display:flex;justify-content:center;height:calc(var(--dw-item) * 5);
+  margin:4px auto 16px;max-width:320px;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.dw-band{position:absolute;inset-inline:6px;top:calc(var(--dw-item) * 2);height:var(--dw-item);border-radius:10px;
+  background:var(--label-4);background:color-mix(in srgb,var(--label) 10%,transparent);pointer-events:none}
+.dw-col{position:relative;flex:1;min-width:0;outline:none;border-radius:10px}
+.dw-col:focus-visible::after{content:'';position:absolute;inset-inline:8px;top:calc(var(--dw-item) * 2);height:var(--dw-item);
+  border-radius:10px;box-shadow:0 0 0 2px var(--acc);pointer-events:none}
+.dw-scroll{height:100%;overflow-y:scroll;overflow-x:hidden;scroll-snap-type:y mandatory;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;perspective:420px;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 34%,#000 66%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 34%,#000 66%,transparent 100%)}
+.dw-scroll::-webkit-scrollbar{display:none}
+.dw-pad{height:calc(var(--dw-item) * 2)}
+.dw-it{height:var(--dw-item);scroll-snap-align:center;display:flex;align-items:center;justify-content:flex-end;
+  padding-inline-end:calc(50% + 2px);font-size:22px;font-variant-numeric:tabular-nums;color:var(--label-2);
+  cursor:pointer;transform-origin:50% 50%;will-change:transform,opacity}
+.dw-it.on{color:var(--label);font-weight:600}
+.dw-it.out{color:var(--label-4)}
+.dw-unit{position:absolute;top:calc(var(--dw-item) * 2);height:var(--dw-item);display:flex;align-items:center;
+  inset-inline-start:calc(50% + 8px);font-size:17px;font-weight:600;color:var(--label);pointer-events:none}
+.dw-read{text-align:center;font-size:34px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:-4px 0 2px}
+.dw-foot{text-align:center;margin:-6px 0 14px;line-height:1.4}
+@media (hover:hover){.dw-it:hover{color:var(--label)}}
+
+/* ------------------------------------------------------- Settings (v1.3.11) -- */
+/* A sub-page's nav bar: the back button names where it goes, the title sits in the middle.
+   The back column is at least as wide as its label ("Einstellungen" stays whole), and the two
+   side columns share what is left equally, so the title is centred whenever it can be and moves
+   over when the label needs the room. Only a label past half the screen is cut. */
+.sp-nav{display:grid;grid-template-columns:minmax(max-content,1fr) minmax(0,max-content) minmax(0,1fr);align-items:center;column-gap:6px;
+  min-height:44px;margin:4px -6px 10px}
+.sp-back{display:inline-flex;align-items:center;gap:2px;color:var(--acc);font-size:17px;padding:6px;border-radius:10px;
+  min-width:0;max-width:50vw;justify-self:start}
+.sp-back span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-back .icn{font-size:22px;--icon-stroke:2.2;flex:none}
+/* A long title ("Alertas do temporizador", "Megjelenés és Kezdőlap") takes a second line rather
+   than lose its end to an ellipsis next to a whole back label. */
+.sp-title{text-align:center;font-weight:600;font-size:17px;line-height:1.2;margin:0;overflow:hidden;overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;text-wrap:balance}
+.sp-root-title{font-size:34px;line-height:1.06;font-weight:700;letter-spacing:-.028em;margin:2px 0 10px}
+@media (max-width:420px){.sp-root-title{font-size:30px}}
+.sp-search{margin-bottom:18px}
+/* the account card on top of the root: a big round avatar, the name, one line under it */
+.lrow.sp-acct{padding-block:12px;gap:14px}
+.sp-avatar{width:56px;height:56px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(160deg,var(--surface-3),var(--surface-2));color:var(--label-2)}
+.sp-acct .lrow-t{font-size:19px;font-weight:600}
+.sp-avatar.on{background:var(--acc-soft);color:var(--acc);font-size:24px;font-weight:700}
+.sp-version{text-align:center;margin-top:4px;line-height:1.6}
+/* The root rows' previews ("2:00 de descanso · Tarjetas", "Som · Vibração") are two or three facts, and a
+   one-line ellipsis cut all but the first. They wrap instead, up to three lines, and never below
+   their longest word (min-content, since overflow:hidden would make auto mean 0). On the narrowest phones there is no room beside
+   the title at all, so the preview moves under it, like a subtitle. */
+.lrow.sp-root-row .lrow-v{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;
+  min-width:min-content;max-width:62%;line-height:1.25;text-wrap:balance}
+@media (max-width:360px){
+  .lrow.sp-root-row:has(.lrow-v){display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:12px;row-gap:1px}
+  .lrow.sp-root-row:has(.lrow-v) .lrow-i{grid-column:1;grid-row:1 / span 2}
+  .lrow.sp-root-row:has(.lrow-v) .lrow-m{grid-column:2;grid-row:1}
+  .lrow.sp-root-row .lrow-v{grid-column:2;grid-row:2;min-width:0;max-width:none;text-align:start;font-size:15px;-webkit-line-clamp:2;line-clamp:2}
+  .lrow.sp-root-row:has(.lrow-v) .lrow-c{grid-column:3;grid-row:1 / span 2}
+}
+.lrow.dis .lrow-i,.lrow.dis .lrow-t,.lrow.dis .sw{opacity:.45}
+/* a row a search result jumped to: a short accent wash that fades out */
+.lrow.sp-flash,.btn.sp-flash{animation:spflash 1.8s ease}
+@keyframes spflash{0%,45%{background:var(--acc-soft)}100%{background:transparent}}
+.sp-empty{color:var(--label-2);text-align:center;padding:28px 12px;line-height:1.4}
+
+/* --- exercise config: disclosure rows --- */
+.disc-body{padding:4px 16px 14px}
+.disc.open .lrow-c{transform:rotate(90deg)}
+
+/* range toggle: small button at the end of a from/to input row */
+.cfgrow>.rng-btn{flex:none;align-self:flex-end;width:36px;height:36px}
+.rng-btn[aria-pressed="true"]{color:var(--acc)}
+.cfgrow>.unit-btn{flex:none;align-self:flex-end;width:auto;min-width:36px;height:36px;padding:0 12px;border-radius:18px;font-size:13px;white-space:nowrap}
+
+/* ----------------------------------------------------------- RTL (Arabic) -- */
+/* Directional icons flip: back chevrons point right, trailing chevrons point left. */
+[dir="rtl"] [data-icon="chevronLeft"],
+[dir="rtl"] [data-icon="chevronRight"]{transform:scaleX(-1)}
+/* Segmented control: flex order reverses, so the sliding indicator moves the other way. */
+[dir="rtl"] .seg-sel{transform:translateX(calc(-100% * var(--i)))}
+/* Numbers and dates inside Arabic text still read left-to-right. */
+[dir="rtl"] .num,[dir="rtl"] input[type="number"]{direction:ltr}
+/* Superset edge stripe points at the inline start (the right, in RTL). */
+[dir="rtl"] .item.in-ss,[dir="rtl"] .wd-ss{box-shadow:inset -3px 0 0 var(--acc)}
+/* Slider: the thumb is offset from inline-start, which is the right edge in RTL, so the
+   half-width centering shift points the other way. */
+[dir="rtl"] .sld-knob{transform:translateX(50%)}
+[dir="rtl"] .sld.dragging .sld-knob{transform:translateX(50%) scale(1.14)}
+/* Switch: the knob rests at inline-start (the right, in RTL), so "on" travels the other
+   way — the physical +20px would push it out of the track. */
+[dir="rtl"] .sw.on .knob{transform:translateX(-20px)}
+[dir="rtl"] .sw.on:active .knob{transform:translateX(-16px)}
+/* Chronological grids keep their left-to-right order: heatmap weeks and calendar
+   weekdays would otherwise mirror. */
+[dir="rtl"] .hm-wrap,[dir="rtl"] .cal-grid{direction:ltr}
+/* Tight tracking is tuned for Latin; Arabic is a connected script and gets none. */
+[dir="rtl"] *{letter-spacing:0}
+.exfix-link{display:inline-flex;align-items:center;gap:5px;margin:14px 0 4px;color:var(--label-3);text-decoration:none}
+.list .similar-label{margin:16px 2px 6px;grid-column:1/-1}
+
+/* The edge swipe back (lib/edge-swipe-back.js): the page follows the finger, the one it goes
+   back to slides in underneath with a shade over it. The sliding page's own ground reaches the
+   screen's edges (--eb-*: how far #app's padding and margins leave it short of them). */
+.edge-back-shade{position:fixed;inset:0;background:#000;opacity:.35;pointer-events:none;z-index:1}
+.edge-back-page{position:relative;z-index:2;will-change:transform}
+.edge-back-page::before{
+  content:'';position:absolute;z-index:-1;pointer-events:none;background:var(--bg);
+  top:calc(-1 * var(--eb-t,0px));bottom:calc(-1 * var(--eb-b,0px));
+  left:calc(-1 * var(--eb-l,0px));right:calc(-1 * var(--eb-r,0px));
+  box-shadow:0 0 28px rgba(0,0,0,.28);
+}
+
+/* Gym reminder (#614, views/GymReminder.jsx): the map with its pin and radius, and the editor rows */
+.gym-map-wrap{margin:0 0 22px}
+.gym-map{height:300px;border-radius:12px;overflow:hidden;background:var(--surface-2);z-index:0;isolation:isolate}
+.gym-map .leaflet-control-attribution{font-size:10px}
+.gym-pin span{display:block;width:30px;height:30px;border-radius:50% 50% 50% 0;background:var(--acc);transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.35);border:2px solid #fff}
+.gym-radius{stroke:var(--acc);fill:var(--acc);stroke-width:2}
+.gym-search{display:flex;gap:8px;align-items:center;padding:8px 12px}
+.gym-search>.field{flex:1;min-width:0;width:auto}
+.gym-search>.btn{flex:none;width:auto;padding-left:16px;padding-right:16px}
+.gym-field{padding:8px 12px}
+.gym-field input{width:100%}
+.gym-radius-row{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.gym-radius-row>:first-child{flex:1}
+.gym-radius-val{min-width:64px;text-align:end;font-variant-numeric:tabular-nums;color:var(--label-2)}
+.gym-actions{display:flex;flex-direction:column;gap:10px;margin:4px 0 30px}

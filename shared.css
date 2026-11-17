@@ -443,3 +443,5 @@ input[type=range],input[type=checkbox]{accent-color:var(--acc)}
 .runp{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:8px 0 4px}.rp-k{color:var(--label-2);font-size:var(--fs-label)}
 .rp-t{font-size:72px;font-weight:700;letter-spacing:-.03em;line-height:1.05}.rp-s{font-size:22px;font-weight:600}.runp-b{display:flex;gap:8px;margin:14px 0 8px;width:100%}.runp-b .btn{flex:1;min-height:46px}
 @media (prefers-reduced-motion:reduce){.vs{transition:none}}
+.top.scn button{padding:7px 14px;border-radius:99px;background:#1a1a1d;color:#a0a0a8;font:inherit;font-size:13px;font-weight:500;border:0;cursor:pointer}.top.scn button.on{background:var(--label);color:var(--bg)}
+.menu button[data-scn].on{color:var(--acc)}

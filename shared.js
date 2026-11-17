@@ -97,7 +97,7 @@ const EX={
   push:{name:"Cable pushdown",equip:"Cables",tags:["Triceps"],plan:PLAN('linear',3,12,1,25,120,{deload:{stalls:3,from:27.5,to:25},fail:1,kv:[["Last set to failure","Selected"]]}),step:2.5,ref:[[25,12],[25,11],[22.5,12]],best:[27.5,10]},
   ohp:{name:'Military press',equip:"Barbell",tags:["Shoulders"],plan:PLAN('five_three_one',3,5,null,[30,37.5],150,{rows:[[30,5],[35,5],[37.5,5]]}),bar:20,step:2.5,note:"Brace your glutes without arching your back.",ref:[[30,5],[35,5],[37.5,5]],best:[42.5,6]},
   legp:{name:'Leg press',equip:"Machine",tags:["Legs"],plan:PLAN('double',3,[10,15],[1,2],120,120,{warm:"Automatic · 2 sets",kv:[["Back-off sets","Each set one step lighter (−5 kg)"]]}),step:5,ref:[[120,12],[120,11],[120,10]],best:[130,10]},
-  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:75,warm:"Automatic · 3 sets",programme:{week:2,weeks:6,rpe:8}}),step:2.5,note:"Load is 75% of your 1RM.",ref:[[100,5],[100,5],[100,5]],best:[105,5]},
+  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:80,warm:"Automatic · 3 sets",programme:{week:2,weeks:6,rpe:8}}),step:2.5,note:"Load is 80% of your 1RM.",ref:[[95,5],[95,5],[95,5]],best:[105,5]},
   bulg:{name:"Dumbbell bulgarian split squat",equip:"Dumbbells",tags:["Legs","Glutes"],side:1,plan:PLAN('linear',3,16,1,14,90,{side:1}),step:2,ref:[[14,16],[14,16],[12,16]],best:[16,16]},
   pullup:{name:"Pull-up",equip:"Bodyweight",tags:["Back"],bw:1,plan:PLAN('bodyweight_ladder',[3,6],[6,20],[0,1],null,90,{kv:[['Current rung','Pull-up'],['Next rung','Wide-grip pull-up']]}),step:1,ref:[[8],[7],[6]],best:[10]},
   curl:{name:"Dumbbell biceps curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('triple',[3,4],[8,12],[1,2],12,75),step:1,ref:[[12,10],[12,9],[11,10]],best:[14,8]},
@@ -111,6 +111,31 @@ const EX={
   lat:{name:"Dumbbell lateral raise",equip:"Dumbbells",tags:["Shoulders"],plan:PLAN('double',[3,4],[12,15],[0,1],8,75,{out:1}),step:1,ref:[[8,12],[8,11],[8,10]],best:[10,8]}
 };
 
+const BWX=(name,tags,x={})=>({name,equip:"Bodyweight",tags,bw:1,step:1,...x});
+Object.assign(EX,{
+  dl:{name:"Barbell deadlift",equip:"Barbell",tags:["Back","Hamstrings","Glutes"],plan:PLAN('greyskull',3,5,null,110,180,{kv:[["Last set","AMRAP: add weight when you reach 5 or more"]]}),bar:20,step:2.5,rec:'8 reps at 105 kg',ref:[[105,5],[105,5],[105,8]],best:[105,8]},
+  hack:{name:"Hack squat",equip:"Machine",tags:["Legs","Glutes"],plan:PLAN('double',3,[8,12],[1,2],100,120),step:10,ref:[[100,12],[100,11],[100,10]],best:[120,10]},
+  calf:{name:"Standing calf raise",equip:"Machine",tags:["Legs"],plan:PLAN('undulating',4,[8,15],[1,2],80,60,{kv:[["Session","Heavy: 4 × 8 at the top of the load range"],["Wave","Heavy · Medium · Light across the week"]]}),step:5,ref:[[80,8],[80,8],[80,8],[80,7]],best:[90,8]},
+  hammer:{name:"Dumbbell hammer curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('double_controlled',3,[8,12],[1,2],12,60),step:1,ref:[[12,10],[12,10],[11,11]],best:[14,8]},
+  skull:{name:"EZ-bar skull crusher",equip:"Barbell",tags:["Triceps"],plan:PLAN('linear',3,10,2,25,60),bar:10,step:2.5,ref:[[25,10],[25,10],[25,9]],best:[30,8]},
+  face:{name:"Face pull",equip:"Cables",tags:["Shoulders"],plan:PLAN('double',3,[15,20],[0,1],20,60),step:2.5,ref:[[20,17],[20,16],[20,15]],best:[25,15]},
+  dip:BWX("Parallel bar dip",["Chest","Triceps"],{plan:PLAN('double',3,[8,12],[1,2],null,90),ref:[[10],[9],[8]],best:[12]}),
+  pist:BWX("Pistol squat",["Legs"],{side:1,plan:PLAN('linear',3,6,2,null,90,{side:1}),ref:[[6],[6],[5]],best:[8]}),
+  lsit:BWX("L-sit",["Core"],{mode:'time',step:5,plan:PLAN('hold_seconds',3,[0,0],null,null,75,{sec:[15,25]}),ref:[[18],[15],[15]],best:[25]}),
+  tuck:BWX("Tuck planche",["Shoulders","Core"],{mode:'time',step:2,plan:PLAN('hold_seconds',4,[0,0],null,null,90,{sec:[8,12]}),ref:[[10],[9],[8],[8]],best:[12]}),
+  sidep:BWX("Side plank",["Core"],{mode:'time',side:1,step:5,plan:PLAN('hold_seconds',3,[0,0],null,null,45,{sec:[30,45],side:1}),ref:[[35],[30],[30]],best:[45]}),
+  kb:{name:"Kettlebell swing",equip:"Kettlebell",tags:["Glutes","Core"],plan:PLAN('manual',3,15,null,24,45),step:4,ref:[[24,15],[24,15],[24,14]],best:[28,15]},
+  burp:BWX("Burpee",["Legs","Core"],{plan:PLAN('manual',3,12,null,null,30),ref:[[12],[11],[10]],best:[14]}),
+  box:BWX("Box jump",["Legs"],{plan:PLAN('manual',3,8,null,null,30),ref:[[8],[8],[7]],best:[10]}),
+  pu:BWX("Push-up",["Chest","Triceps"],{plan:PLAN('manual',4,12,null,null,0),ref:[[12],[12],[11],[10]],best:[20]}),
+  gob:{name:"Goblet squat",equip:"Dumbbells",tags:["Legs"],plan:PLAN('manual',4,10,null,16,0),step:2,ref:[[16,10],[16,10],[16,10],[16,9]],best:[20,8]},
+  lunge:{name:"Walking lunge",equip:"Dumbbells",tags:["Legs","Glutes"],plan:PLAN('manual',5,12,null,10,0),step:2,ref:[[10,12],[10,12],[10,11],[10,10],[10,9]],best:[12,12]},
+  sit:BWX("Sit-up",["Core"],{plan:PLAN('manual',5,15,null,null,0),ref:[[15],[15],[14],[13],[12]],best:[20]}),
+  mc:BWX("Mountain climber",["Core"],{plan:PLAN('manual',8,20,null,null,10),ref:[[20],[20],[20],[18],[18],[18],[16],[16]],best:[24]}),
+  bike:{name:"Stationary bike",equip:"Machine",tags:['Cardio'],mode:'cardio',plan:PLAN('manual',1,[0,0],null,null,0,{min:15,speed:24,kv:[["Incline","Optional, in % (0–40): enter it on the set"]]}),step:1,ref:[[15,24,0]],best:[20,25,0]},
+  walk:{name:"Run/walk program",equip:"Machine",tags:['Cardio'],mode:'cardio',plan:PLAN('manual',6,[0,0],null,null,0,{min:2,speed:9,kv:[["Program","Level 3 · run 2 min, walk 2 min × 3"],["Moves up","After three finished runs"]]}),step:1,ref:[[2,9,0],[2,5,0],[2,9,0],[2,5,0],[2,9,0],[2,5,0]],best:[2,10,0]}});
+EX.bench.backups=[{name:"Dumbbell bench press",equip:"Dumbbells",tags:["Chest","Triceps"]},{name:"Machine chest press",equip:"Machine",tags:["Chest","Triceps"]}];
+EX.legp.backups=[{name:"Hack squat",equip:"Machine",tags:["Legs","Glutes"]}];EX.hack.backups=[{name:"Leg press",equip:"Machine",tags:["Legs"]}];
 for(const k in EX)EX[k].id=k;
 EX.push.plan.int={t:'drop',count:1,pct:20};EX.lat.plan.int={t:'rp',total:6,rest:15};   
 const nextDrop=(prev,pct,step)=>{const raw=prev*(1-pct/100);let w=Math.round(raw/step)*step;if(prev>0&&w>=prev)w=prev-step;return Math.max(0,Math.round(w*1000)/1000)};
@@ -120,25 +145,52 @@ const withInt=(id,sets)=>{const it=EX[id].plan.int;if(!it)return sets;
   return sets.map(x=>{if(it.t==='drop'){const d=[];let w=x.w;for(let k=0;k<it.count;k++){w=nextDrop(w,it.pct,EX[id].step);d.push({w,r:x.r})}return{...x,type:'dropset',drops:d}}
     const c=splitBursts(it.total).map(r=>({r,restSec:it.rest}));return{...x,type:'restpause',clusters:c,r:x.r+it.total}})};
 
-const UNITS=[{ex:['bench']},{ex:['fly','push'],ss:1,name:"Chest finisher",rest:100},{ex:['ohp']},{ex:['incl']},{ex:['lat']},{ex:['latm']},{ex:['rdl']},{ex:['legp']},{ex:['squat']},{ex:['bulg']},{ex:['pullup']},{ex:['curl']},{ex:['rowb']},{ex:['crunch']},{ex:['plank']},{ex:['run']}];
+const sg=(k,d)=>{try{return sessionStorage.getItem(k)??d}catch{return d}}, ss=(k,v)=>{try{sessionStorage.setItem(k,v)}catch{}};
 const mk=(w,r,n)=>Array.from({length:n},()=>({w,r}));
-const INIT=()=>({cur:0,pop:null,sets:{
+const dn=(a,k,x)=>a.map((s,i)=>i<k?{...s,d:1,t:1,...(x?.[i]||{})}:s);   // first k sets done, x = per-set extras
+const SCN_ALL={
+  push:{title:"Push A",label:"Push A",units:[{ex:['bench']},{ex:['fly','push'],ss:1,name:"Chest finisher",rest:100},{ex:['ohp']},{ex:['incl']},{ex:['lat']},{ex:['latm']},{ex:['rdl']},{ex:['legp']},{ex:['squat']},{ex:['bulg']},{ex:['pullup']},{ex:['curl']},{ex:['rowb']},{ex:['crunch']},{ex:['plank']},{ex:['run']}],init:()=>INIT0()},
+  lower:{title:"Lower A",label:"Lower A",units:[{ex:['squat']},{ex:['dl']},{ex:['hack']},{ex:['rdl']},{ex:['calf']},{ex:['crunch']}],
+    seed:S=>{S.tempo={squat:'3-1-1-0'};S.stk={hack:{on:1,w:[40,60,80,100,120,140,160,180]}};S.noRest={calf:true}},
+    init:()=>({cur:0,pop:null,sets:{
+      squat:dn([{w:50,r:5,wu:1},{w:70,r:3,wu:1},{w:90,r:2,wu:1},{w:95,r:5,e:2},{w:95,r:6,e:2,note:"Belt from here on",film:1},{w:95,r:4,e:1}],6),
+      dl:dn([{w:60,r:5,wu:1},{w:90,r:3,wu:1},{w:110,r:5},{w:110,r:5},{w:110,r:5,max:1}],4,{3:{e:2},4:{e:1}}),
+      hack:mk(100,10,3),rdl:[{w:40,r:8,wu:1},{w:70,r:4,wu:1},{w:100,r:6,ph:'top'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'}],calf:mk(80,8,4),crunch:mk(30,10,3)}})},
+  upper:{title:"Upper B",label:"Upper B",units:[{ex:['incl']},{ex:['latm']},{ex:['lat']},{ex:['fly','push'],ss:1,name:"Chest finisher",rest:100},{ex:['curl','hammer','skull'],ss:1,name:"Arms triset",rest:90},{ex:['face']}],
+    init:()=>({cur:0,pop:null,sets:{
+      incl:dn([{w:16,r:8},{w:20,r:8},{w:24,r:7}],3,{0:{e:3},1:{e:2,note:"Left shoulder pinched"},2:{e:1,film:1}}),
+      latm:dn([{w:40,r:12},{w:45,r:10},{w:50,r:8},{w:50,r:0,max:1}],2),lat:withInt('lat',mk(8,12,1)),
+      fly:mk(15,12,3),push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;return a})(),
+      curl:mk(12,10,3),hammer:mk(12,10,3),skull:mk(25,10,3),face:mk(20,15,3)}})},
+  pull:{title:"Pull & core",label:"Calisthenics",units:[{ex:['pullup']},{ex:['dip','lsit'],ss:1,name:"Dips and L-sit",rest:90},{ex:['pist']},{ex:['tuck']},{ex:['sidep']},{ex:['plank']}],
+    init:()=>({cur:0,pop:null,sets:{
+      pullup:dn([{r:8},{r:7},{r:6}],2,{0:{e:2},1:{e:1}}),dip:mk(null,10,3).map(({r})=>({r})),lsit:[{sec:15},{sec:15},{sec:15}],
+      pist:Array.from({length:3},()=>({r:6,sides:{L:{r:3},R:{r:3}}})),tuck:[{sec:8},{sec:8},{sec:8},{sec:8}],
+      sidep:Array.from({length:3},()=>({sec:30,sides:{L:{sec:30},R:{sec:30}}})),plank:[{sec:30},{sec:25},{sec:30}]}})},
+  cond:{title:"Conditioning",label:"Circuits & cardio",units:[{ex:['kb','burp','box'],ss:1,name:"Full-body circuit",run:'circ',rest:60},{ex:['pu','gob'],ss:1,name:"EMOM · 8 min",run:'emom'},{ex:['lunge','sit'],ss:1,name:"AMRAP · 10 min",run:'amrap'},{ex:['mc'],ss:1,name:"Tabata · 20/10 × 8",run:'tab'},{ex:['bike']},{ex:['walk']}],
+    init:()=>({cur:0,pop:null,sets:{
+      kb:dn(mk(24,15,3),3),burp:dn(mk(null,12,3).map(({r})=>({r})),2),box:mk(null,8,3).map(({r})=>({r})),
+      pu:mk(null,12,4).map(({r})=>({r})),gob:mk(16,10,4),lunge:mk(10,12,5),sit:mk(null,15,5).map(({r})=>({r})),
+      mc:Array.from({length:8},()=>({r:20})),bike:[{min:15,speed:24,inc:0}],walk:[9,5,9,5,9,5].map(v=>({min:2,speed:v,inc:0}))}})}};
+const SCN=(()=>{const q=new URLSearchParams(location.search).get('s');if(q&&SCN_ALL[q])try{sessionStorage.setItem('og-scn',q)}catch{}const k=sg('og-scn','push');return SCN_ALL[k]?k:'push'})();
+const UNITS=SCN_ALL[SCN].units;
+const SKEY='og-demo5-'+SCN;
+function INIT0(){return{cur:0,pop:null,sets:{
   bench:[{w:40,r:10,wu:1,d:1,t:1},{w:60,r:8,d:1,t:1,e:3},{w:60,r:6,d:1,t:1,e:1},{w:65,r:11,d:1,t:1,e:0,f:1},{w:60,r:8}],
   fly:[{w:15,r:12},{w:15,r:12},{w:12.5,r:14}],push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;return a})(),ohp:[{w:30,r:5},{w:35,r:5},{w:37.5,r:5}],lat:withInt('lat',mk(8,12,1)),
   legp:[{w:60,r:10,wu:1},{w:90,r:6,wu:1},{w:120,r:12},{w:115,r:12},{w:110,r:12}],
   incl:[{w:16,r:8},{w:20,r:8},{w:24,r:8}],latm:[{w:40,r:12},{w:45,r:10},{w:50,r:8},{w:50,r:0,max:1}],
   rdl:[{w:40,r:8,wu:1},{w:70,r:4,wu:1},{w:100,r:6,ph:'top'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'}],rowb:mk(52.5,10,3),crunch:mk(30,10,3),squat:mk(0,5,3),
   bulg:Array.from({length:3},()=>({w:14,r:16,sides:{L:{w:14,r:8},R:{w:14,r:8}}})),
-  pullup:Array.from({length:3},()=>({r:8})),curl:mk(12,10,3),plank:[{sec:30},{sec:25},{sec:30}],run:[{min:20,speed:8,inc:2}]}});
-const sg=(k,d)=>{try{return sessionStorage.getItem(k)??d}catch{return d}}, ss=(k,v)=>{try{sessionStorage.setItem(k,v)}catch{}};
-let S;try{S=JSON.parse(sg('og-demo5','null'))}catch{}S=S||INIT();S.weightEntry=S.weightEntry||{};S.fav=S.fav||{face:1,dip:1};S.stk=S.stk||{};S.noRest=S.noRest||{};S.tempo=S.tempo||{};S.runs=S.runs||{};S.bk=S.bk||{};
+  pullup:Array.from({length:3},()=>({r:8})),curl:mk(12,10,3),plank:[{sec:30},{sec:25},{sec:30}],run:[{min:20,speed:8,inc:2}]}}}
+const INIT=()=>{const d=SCN_ALL[SCN].init();return d};
+let S;try{S=JSON.parse(sg(SKEY,'null'))}catch{}if(!S){S=INIT();SCN_ALL[SCN].seed?.(S)}S.weightEntry=S.weightEntry||{};S.fav=S.fav||{face:1,dip:1};S.stk=S.stk||{};S.noRest=S.noRest||{};S.tempo=S.tempo||{};S.runs=S.runs||{};S.bk=S.bk||{};
 
 const EF=()=>sg('og-effort','off'),effOf=(id,s)=>s.e??null,effShow=v=>EF()==='rpe'?10-v:v;
-const save=()=>ss('og-demo5',JSON.stringify(S));
+const save=()=>ss(SKEY,JSON.stringify(S));
+UNITS.forEach(u=>{if(u.run&&!S.runs[u.ex.join(',')])S.runs[u.ex.join(',')]=u.run});
 for(const k in S.sets)S.sets[k]=S.sets[k].filter(s=>!s.o);S.added=(S.added||[]).filter(a=>Array.isArray(a.ex.plan?.n));   
 (S.added||[]).forEach(a=>{a.ex.id=a.id;EX[a.id]=a.ex;UNITS.push({ex:[a.id]})});
-EX.bench.backups=[{name:"Dumbbell bench press",equip:"Dumbbells",tags:["Chest","Triceps"]},{name:"Machine chest press",equip:"Machine",tags:["Chest","Triceps"]}];
-EX.legp.backups=[{name:"Hack squat",equip:"Machine",tags:["Legs","Glutes"]}];
 for(const k in S.bk)if(EX[k])Object.assign(EX[k],S.bk[k]);
 
 
@@ -283,9 +335,9 @@ function setRow(id,i,o={}){const s=S.sets[id][i],nx=nextOpen(),next=nx&&!s.d&&((
   const main=s.sides?`<div class="${cls}"${next?' aria-current="step"':''}>${fm}${num}<div class="side-rows">${['L','R'].map(sd=>`<div class="srow${s.sides[sd].d?' done':''}"><span class="sd">${sd}</span>${rowCells(id,i,o,sd)}${chk(sd,s.sides[sd].d)}</div>`).join('')}</div>${more}</div>`
     :`<div class="${cls}"${next?' aria-current="step"':''}>${fm}${num}${rowCells(id,i,o)}${m==='time'?`<button class="setgo" data-act="tick" ${a} aria-label="Start hold" title="Start hold">${ic('play',16)}</button>`:''}${chk(null,s.d)}${more}</div>`;
   const pv=S.sets[id][i-1],lab=s.max?`<div class="setlbl">Max: as many reps as possible${EX[id].rec?` · Record: ${EX[id].rec}`:''}</div>`:s.ph&&s.ph!==pv?.ph?`<div class="setlbl">${s.ph==='top'?'Top set':'Back-off'}</div>`:'';
-  return lab+main+subs(id,i,next)+(s.note?`<button class="setnote-line" data-act="setnote" ${a} aria-label="Edit note: ${esc(s.note)}">${ic('note',16)}<span>${esc(s.note)}</span></button>`:'')}
+  return lab+main+subs(id,i,next)+(s.film?`<button class="setnote-line" data-act="film" ${a} aria-label="Play form video">${ic('video',16)}<span>Form video · tap to play</span></button>`:'')+(s.note?`<button class="setnote-line" data-act="setnote" ${a} aria-label="Edit note: ${esc(s.note)}">${ic('note',16)}<span>${esc(s.note)}</span></button>`:'')}
 
-const setCtl=(id,lbl,o={})=>{const a=`data-ex="${id}"`;return`<div class="sctl${unitOf(String(id).split(',')[0])===S.cur?' cur':''}"><div class="sbtns">${lbl?`<span class="L">${lbl}</span>`:''}${modeOf(String(id).split(',')[0])==='reps'?`<button class="btn sm" data-act="wadd" ${a}>${ic('flame',15)}Warm-ups</button>`:''}<button class="btn sm" data-act="sadd" ${a}>${ic('plus',15,2.2)}Add set</button>${String(id).includes(',')?`<button class="btn sm" data-act="runs" ${a}>${ic('timer',15)}How it runs</button>`:''}${o.i!=null?`<button class="btn sm" data-act="smenu" ${a} data-i="${o.i}">${ic('dots',15)}Set options</button>`:''}</div></div>`};
+const setCtl=(id,lbl,o={})=>{const a=`data-ex="${id}"`;return`<div class="sctl${unitOf(String(id).split(',')[0])===S.cur?' cur':''}"><div class="sbtns">${lbl?`<span class="L">${lbl}</span>`:''}${modeOf(String(id).split(',')[0])==='reps'?`<button class="btn sm" data-act="wadd" ${a}>${ic('flame',15)}Warm-ups</button>`:''}<button class="btn sm" data-act="sadd" ${a}>${ic('plus',15,2.2)}Add set</button>${o.run||String(id).includes(',')?`<button class="btn sm" data-act="runs" ${a}>${ic('timer',15)}How it runs</button>`:''}${o.i!=null?`<button class="btn sm" data-act="smenu" ${a} data-i="${o.i}">${ic('dots',15)}Set options</button>`:''}</div></div>`};
 
 function subs(id,i,on){const s=S.sets[id][i];if(s.wu||s.sides||modeOf(id)!=='reps')return'';const a=`data-ex="${id}" data-i="${i}"`,L=(k,kd,f,v)=>`${a} data-k="${k}" data-kind="${kd}" data-f="${f}"`;
   const mini=(v,k,kd,f)=>`<div class="stp mini"><button data-act="sdec" ${L(k,kd,f)} aria-label="Decrease">${ic('minus',14,2.2)}</button><input class="num sub" inputmode="decimal" ${L(k,kd,f)} value="${fmt(f==='w'?wShow(id,v):v)}" aria-label="${kd==='d'?'Drop':'Burst'} ${k+1} ${f==='w'?"weight":"reps"}"><button data-act="sinc" ${L(k,kd,f)} aria-label="Increase">${ic('plus',14,2.2)}</button></div>`;
@@ -343,7 +395,7 @@ function runPlayer(ids,k){const ex=ids.split(','),r=RUNS.find(x=>x[0]===k),tab=k
     <div class="runp-b"><button class="btn" data-p>Pause</button><button class="btn primary" data-d>Done</button><button class="btn" data-s>Skip</button></div><div class="muted small">3-2-1 beeps and a buzz at the end of each interval. The screen stays on.</div></div>`,(el,c)=>{sh=el;let on=1;
     el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p!=null){on=!on;b.textContent=on?'Pause':'Resume'}
       else{const st=ex[n%ex.length],w=S.sets[st],o=w.find(x=>!x.d&&!x.wu);if(b.dataset.d!=null&&o){o.d=1;o.t=1;save()}n++;left=tab?(work=!work)?20:10:k==='emom'?60:left;paint()}});
-    t=setInterval(()=>{if(on&&--left<=0){left=tab?(work=!work)?20:10:k==='emom'?60:0;if(left)n++;else c()}paint()},1000);paint()},()=>{clearInterval(t);RENDER()})}
+    t=setInterval(()=>{if(on&&k==='circ')left++;else if(on&&--left<=0){left=tab?(work=!work)?20:10:k==='emom'?60:0;if(left)n++;else c()}paint()},1000);paint()},()=>{clearInterval(t);RENDER()})}
 let sh;const ROPEN={};
 function ssBody(u,o={}){const un=UNITS[u],cr=curRound(u),m=maxSets(u),sum=r=>un.ex.map(e=>{const s=S.sets[e][r];return s?fmt(wShow(e,s.w))+'×'+s.r:''}).filter(Boolean).join(' · ');
   const L=k=>String.fromCharCode(65+k),ord=o.abc?ssPlan(u,o):'';
@@ -351,7 +403,7 @@ function ssBody(u,o={}){const un=UNITS[u],cr=curRound(u),m=maxSets(u),sum=r=>un.
   const hdr=(sets,k)=>{const h=sethead(sets[k],true),prev=k?sethead(sets[k-1],true):o.dense?sethead(null,true):'';return h===prev?'':h};
   return ord+Array.from({length:m},(_,r)=>{const sets=un.ex.filter(e=>S.sets[e][r]),done=sets.every(e=>S.sets[e][r].d),key=u+':'+r,open=ROPEN[key]??true,st=done?'done':r===cr?'cur':'fut';
     return`<section class="rgrp ${st}${open?' open':''}"><button class="rhd" data-act="rtoggle" data-key="${key}" data-open="${open?1:0}" aria-expanded="${open}"><span class="rt">${done?ic('check',14,2.6):''}Round ${r+1}</span><span class="rs tnum">${open?'':sum(r)}</span>${ic(open?'chevU':'chevD',16)}</button>
-      ${open?`<div class="rbody">${sets.map((e,k)=>hdr(sets,k)+(o.abc?setRow(e,r,{...o,letter:L(un.ex.indexOf(e))}):`<div class="rname">${EX[e].name}<span> · ${EX[e].equip}</span></div>${setRow(e,r,o)}`)).join('')}</div>`:''}</section>`}).join('')+`<div class="sctls">${setCtl(un.ex.join(','))}</div>`}
+      ${open?`<div class="rbody">${sets.map((e,k)=>hdr(sets,k)+(o.abc?setRow(e,r,{...o,letter:L(un.ex.indexOf(e))}):`<div class="rname">${EX[e].name}<span> · ${EX[e].equip}</span></div>${setRow(e,r,o)}`)).join('')}</div>`:''}</section>`}).join('')+`<div class="sctls">${setCtl(un.ex.join(','),'',{run:1})}</div>`}
 
 const Rest={on:0,left:0,total:0,paused:0,ready:0,open:sg('og-rest-open','0')==='1',
   mode:()=>sg('og-rest-mode','remember'),
@@ -415,12 +467,13 @@ function chrome(){
   const mode=document.body.dataset.mode,name=MODES.find(m=>m[0]===mode)[1],notes=$('#notes')?.innerHTML||'',ctl=$('#ctl')?.innerHTML||'';
   document.body.insertAdjacentHTML('afterbegin',`
   <nav class="top" aria-label="Views">${MODES.map(([k,n])=>`<a href="${k}.html" class="${k===mode?'on':''}">${n}</a>`).join('')}<a href="index.html">All mocks</a></nav>
+  <nav class="top scn" aria-label="Sessions">${Object.entries(SCN_ALL).map(([k,v])=>`<button data-scn="${k}" class="${k===SCN?'on':''}">${v.label}</button>`).join('')}</nav>
   <div class="row"><div class="phone" id="phone">
-    <div class="screen" id="screen"><header class="whdr"><div class="whdr-row"><div><div class="wt">Push A</div>
+    <div class="screen" id="screen"><header class="whdr"><div class="whdr-row"><div><div class="wt">${SCN_ALL[SCN].title}</div>
       <div class="wsub"><span id="clk"></span> · <span class="cnt" aria-live="polite"></span></div></div>
       <button class="fpill" data-act="finish">Finish</button><button class="ibtn" data-act="menu" aria-label="Workout menu" aria-haspopup="true">${ic('dots',22)}</button></div>
       <div class="wprog" role="progressbar"><i></i></div><div class="chiprow"><nav class="chips" id="chips" aria-label="Workout exercises"></nav><button class="mmini iconbtn whdr-map" id="mm" data-act="mmap" aria-haspopup="dialog" aria-label="Muscle map: done and planned sets per muscle" hidden></button></div><div id="hx"></div></header><main id="view"></main></div>
-    <div class="menu" id="menu" hidden><button data-act="wset">${ic('set',18)}Workout settings</button><button data-act="addex">${ic('plus',18)}Add exercise</button><button data-act="note">${ic('pencil',18)}Session note</button><div class="mh">View</div>${MODES.map(([k,n])=>`<a href="${k}.html" class="${k===mode?'on':''}">${n}${k===mode?ic('check',16,2.4):''}</a>`).join('')}<button class="dng" data-act="discard">${ic('trash',18)}Discard workout</button></div>
+    <div class="menu" id="menu" hidden><button data-act="wset">${ic('set',18)}Workout settings</button><button data-act="addex">${ic('plus',18)}Add exercise</button><button data-act="note">${ic('pencil',18)}Session note</button><div class="mh">Session</div>${Object.entries(SCN_ALL).map(([k,v])=>`<button data-scn="${k}" class="${k===SCN?'on':''}">${v.label}${k===SCN?ic('check',16,2.4):''}</button>`).join('')}<div class="mh">View</div>${MODES.map(([k,n])=>`<a href="${k}.html" class="${k===mode?'on':''}">${n}${k===mode?ic('check',16,2.4):''}</a>`).join('')}<button class="dng" data-act="discard">${ic('trash',18)}Discard workout</button></div>
     <div class="rest" id="rest" hidden><button class="rest-handle" data-r="toggle" aria-expanded="false" aria-label="Rest details"><span></span></button>
       <div class="rest-detail" id="rd"></div>
       <div class="rest-main"><button class="rest-t" data-act="rtime" aria-label="Change the time left"><b id="rt">0:00</b><small id="rl">rest</small></button><div class="rest-prog"><i id="rp"></i></div>
@@ -438,7 +491,8 @@ function chrome(){
       <button class="abtn" id="reset">Reset demo</button></div>
     <div class="muted">Demo data. Complete a set with ✓ to start rest; tap the rest bar handle to expand it.</div></aside></div>`);
   $('#mmode').value=MS();$('#mmode').onchange=e=>{ss('og-media',e.target.value);RENDER()};$('#chmode').value=CHIPS()?'1':'0';$('#chmode').onchange=e=>{ss('og-chips',e.target.value);RENDER()};$('#emode').value=EF();$('#emode').onchange=e=>{ss('og-effort',e.target.value);RENDER()};$('#wemode').value=['each','total'].find(m=>Object.keys(EX).filter(weOk).every(k=>weMode(k)===m))||'as';$('#wemode').onchange=e=>{Object.keys(EX).filter(weOk).forEach(k=>S.weightEntry[k]={mode:e.target.value,_ts:Date.now()});save();RENDER()};$('#rackmode').value=rackOn()?'1':'0';$('#rackmode').onchange=e=>{ss('og-rack',e.target.value)};$('#sqrm').value=sg('og-sqrm','none');$('#sqrm').onchange=e=>{ss('og-sqrm',e.target.value);if(S.oneRm)delete S.oneRm.squat;save();RENDER()};$('#oopw').value=OOPW();$('#oopw').onchange=e=>{ss('og-oopw',e.target.value);RENDER()};$('#rmode').value=Rest.mode();$('#rmode').onchange=e=>{ss('og-rest-mode',e.target.value)};
-  $('#reset').onclick=()=>{try{sessionStorage.clear()}catch{}location.reload()};
+  $('#reset').onclick=()=>{try{sessionStorage.clear();sessionStorage.setItem('og-scn',SCN)}catch{}location.reload()};
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-scn]');if(b){ss('og-scn',b.dataset.scn);location.href=location.pathname}});
   new ResizeObserver(()=>$('#phone').style.setProperty('--rest-h',$('#rest').hidden?'0px':$('#rest').offsetHeight+8+'px')).observe($('#rest'));
 }
 let RENDER=()=>{};
@@ -460,6 +514,7 @@ document.addEventListener('click',e=>{
   if(a==='logref'){ss('og-logref',refBest()?'last':'best');RENDER();return}
   if(a==='smenu'){setMenu(id,i);return}
   if(a==='runs'){runsSheet(id);return}
+  if(a==='film'){toast("Plays muted and looping, 0.5× or full screen");return}
   if(a==='oopinfo'){oopSheet(id);return}
   if(a==='mmap'){mapSheet();return}
   if(a==='excfg'){exCfgSheet(id);return}
@@ -712,8 +767,8 @@ function finishSummary(){const c=counts(),ids=Object.keys(S.sets),vol=ids.reduce
     <h4 class="sec">Last time and next time</h4><div class="list">${lastNext().map(r=>`<div class="item" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${esc(EX[r.id].name)}</b><span style="color:${TR[r.trend][1]};display:inline-flex" aria-label="${r.trend>0?"Better than last time":r.trend<0?"Below last time":"Same as last time"}">${ic(TR[r.trend][0],18,2.2)}</span></div>
       <div class="small">Today: ${setsLine(r.today,r.bw)}</div><div class="small muted">Last time: ${setsLine(r.last,r.bw)}</div><div class="small accent">Next time: ${r.bw?r.next.r+' reps':fmt(r.next.w)+' kg × '+r.next.r} · ${W[r.next.k]}</div></div>`).join('')||"<div class=\"muted small\" style=\"padding:10px\">Complete a few sets to see the comparison.</div>"}</div>
     ${cardio.length?`<h4 class="sec">Cardio</h4><div class="list">${cardio.map(id=>`<div class="item" style="display:block"><b>${esc(EX[id].name)}</b><div class="small">${S.sets[id].filter(x=>x.d).map(x=>valBase(id,x)).join('  ·  ')}</div></div>`).join('')}</div>`:''}
-    ${added.length?`<h4 class="sec">New in this workout</h4><div class="list">${added.map(a=>`<div class="item" style="display:block"><b>${esc(a.ex.name)}</b><div class="small">${S.sets[a.id].filter(x=>x.d&&!x.wu).length} sets done</div><button class="btn" style="margin-top:8px" data-add="${a.id}">Add to Push A</button></div>`).join('')}</div>`:''}
-    <div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Done</button>`,(sh,close)=>sh.addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(b){b.disabled=true;b.textContent='Added to Push A';return}if(e.target.closest('[data-x]'))close()}))}
+    ${added.length?`<h4 class="sec">New in this workout</h4><div class="list">${added.map(a=>`<div class="item" style="display:block"><b>${esc(a.ex.name)}</b><div class="small">${S.sets[a.id].filter(x=>x.d&&!x.wu).length} sets done</div><button class="btn" style="margin-top:8px" data-add="${a.id}">Add to ${SCN_ALL[SCN].title}</button></div>`).join('')}</div>`:''}
+    <div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Done</button>`,(sh,close)=>sh.addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(b){b.disabled=true;b.textContent='Added to '+SCN_ALL[SCN].title;return}if(e.target.closest('[data-x]'))close()}))}
 function restSheet(id,i){const s=S.sets[id][i];openSheet(`<h3 style="margin-bottom:2px">Rest after this set</h3><div class="muted small" style="margin-bottom:10px">${esc(EX[id].name)} · Set ${wn(id,i)}. Applies to today's workout only.</div><div class="list menu-list">${[[null,"Exercise default"],[0,"No timer"],[30,"0:30"],[60,"1:00"],[90,"1:30"],[120,"2:00"],[180,"3:00"],[300,"5:00"]].map(([v,l])=>`<div class="item menu-item" tabindex="0" role="button" data-v="${v}"><div class="grow"><div class="tt">${l}</div></div><span class="menu-on${(s.rest??null)===v?' is-on':''}">${ic('check',16,2.4)}</span></div>`).join('')}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const v=e.target.closest('[data-v]')?.dataset.v;if(v==null)return;if(v==='null')delete s.rest;else s.rest=+v;close();save();RENDER()}))}
 function confirmDiscard(){openSheet(`<h3 style="margin-bottom:2px">Discard workout?</h3><div class="muted small" style="margin-bottom:10px">The sets you logged in this session will be lost.</div>
   <div class="list menu-list">${menuItem('go','trash',"Discard",' danger')}${menuItem('no','x',"Cancel")}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();if(m==='go')toast("Workout discarded")}))}
