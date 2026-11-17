@@ -1,9 +1,9 @@
-/* openGym 1.4.3 · Progression Engine v2. Shared demo workout session and phone shell. */
+/* openGym 1.4.5 · Progression Engine v2. Shared demo workout session and phone shell. */
 
 
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const fmt=n=>String(n);
-const IC={plus:'M12 5v14M5 12h14',minus:'M5 12h14',check:'M5 12.5l4.5 4.5L19 7.5',chevR:'M9 5l7 7-7 7',chevL:'M15 5l-7 7 7 7',chevD:'M5 9l7 7 7-7',chevU:'M5 15l7-7 7 7',
+const IC={video:'M3 7h12v10H3zM15 11l6-3v8l-6-3',plus:'M12 5v14M5 12h14',minus:'M5 12h14',check:'M5 12.5l4.5 4.5L19 7.5',chevR:'M9 5l7 7-7 7',chevL:'M15 5l-7 7 7 7',chevD:'M5 9l7 7 7-7',chevU:'M5 15l7-7 7 7',
   dots:'M12 5.5v.01M12 12v.01M12 18.5v.01',flame:'M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z',
   link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   note:'M6 3h9l4 4v14H6zM9 12h7M9 16h7',x:'M6 6l12 12M18 6L6 18',skip:'M5 5l9 7-9 7zM18 5v14',pause:'M8 5v14M16 5v14',play:'M7 5l12 7-12 7z',
@@ -17,8 +17,8 @@ const R2=v=>[].concat(v,v).slice(0,2);
 const PLAN=(preset,n,r,rir,load,rest,x={})=>({preset,n:R2(n),r:R2(r),rir:rir==null?null:R2(rir),load:load==null?null:R2(load),rest,...x});
 
 const PRESET={
-  "autoregulated": [
-    "Autoregulated",
+  "manual": [
+    "Manual",
     "You set every value by feel (reps, load or seconds); nothing is advanced for you."
   ],
   "linear": [
@@ -65,6 +65,8 @@ const PRESET={
     "Accumulation then intensification",
     "Build reps at a lighter percentage of your training max, then a heavier block of fewer reps."
   ],
+  "double_controlled": ["Controlled double progression", "Build reps inside the range while keeping the target effort, then add weight."],
+  "undulating": ["Undulating", "Alternate sessions with different rep and load targets."],
   "density": [
     "Density",
     "Same work, a little less rest after every clean session."
@@ -91,18 +93,18 @@ const DEF_REST=90;
 const EX={
   bench:{name:"Barbell bench press",equip:"Barbell",tags:["Chest","Triceps"],plan:PLAN('linear',4,8,2,60,120,{warm:"Automatic · 1 set"}),bar:20,step:2.5,
     pin:"Retract your shoulder blades and plant your feet.",note:"Pause for 1 second at the chest.",ref:[[60,8],[60,8],[57.5,9]],best:[62.5,8]},
-  fly:{name:"Cable fly",equip:"Cables",tags:["Chest"],plan:PLAN('autoregulated',3,12,1,15,90),step:2.5,note:"Keep elbows slightly bent.",ref:[[15,12],[15,12],[12.5,13]],best:[17.5,10]},
+  fly:{name:"Cable fly",equip:"Cables",tags:["Chest"],plan:PLAN('manual',3,12,1,15,90),step:2.5,note:"Keep elbows slightly bent.",ref:[[15,12],[15,12],[12.5,13]],best:[17.5,10]},
   push:{name:"Cable pushdown",equip:"Cables",tags:["Triceps"],plan:PLAN('linear',3,12,1,25,120,{deload:{stalls:3,from:27.5,to:25},fail:1,kv:[["Last set to failure","Selected"]]}),step:2.5,ref:[[25,12],[25,11],[22.5,12]],best:[27.5,10]},
   ohp:{name:'Military press',equip:"Barbell",tags:["Shoulders"],plan:PLAN('five_three_one',3,5,null,[30,37.5],150,{rows:[[30,5],[35,5],[37.5,5]]}),bar:20,step:2.5,note:"Brace your glutes without arching your back.",ref:[[30,5],[35,5],[37.5,5]],best:[42.5,6]},
   legp:{name:'Leg press',equip:"Machine",tags:["Legs"],plan:PLAN('double',3,[10,15],[1,2],120,120,{warm:"Automatic · 2 sets",kv:[["Back-off sets","Each set one step lighter (−5 kg)"]]}),step:5,ref:[[120,12],[120,11],[120,10]],best:[130,10]},
-  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:75,warm:"Automatic · 3 sets"}),step:2.5,note:"Load is 75% of your 1RM.",ref:[[100,5],[100,5],[100,5]],best:[105,5]},
+  squat:{name:'Barbell squat',equip:"Barbell",tags:["Legs"],plan:PLAN('linear',3,5,2,null,180,{pct:75,warm:"Automatic · 3 sets",programme:{week:2,weeks:6,rpe:8}}),step:2.5,note:"Load is 75% of your 1RM.",ref:[[100,5],[100,5],[100,5]],best:[105,5]},
   bulg:{name:"Dumbbell bulgarian split squat",equip:"Dumbbells",tags:["Legs","Glutes"],side:1,plan:PLAN('linear',3,16,1,14,90,{side:1}),step:2,ref:[[14,16],[14,16],[12,16]],best:[16,16]},
-  pullup:{name:"Pull-up",equip:"Bodyweight",tags:["Back"],bw:1,plan:PLAN('bodyweight_ladder',[3,6],[6,20],[0,1],null,90,{completed:1}),step:1,ref:[[8],[7],[6]],best:[10]},
+  pullup:{name:"Pull-up",equip:"Bodyweight",tags:["Back"],bw:1,plan:PLAN('bodyweight_ladder',[3,6],[6,20],[0,1],null,90,{kv:[['Current rung','Pull-up'],['Next rung','Wide-grip pull-up']]}),step:1,ref:[[8],[7],[6]],best:[10]},
   curl:{name:"Dumbbell biceps curl",equip:"Dumbbells",tags:["Biceps"],plan:PLAN('triple',[3,4],[8,12],[1,2],12,75),step:1,ref:[[12,10],[12,9],[11,10]],best:[14,8]},
   plank:{name:'Front plank',equip:"Bodyweight",tags:['Core'],mode:'time',bw:1,plan:PLAN('hold_seconds',3,[0,0],null,null,60,{sec:[30,45]}),step:5,ref:[[40],[35],[30]],best:[50]},
   rowb:{name:"Barbell bent over row",equip:"Barbell",tags:["Back"],plan:PLAN('accumulation_intensification',3,[8,12],null,[52.5,52.5],120,{phase:"Accumulation",kv:[['Phase',"Accumulation · reps 8 → 12 at 65% of training max"],["Training max",'80 kg (90% 1RM)'],["Then","Intensification 3 × 4 at 80%, after 4 successful sessions"]]}),bar:20,step:2.5,ref:[[52.5,9],[52.5,9],[52.5,8]],best:[60,8]},
   crunch:{name:"Cable kneeling crunch",equip:"Cables",tags:['Core'],plan:PLAN('density',3,10,null,30,85,{kv:[["Density","Rest −5 sec after each successful session, down to 45 sec"]]}),step:2.5,ref:[[30,10],[30,10],[30,10]],best:[35,8]},
-  run:{name:"Run on treadmill",equip:"Machine",tags:['Cardio'],mode:'cardio',plan:PLAN('autoregulated',1,[0,0],null,null,0,{min:20,speed:8,kv:[["Incline","Optional, in % (0–40): enter it on the set"]]}),step:1,ref:[[20,8,2]],best:[25,8,3]},
+  run:{name:"Run on treadmill",equip:"Machine",tags:['Cardio'],mode:'cardio',plan:PLAN('manual',1,[0,0],null,null,0,{min:20,speed:8,kv:[["Incline","Optional, in % (0–40): enter it on the set"]]}),step:1,ref:[[20,8,2]],best:[25,8,3]},
   incl:{name:"Dumbbell incline bench press",equip:"Dumbbells",tags:["Chest","Shoulders"],plan:PLAN('pyramid',3,8,2,[16,24],150,{rows:[[16,8],[20,8],[24,8]],perRow:false,kv:[["Direction","Lightest first: 70 · 85 · 100% of the anchor load"],["Decide the session","Sets at 100%"]]}),step:2,ref:[[16,8],[20,8],[24,7]],best:[26,6]},
   latm:{name:'Lat machine',equip:"Cables",tags:["Back"],plan:PLAN('pyramid_reps',4,[8,12],null,[40,50],120,{rows:[[40,12],[45,10],[50,8],[50,'max']],kv:[["Set Max","Last set: as many reps as possible. Record at this weight: 11 reps at 50 kg"],["Load per set",'40 / 45 / 50 / 50 kg']]}),step:2.5,note:"Last set: as many reps as possible.",rec:'11 reps at 50 kg',ref:[[40,12],[45,10],[50,8],[50,10]],best:[50,11]},
   rdl:{name:"Barbell Romanian deadlift",equip:"Barbell",tags:["Hamstrings","Glutes"],plan:PLAN('top_set_backoff',[4,4],[6,8],null,[90,100],180,{rows:[[100,6],[90,8],[90,8],[90,8]],tsb:{n:3,r:8,pct:90,rest:120},warm:"Automatic · 2 sets",kv:[['Top set',"1 × 6 @ 100 kg · rest 3min"],['Back-off',"3 × 8 @ 90% (90 kg) · rest 2min"],["Top set decides","Load increases after a successful top set"]]}),bar:20,step:2.5,ref:[[100,6],[90,8],[90,8],[90,7]],best:[100,6]},
@@ -129,7 +131,7 @@ const INIT=()=>({cur:0,pop:null,sets:{
   bulg:Array.from({length:3},()=>({w:14,r:16,sides:{L:{w:14,r:8},R:{w:14,r:8}}})),
   pullup:Array.from({length:3},()=>({r:8})),curl:mk(12,10,3),plank:[{sec:30},{sec:25},{sec:30}],run:[{min:20,speed:8,inc:2}]}});
 const sg=(k,d)=>{try{return sessionStorage.getItem(k)??d}catch{return d}}, ss=(k,v)=>{try{sessionStorage.setItem(k,v)}catch{}};
-let S;try{S=JSON.parse(sg('og-demo5','null'))}catch{}S=S||INIT();S.weightEntry=S.weightEntry||{};S.fav=S.fav||{face:1,dip:1};S.stk=S.stk||{};S.noRest=S.noRest||{};S.bk=S.bk||{};
+let S;try{S=JSON.parse(sg('og-demo5','null'))}catch{}S=S||INIT();S.weightEntry=S.weightEntry||{};S.fav=S.fav||{face:1,dip:1};S.stk=S.stk||{};S.noRest=S.noRest||{};S.tempo=S.tempo||{};S.runs=S.runs||{};S.bk=S.bk||{};
 
 const EF=()=>sg('og-effort','off'),effOf=(id,s)=>s.e??null,effShow=v=>EF()==='rpe'?10-v:v;
 const save=()=>ss('og-demo5',JSON.stringify(S));
@@ -156,7 +158,7 @@ function nextOpen(from=S.cur){
   for(let k=0;k<UNITS.length;k++){const u=(from+k)%UNITS.length,m=maxSets(u);
     for(let i=0;i<m;i++)for(const e of UNITS[u].ex){const s=S.sets[e][i];if(s&&!s.d)return{u,e,i}}}
   return null}
-const volume=id=>vFactor(id)*S.sets[id].reduce((a,s)=>a+(s.d&&!s.wu?(s.sides?s.sides.L.w*s.sides.L.r+s.sides.R.w*s.sides.R.r:(s.w||0)*(s.r||0))+(s.drops||[]).reduce((b,d)=>b+d.w*d.r,0):0),0);   
+const volume=id=>vFactor(id)*S.sets[id].reduce((a,s)=>a+(s.d&&!s.wu?(s.sides?s.sides.L.w*s.sides.L.r+s.sides.R.w*s.sides.R.r:(s.w||(EX[id].bw&&sg('og-bwvol','0')==='1'?80:0))*(s.r||0))+(s.drops||[]).reduce((b,d)=>b+d.w*d.r,0):0),0);   
 const refRow=(ex,a)=>ex.mode==='time'?a[0]+" s":ex.mode==='cardio'?a[0]+' min @ '+fmt(a[1])+(a[2]!=null?' · '+fmt(a[2])+'%':''):ex.bw?a[0]+' reps':fmt(ex.id&&weOk(ex.id)?wShow(ex.id,a[0]):a[0])+'×'+a[1];
 const refTxt=ex=>sg('og-logref','last')==='best'?refRow(ex,ex.best):ex.ref.map(a=>refRow(ex,a)).join(' · ');
 
@@ -181,6 +183,10 @@ function adjust(id,i,f,dir,side){const s=S.sets[id][i],x=side?s.sides[side]:s;
   else if(f==='w'&&stkOn(id))x.w=stepStk(id,x.w||0,dir)
   else if(f==='w'&&bellEx(id)&&rackOn())x.w=stepRack(x.w||0,dir)   
   else x[f]=Math.max(0,Math.round(((x[f]||0)+dir*stepOf(id,f))*100)/100);x.t=1;s.t=1;if(side)syncSide(s);save()}
+// "Is that right?": a hand tick far above your best asks first, an untick or a timed hold never does.
+function typoTick(id,i,side){const s=S.sets[id][i],b=EX[id].best;if(s.d||s.sides||s.wu||modeOf(id)!=='reps'||EX[id].bw||!b||!(s.w>3*b[0]))return 0;
+  openSheet(`<h3 style="margin-bottom:2px">Is that right?</h3><div class="muted small" style="margin-bottom:10px">${fmt(s.w)} kg is far above your best ${fmt(b[0])} kg on ${esc(EX[id].name)}. Whatever you log becomes last time, the next target and maybe a record.</div>
+    <div class="list menu-list">${menuItem('fix','pencil',"Fix it")}${menuItem('go','check',"Log as typed")}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();if(m==='go'){toggle(id,i,side);RENDER()}}))}
 function toggle(id,i,side){
   const s=S.sets[id][i],un=UNITS[unitOf(id)],was=!!s.d;
   if(s.sides){if(side){const x=s.sides[side];x.d=x.d?0:1;x.t=1}else{const v=s.d?0:1;s.sides.L.d=s.sides.R.d=v}syncSide(s)}else s.d=s.d?0:1;
@@ -204,7 +210,7 @@ const loadTxt=(p,id)=>{const f=v=>fmt(Math.round(v*100)/100);return p.pct?`${p.p
 const hasLoad=p=>!!(p.pct||p.load);
 const effRg=p=>EF()==='rpe'?rg([10-p.rir[1],10-p.rir[0]]):rg(p.rir);   
 const restTxt=p=>p.tsb?fmtRest(p.rest)+' / '+fmtRest(p.tsb.rest):fmtRest(p.rest);   
-const chipTxt=(id,o={})=>{const p=EX[id].plan;return[planShort(id)+(o.short||o.lead||!hasLoad(p)?'':' @ '+loadTxt(p,id)),EF()==='off'||o.short||!p.rir||!hasEff(id)?null:EF().toUpperCase()+' '+effRg(p),o.rest===false||!p.rest?null:o.html?`<span class="prest">${ic('timer',14,2)}${restTxt(p)}</span>`:restTxt(p),o.short||!p.phase?null:p.phase,o.short||!p.int?null:p.int.t==='drop'?`Drop −${p.int.pct}%`:'Rest-pause'].filter(Boolean).join(' · ')};
+const chipTxt=(id,o={})=>{const p=EX[id].plan;return[planShort(id)+(o.short||o.lead||!hasLoad(p)?'':' @ '+loadTxt(p,id)),EF()==='off'||o.short||!p.rir||!hasEff(id)?null:EF().toUpperCase()+' '+effRg(p),o.rest===false||!p.rest?null:o.html?`<span class="prest">${ic('timer',14,2)}${restTxt(p)}</span>`:restTxt(p),o.short||!p.phase?null:p.phase,S.tempo[id]?'Tempo '+S.tempo[id]:null,o.short||!p.int?null:p.int.t==='drop'?`Drop −${p.int.pct}%`:'Rest-pause'].filter(Boolean).join(' · ')};
 
 const refBest=()=>sg('og-logref','last')==='best',refLbl=()=>refBest()?"Best":"Last time";
 
@@ -232,8 +238,8 @@ function oopSheet(id){const p=EX[id].plan;
 const PLV=(()=>{try{return JSON.parse(sg('og-plv','{}'))}catch{return{}}})();
 const kvr=(a,b)=>`<div class="kv"><span>${a}</span><span>${b}</span></div>`;
 function planBody(id,lv){const ex=EX[id],p=ex.plan,pr=PRESET[p.preset],m=modeOf(id),today=wTot(id),e=p.int?.t==='rp'?[1,1]:p.n;
-  const hint=p.preset==='autoregulated'?`You set every value by feel (${m==='time'?'seconds':'reps'} and load); nothing is advanced for you.`:p.preset==='double'?`Reach the top of the ${m==='time'?'time':'rep'} range, then add weight and start again.`:p.preset==='triple'&&m==='time'?'Fill sets and duration up to the top of the range, then add weight.':pr[1];
-  return`<div class="pctx"><div class="kv"><span>${refLbl()}</span><button class="kvbtn" data-act="logref" aria-label="Show ${refBest()?"last time":"best"} instead">${refTxt(ex)}${ic('undo',13,2)}</button></div>${kvr("Progression",pr[0])}
+  const hint=p.preset==='manual'?`You set every value by feel (${m==='time'?'seconds':'reps'} and load); nothing is advanced for you.`:p.preset==='double'?`Reach the top of the ${m==='time'?'time':'rep'} range, then add weight and start again.`:p.preset==='triple'&&m==='time'?'Fill sets and duration up to the top of the range, then add weight.':pr[1];
+  return`<div class="pctx"><div class="kv"><span>${refLbl()}</span><button class="kvbtn" data-act="logref" aria-label="Show ${refBest()?"last time":"best"} instead">${refTxt(ex)}${ic('undo',13,2)}</button></div>${kvr("Progression",pr[0])}${p.programme?kvr("Programme",`Week ${p.programme.week} of ${p.programme.weeks}`)+kvr("Target RPE",p.programme.rpe):''}
     ${p.deload?`<div class="pnote">Reduced after ${p.deload.stalls} off-target sessions: ${fmt(p.deload.from)} → ${fmt(p.deload.to)} kg.</div>`:''}${p.out?"<div class=\"pnote\">Suggested from a recorded off-target session.</div>":''}
     ${p.pct&&!rmRec(id)?`<div class="pnote">No recorded 1RM: enter your working load.</div><button class="plink" data-act="rmprompt" data-ex="${id}">Enter 1RM${ic('chevR',14,2)}</button>`:''}${p.completed?"<div class=\"pnote acc\">Progression completed.</div>":''}
     ${today<e[0]||today>e[1]?kvr("Today",`${today} sets (planned ${rg(e)})`):''}${lv===1?`<button class="plink" data-act="plv" data-k="${id}" data-to="2">How it works${ic('chevR',14,2)}</button>`:''}</div>`+
@@ -262,18 +268,24 @@ function stp(id,i,f,o,side){const s=S.sets[id][i],x=side?s.sides[side]:s,v=f==='
   const oc=side?{cls:'',html:''}:oopCell(id,i,f);
   return`<div class="stp ${colsOf(id).indexOf(f)?'r':'w'}${oc.cls}">${fk}${b('dec','minus')}<input class="num${ghost?' ghost':''}" inputmode="decimal" ${at} value="${empty?'':fmt(v||0)}"${empty?` placeholder="${f==='inc'?'–':'Max'}"`:''} aria-label="${lbl}">${b('inc','plus')}${oc.html}</div>`}
 const rowCells=(id,i,o,side)=>colsOf(id).map(c=>stp(id,i,c,o,side)).join('')+(hasEff(id)&&EF()!=='off'?effCell(id,i,o,side):'');
+// Every set against last time: weight first, then reps; the estimated 1RM settles a pull-apart.
+function vsLast(id,i){if(sg('og-vs','1')!=='1')return null;const s=S.sets[id][i],x=EX[id],m=modeOf(id);if(s.wu||s.sides||m==='cardio'||!x.ref)return null;
+  const q=x.ref[wn(id,i)-1];if(!q)return null;let c;
+  if(m==='time')c=Math.sign((s.sec||0)-q[0]);else if(x.bw)c=Math.sign((s.r||0)-q[0]);
+  else{const dw=Math.sign((s.w||0)-q[0]),dr=Math.sign((s.r||0)-q[1]);c=dw*dr<0?Math.sign((s.w||0)*(1+s.r/30)-q[0]*(1+q[1]/30)):dw||dr}
+  return c>0?['up',"better than last time"]:c<0?['dn',"below last time"]:['eq',"same as last time"]}
 function setRow(id,i,o={}){const s=S.sets[id][i],nx=nextOpen(),next=nx&&!s.d&&((nx.e===id&&nx.i===i)||(UNITS[nx.u].ss&&unitOf(id)===nx.u&&i===nx.i)),pop=S.pop===id+':'+i,m=modeOf(id),a=`data-ex="${id}" data-i="${i}"`,
   num=!o.letter?'':`<button class="n" data-act="smenu" ${a} aria-label="Set options ${s.wu?"warm-up":wn(id,i)}">${o.letter}</button>`,
-  chk=(side,d)=>`<button class="chk${pop?' pop':''}" data-act="tick" ${a}${side?` data-side="${side}"`:''} aria-pressed="${!!d}" aria-label="Complete ${side?(side==='L'?"left":"right")+" side of ":''}${s.wu?"warm-up":"set "+wn(id,i)}${s.f?", to failure":''}">${ic('check',20,2.6)}</button>`,
+  vs=s.d?vsLast(id,i):null,chk=(side,d)=>`<button class="chk${pop?' pop':''}" data-act="tick" ${a}${side?` data-side="${side}"`:''} aria-pressed="${!!d}" aria-label="Complete ${side?(side==='L'?"left":"right")+" side of ":''}${s.wu?"warm-up":"set "+wn(id,i)}${s.f?", to failure":''}${vs?', '+vs[1]:''}">${ic('check',20,2.6)}${vs?`<i class="vs ${vs[0]}" aria-hidden="true">${ic(vs[0]==='up'?'up':vs[0]==='dn'?'down':'minus',9,3)}</i>`:''}</button>`,
   more=`<button class="more" data-act="smenu" ${a} aria-label="More about ${s.wu?"warm-up":"set "+wn(id,i)}: drop set, rest-pause, remove" title="${s.sides||m!=='reps'?"Remove":"Drops · Rest-pause · Remove"}">${ic('dots',20,3.4)}</button>`,
   fm='',cr=modeOf(id)==='cardio'?' c3':'',
   cls=`setrow${cr}${s.d?' done':''}${next?' is-next':''}${s.wu?' wu':''}${s.sides?' sidewrap':''}`;
   const main=s.sides?`<div class="${cls}"${next?' aria-current="step"':''}>${fm}${num}<div class="side-rows">${['L','R'].map(sd=>`<div class="srow${s.sides[sd].d?' done':''}"><span class="sd">${sd}</span>${rowCells(id,i,o,sd)}${chk(sd,s.sides[sd].d)}</div>`).join('')}</div>${more}</div>`
     :`<div class="${cls}"${next?' aria-current="step"':''}>${fm}${num}${rowCells(id,i,o)}${m==='time'?`<button class="setgo" data-act="tick" ${a} aria-label="Start hold" title="Start hold">${ic('play',16)}</button>`:''}${chk(null,s.d)}${more}</div>`;
   const pv=S.sets[id][i-1],lab=s.max?`<div class="setlbl">Max: as many reps as possible${EX[id].rec?` · Record: ${EX[id].rec}`:''}</div>`:s.ph&&s.ph!==pv?.ph?`<div class="setlbl">${s.ph==='top'?'Top set':'Back-off'}</div>`:'';
-  return lab+main+subs(id,i,next)}
+  return lab+main+subs(id,i,next)+(s.note?`<button class="setnote-line" data-act="setnote" ${a} aria-label="Edit note: ${esc(s.note)}">${ic('note',16)}<span>${esc(s.note)}</span></button>`:'')}
 
-const setCtl=(id,lbl,o={})=>{const a=`data-ex="${id}"`;return`<div class="sctl${unitOf(String(id).split(',')[0])===S.cur?' cur':''}"><div class="sbtns">${lbl?`<span class="L">${lbl}</span>`:''}${modeOf(String(id).split(',')[0])==='reps'?`<button class="btn sm" data-act="wadd" ${a}>${ic('flame',15)}Warm-ups</button>`:''}<button class="btn sm" data-act="sadd" ${a}>${ic('plus',15,2.2)}Add set</button>${o.i!=null?`<button class="btn sm" data-act="smenu" ${a} data-i="${o.i}">${ic('dots',15)}Set options</button>`:''}</div></div>`};
+const setCtl=(id,lbl,o={})=>{const a=`data-ex="${id}"`;return`<div class="sctl${unitOf(String(id).split(',')[0])===S.cur?' cur':''}"><div class="sbtns">${lbl?`<span class="L">${lbl}</span>`:''}${modeOf(String(id).split(',')[0])==='reps'?`<button class="btn sm" data-act="wadd" ${a}>${ic('flame',15)}Warm-ups</button>`:''}<button class="btn sm" data-act="sadd" ${a}>${ic('plus',15,2.2)}Add set</button>${String(id).includes(',')?`<button class="btn sm" data-act="runs" ${a}>${ic('timer',15)}How it runs</button>`:''}${o.i!=null?`<button class="btn sm" data-act="smenu" ${a} data-i="${o.i}">${ic('dots',15)}Set options</button>`:''}</div></div>`};
 
 function subs(id,i,on){const s=S.sets[id][i];if(s.wu||s.sides||modeOf(id)!=='reps')return'';const a=`data-ex="${id}" data-i="${i}"`,L=(k,kd,f,v)=>`${a} data-k="${k}" data-kind="${kd}" data-f="${f}"`;
   const mini=(v,k,kd,f)=>`<div class="stp mini"><button data-act="sdec" ${L(k,kd,f)} aria-label="Decrease">${ic('minus',14,2.2)}</button><input class="num sub" inputmode="decimal" ${L(k,kd,f)} value="${fmt(f==='w'?wShow(id,v):v)}" aria-label="${kd==='d'?'Drop':'Burst'} ${k+1} ${f==='w'?"weight":"reps"}"><button data-act="sinc" ${L(k,kd,f)} aria-label="Increase">${ic('plus',14,2.2)}</button></div>`;
@@ -292,10 +304,13 @@ function subSet(id,i,kind,k,f,v){const s=S.sets[id][i];
 function setMenu(id,i){const s=S.sets[id][i],warm=s.wu,work=S.sets[id].filter(x=>!x.wu),reps=modeOf(id)==='reps',it=(m,ico,t,sb,cls,on)=>`<div class="item menu-item${cls||''}" tabindex="0" role="button" data-m="${m}"><span class="lrow-i">${ic(ico,16)}</span><div class="grow"><div class="tt">${t}</div>${sb?`<div class="muted small">${sb}</div>`:''}</div>${on==null?'':`<span class="menu-on${on?' is-on':''}">${ic('check',16,2.4)}</span>`}</div>`;
   openSheet(`<h3 style="margin-bottom:2px">${warm?"Warm-ups":"Set "+wn(id,i)}</h3><div class="muted small" style="margin-bottom:10px">${esc(EX[id].name)} · ${valTxt(id,s)}</div>${findsL(id,i).length?`<div class="oopline" style="margin:0 0 10px">${findsL(id,i).map(oopChip).join('')}</div>`:''}<div class="list menu-list">
     ${!warm&&reps&&!s.sides&&!s.drops&&!s.clusters&&work.length>1?it('wu','flame',"Make warm-up set"):''}${warm&&reps?it('wk','dumb',"Count as a working set"):''}
-    ${!warm&&modeOf(id)!=='cardio'?it('fail','gauge',"To failure",hasEff(id)&&EF()!=='off'?`Nothing left: counts as ${EF().toUpperCase()} ${effShow(0)} if unrated`:modeOf(id)==='time'?'Hold until you cannot continue.':'Continue until you cannot complete another rep.','',!!s.f):''}
+    ${!warm&&modeOf(id)!=='cardio'?it('fail','gauge',"Taken to failure",hasEff(id)&&EF()!=='off'?`Nothing left: counts as ${EF().toUpperCase()} ${effShow(0)} if unrated`:modeOf(id)==='time'?'Hold until you cannot continue.':'Continue until you cannot complete another rep.','',!!s.f):''}
     ${!warm&&!s.clusters&&!s.sides&&reps?it('drop','down',"Drops",'+ Drop'):''}${!warm&&!s.drops&&!s.sides&&reps?it('burst','bolt','Rest-pause','+ Burst'):''}
-    ${!warm?it('rst','timer',"Rest after this set",S.sets[id][i].rest==null?"Uses the exercise's rest":S.sets[id][i].rest?fmtRest(S.sets[id][i].rest)+' today':"No timer today"):''}${it('copy','plus',"Copy this set")}${it('rm','trash',"Remove this set",'',(!warm&&work.length<=1)?' disabled':'')}</div>`,(sh,close)=>{
+    ${!warm&&modeOf(id)==='cardio'?it('effort','gauge','How hard it felt',s.rpe==null?'Not rated yet':'RPE '+s.rpe):''}${it('film','video',"Film this set",'Check your form')}${it('note','note',s.note?'Edit note':'Note',s.note?esc(s.note):'A word about this set')}${!warm?it('rst','timer',"Rest after this set",S.sets[id][i].rest==null?"Uses the exercise's rest":S.sets[id][i].rest?fmtRest(S.sets[id][i].rest)+' today':"No timer today"):''}${it('copy','plus',"Copy this set")}${it('rm','trash',"Remove this set",'',(!warm&&work.length<=1)?' disabled':'')}</div>`,(sh,close)=>{
     sh.addEventListener('click',e=>{const m=e.target.closest('[data-m]')?.dataset.m;if(!m)return;close();const a=S.sets[id];
+      if(m==='effort'){effPicker(id,i);return}
+      if(m==='note'){setNoteSheet(id,i);return}
+      if(m==='film'){filmSheet(id,i);return}
       if(m==='rst'){restSheet(id,i);return}
       if(m==='fail'){if(s.f)delete s.f;else s.f=1}
       else if(m==='drop'||m==='burst')addExtra(id,i,m==='drop'?'d':'c')
@@ -304,7 +319,32 @@ function setMenu(id,i){const s=S.sets[id][i],warm=s.wu,work=S.sets[id].filter(x=
       else a.splice(i,1);
       save();RENDER()})})}
 
-const ROPEN={};
+function filmSheet(id,i){openSheet(`<h3 style="margin-bottom:2px">Film this set</h3><div class="muted small" style="margin-bottom:10px">${esc(EX[id].name)} · Set ${wn(id,i)}. A short clip sticks to the set. Play it under the row, at 0.5× if you want to see the bottom of the squat.</div>
+  <div class="list menu-list">${menuItem('cam','video',"Record")}${menuItem('pick','plus',"Choose from videos")}</div><div class="muted small" style="margin-top:8px">Clips stay yours: never sent to the Coach, never on share cards.</div>`,(sh,close)=>sh.addEventListener('click',e=>{if(!e.target.closest('[data-m]'))return;close();S.sets[id][i].film=1;save();toast("Clip attached to this set")}))}
+// Ask the Coach mid-workout: pick how you feel, tick the changes you like, only today's remaining sets change.
+const COACH={hurts:["It hurts",[["Swap for a gentler exercise","swap"],["One set fewer","sets"],["Lighter weight, same reps","w"]]],taken:["The machine is taken",[["Swap for the planned backup","swap"],["Do it last","order"]]],short:["Short on time",[["One set fewer","sets"],["Rest 1:00 between sets","rest"],["Skip it","skip"]]],great:["Feeling great",[["One extra set","sets"],["A step heavier","w"]]],empty:["Running on empty",[["Lighter weight, same reps","w"],["One set fewer","sets"],["Longer rests","rest"]]]};
+function coachSheet(id){const x=EX[id],pick=k=>{const [t,l]=COACH[k];return`<h3 style="margin-bottom:2px">Coach suggests</h3><div class="muted small" style="margin-bottom:10px">${esc(x.name)} · ${t}. Logged sets and your routine stay as they are; this only changes today.</div>
+    <div class="list menu-list">${l.map(([n],j)=>`<div class="item menu-item" tabindex="0" role="button" data-c="${j}"><div class="grow"><div class="tt">${n}</div></div><span class="menu-on is-on">${ic('check',16,2.4)}</span></div>`).join('')}</div><div style="height:12px"></div><button class="btn primary" style="width:100%" data-ap>Apply ticked</button>`};
+  openSheet(`<h3 style="margin-bottom:2px">Ask the Coach</h3><div class="muted small" style="margin-bottom:10px">How is it going on ${esc(x.name)}?</div><div class="list menu-list">${Object.entries(COACH).map(([k,[t]])=>`<div class="item menu-item" tabindex="0" role="button" data-k="${k}"><div class="grow"><div class="tt">${t}</div></div>${ic('chevR',14,2)}</div>`).join('')}</div>`,(sh,close)=>{let cur;sh.addEventListener('click',e=>{
+    const k=e.target.closest('[data-k]')?.dataset.k;if(k){cur=k;sh.innerHTML=`<div class="grab"></div>`+pick(k);return}
+    const c=e.target.closest('[data-c]');if(c){c.querySelector('.menu-on').classList.toggle('is-on');return}
+    if(!e.target.closest('[data-ap]'))return;const on=[...sh.querySelectorAll('[data-c]')].filter(n=>n.querySelector('.is-on')).map(n=>COACH[cur][1][+n.dataset.c][1]),a=S.sets[id];
+    if(on.includes('sets')){const w=a.filter(s=>!s.wu&&!s.d);if(cur==='great')a.push({...a[a.length-1],d:0,t:0});else if(w.length>1)a.splice(a.lastIndexOf(w[w.length-1]),1)}
+    if(on.includes('w'))for(const s of a)if(!s.d&&!s.wu&&s.w!=null)s.w=Math.max(0,s.w+(cur==='great'?1:-1)*x.step);
+    if(on.includes('rest'))for(const s of a)if(!s.d)s.rest=cur==='empty'?180:60;
+    if(on.includes('skip'))S.noRest[id]=true;
+    close();save();RENDER();toast(on.length?"Coach changes applied for today":"Nothing changed")})})}
+// Circuit, AMRAP, EMOM, Intervals: a full-screen player, every station lands as a normal set.
+const RUNS=[['ss',"Superset","Rounds, rest after each round",0],['circ',"Circuit","One station after another, rest between rounds",0],['amrap',"AMRAP","As many rounds as you can in 10:00",600],['emom',"EMOM","A new round every minute for 8 minutes",60],['tab',"Intervals · Tabata","20 s work, 10 s rest × 8",20]];
+function runsSheet(ids){const ex=ids.split(',');openSheet(`<h3 style="margin-bottom:2px">How it runs</h3><div class="muted small" style="margin-bottom:10px">${ex.map(e=>esc(EX[e].name)).join(' + ')}</div><div class="list menu-list">${RUNS.map(([k,t,d])=>`<div class="item menu-item" tabindex="0" role="button" data-k="${k}"><div class="grow"><div class="tt">${t}</div><div class="muted small">${d}</div></div><span class="menu-on${(S.runs[ids]||'ss')===k?' is-on':''}">${ic('check',16,2.4)}</span></div>`).join('')}</div>`,(sh,close)=>sh.addEventListener('click',e=>{const k=e.target.closest('[data-k]')?.dataset.k;if(!k)return;S.runs[ids]=k;save();close();k==='ss'?RENDER():runPlayer(ids,k)}))}
+function runPlayer(ids,k){const ex=ids.split(','),r=RUNS.find(x=>x[0]===k),tab=k==='tab',total=k==='amrap'?600:k==='emom'?480:tab?240:null;let n=0,left=r[3]||0,work=true,t;
+  const paint=()=>{const m=Math.floor(left/60),s=String(left%60).padStart(2,'0'),st=ex[n%ex.length],nx=ex[(n+1)%ex.length];sh.querySelector('.rp-t').textContent=`${m}:${s}`;sh.querySelector('.rp-k').textContent=(tab&&!work?"Rest":r[1])+' · Round '+(Math.floor(n/ex.length)+1);sh.querySelector('.rp-s').textContent=tab&&!work?"Rest":EX[st].name;sh.querySelector('.rp-n').textContent="Next: "+EX[nx].name};
+  const close=openSheet(`<div class="runp"><div class="rp-k"></div><div class="rp-t tnum"></div><div class="rp-s"></div><div class="rp-n muted"></div>
+    <div class="runp-b"><button class="btn" data-p>Pause</button><button class="btn primary" data-d>Done</button><button class="btn" data-s>Skip</button></div><div class="muted small">3-2-1 beeps and a buzz at the end of each interval. The screen stays on.</div></div>`,(el,c)=>{sh=el;let on=1;
+    el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p!=null){on=!on;b.textContent=on?'Pause':'Resume'}
+      else{const st=ex[n%ex.length],w=S.sets[st],o=w.find(x=>!x.d&&!x.wu);if(b.dataset.d!=null&&o){o.d=1;o.t=1;save()}n++;left=tab?(work=!work)?20:10:k==='emom'?60:left;paint()}});
+    t=setInterval(()=>{if(on&&--left<=0){left=tab?(work=!work)?20:10:k==='emom'?60:0;if(left)n++;else c()}paint()},1000);paint()},()=>{clearInterval(t);RENDER()})}
+let sh;const ROPEN={};
 function ssBody(u,o={}){const un=UNITS[u],cr=curRound(u),m=maxSets(u),sum=r=>un.ex.map(e=>{const s=S.sets[e][r];return s?fmt(wShow(e,s.w))+'×'+s.r:''}).filter(Boolean).join(' · ');
   const L=k=>String.fromCharCode(65+k),ord=o.abc?ssPlan(u,o):'';
   
@@ -343,21 +383,25 @@ let ON_CHIP=()=>{},CHIP_CUR=-1;
 const chipOf=u=>{const ids=UNITS[u].ex,work=ids.map(e=>S.sets[e].filter(s=>!s.wu)),all=work.flat(),
   touched=ids.some(e=>S.sets[e].some(s=>s.d||(s.sides&&(s.sides.L.d||s.sides.R.d))));
   return{state:work.every(w=>w.length&&w.every(s=>s.d))?'done':touched?'partial':'todo',p:all.length?Math.round(all.filter(s=>s.d).length/all.length*100):0}};
-const MUS=['Chest','Shoulders','Back','Biceps','Triceps','Core','Legs','Hamstrings','Glutes'];
 const MMAP=()=>sg('og-mmap','1')==='1';
-function muscleSets(){const r={};for(const id of Object.keys(S.sets)){const w=S.sets[id].filter(s=>!s.wu);for(const g of EX[id].tags){const o=r[g]||(r[g]={d:0,t:0});o.t+=w.length;o.d+=w.filter(s=>s.d).length}}return r}
-// front on the left, back on the right; one rect per region
-const MREG={Shoulders:[[10,17,9,7,3.5],[31,17,9,7,3.5],[60,17,9,7,3.5],[81,17,9,7,3.5]],Chest:[[16,20,9,9,3],[25,20,9,9,3]],Biceps:[[6,25,5,13,2.5],[39,25,5,13,2.5]],Triceps:[[56,25,5,13,2.5],[89,25,5,13,2.5]],Core:[[19,31,12,15,3]],
-  Back:[[66,20,18,19,4]],Glutes:[[66,41,18,9,4]],Legs:[[15,48,9,31,4],[26,48,9,31,4]],Hamstrings:[[65,52,9,27,4],[76,52,9,27,4]]};
-function bodySVG(m,cls){const body='<circle cx="25" cy="9" r="6.5" class="mb"/><circle cx="75" cy="9" r="6.5" class="mb"/><rect x="18" y="16" width="14" height="30" rx="5" class="mb"/><rect x="66" y="16" width="18" height="30" rx="5" class="mb"/>';
-  return`<svg class="${cls}" viewBox="0 0 100 82" aria-hidden="true">${body}${MUS.map(g=>{const o=m[g],p=o&&o.t?o.d/o.t:0;return(MREG[g]||[]).map(([x,y,w,h,r])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" class="mr${o&&o.t?' pl':''}${p>=1?' dn':''}" style="--q:${o&&o.t?.25+.75*p:0}"/>`).join('')}).join('')}</svg>`}
-function mapSheet(){const m=muscleSets(),rows=Object.keys(m).sort((a,b)=>m[b].t-m[a].t);
-  openSheet(`<div class="wsh"><h3>Muscles today</h3><button class="btn sm primary" data-x>Done</button></div><div class="muted small" style="margin-bottom:8px">Sets done of planned, per muscle. Settings → Workout → Fine-tuning turns the map off.</div>${bodySVG(m,'mapbig')}
-    <div class="list menu-list">${rows.map(g=>`<div class="item menu-item"><div class="grow"><div class="tt">${g}</div><div class="mbar"><i style="width:${m[g].t?m[g].d/m[g].t*100:0}%"></i></div></div><b>${m[g].d}/${m[g].t}</b></div>`).join('')}</div>`,(sh,close)=>sh.addEventListener('click',e=>{if(e.target.closest('[data-x]'))close()}))}
+// mock tag -> app muscle slugs (lib/muscles.js); fake data, but the map itself is the app's
+const TAGM={Chest:['chest'],Shoulders:['deltoids'],Back:['upper-back','trapezius'],Biceps:['biceps'],Triceps:['triceps'],Core:['abs','obliques'],Legs:['quadriceps','calves'],Hamstrings:['hamstring'],Glutes:['gluteal']};
+const BM_SIL=['head','hair','neck','hands','feet','knees','ankles'],BM_MUS=['trapezius','deltoids','chest','upper-back','serratus','biceps','triceps','forearm','abs','obliques','lower-back','gluteal','quadriceps','hamstring','adductors','hip-flexors','calves','tibialis'];
+const BM_NAME={chest:'Chest',deltoids:'Shoulders',trapezius:'Trapezius','upper-back':'Upper back',biceps:'Biceps',triceps:'Triceps',abs:'Abs',obliques:'Obliques',quadriceps:'Quads',calves:'Calves',hamstring:'Hamstrings',gluteal:'Glutes'};
+function muscleSets(){const r={};for(const id of Object.keys(S.sets)){const w=S.sets[id].filter(s=>!s.wu);for(const g of EX[id].tags)for(const m of TAGM[g]||[]){const o=r[m]||(r[m]={d:0,t:0});o.t+=w.length;o.d+=w.filter(s=>s.d).length}}return r}
+// same rule as sessionLevels(): planned = l1, worked = l3, l4 from half the busiest muscle
+function bmLevels(m){const mx=Math.max(0,...Object.values(m).flatMap(o=>[o.t,o.d])),lv={};for(const k in m)lv[k]=m[k].d>0?(m[k].d*2>=mx?4:3):m[k].t>0?1:0;return lv}
+function bodySVG(m,cls){const g=window.BODYPATHS&&window.BODYPATHS.male;if(!g)return`<div class="bodymap ${cls}"><div class="bm-ph"></div></div>`;const lv=bmLevels(m);
+  const view=v=>`<svg class="bm-v" viewBox="${v.vb}" role="img" aria-hidden="true">${BM_SIL.map(k=>(v.p[k]||[]).map(d=>`<path class="bm-sil" d="${d}"/>`).join('')).join('')}${BM_MUS.map(k=>(v.p[k]||[]).map(d=>`<path class="bm-m l${lv[k]||0}" d="${d}"/>`).join('')).join('')}</svg>`;
+  return`<div class="bodymap ${cls}">${view(g.front)}${view(g.back)}</div>`}
+function mapSheet(){const m=muscleSets(),rows=Object.keys(m).sort((a,b)=>m[b].d-m[a].d||m[b].t-m[a].t);
+  openSheet(`<div class="wsh"><h3>What this session hits</h3><button class="btn sm primary" data-x>Done</button></div>${bodySVG(m,'bm-session')}
+    <div class="hm-legend sm-legend"><span class="hm-c l4"></span>Already worked<span class="hm-c l1"></span>Still to come</div>
+    ${rows.slice(0,6).map(k=>`<div class="mrow"><span class="nm">${BM_NAME[k]||k}</span><span class="bar"><i style="width:${Math.round(Math.min(m[k].d/m[k].t,1)*100)}%"></i></span><span class="v">${m[k].d}/${m[k].t}</span></div>`).join('')}`,(sh,close)=>sh.addEventListener('click',e=>{if(e.target.closest('[data-x]'))close()}))}
 function chipsPaint(){const el=$('#chips');if(!el)return;el.hidden=!CHIPS();$('#mm').hidden=el.hidden||!MMAP();if(el.hidden)return;
   const left=el.scrollLeft,W={done:"finished",partial:"started",todo:"not started"};
   el.innerHTML=UNITS.map((un,u)=>{const c=chipOf(u),cur=u===S.cur,n=un.ex.map(e=>EX[e].name).join(' + ');
-    return`<button class="wchip ${c.state}${cur?' cur':''}" style="--p:${Math.max(c.p,14)}%" data-chip="${u}"${cur?' aria-current="step"':''} title="${esc(n)}" aria-label="${un.ss?'Superset':"Exercise"} ${u+1}: ${esc(n)} (${W[c.state]})"><span>${u+1}</span>${un.ss?ic('link',12,2.4):''}</button>`}).join('');const mm=$('#mm');if(MMAP())mm.innerHTML=bodySVG(muscleSets(),'mapsm');
+    return`<button class="wchip ${c.state}${cur?' cur':''}" style="--p:${Math.max(c.p,14)}%" data-chip="${u}"${cur?' aria-current="step"':''} title="${esc(n)}" aria-label="${un.ss?'Superset':"Exercise"} ${u+1}: ${esc(n)} (${W[c.state]})"><span>${u+1}</span>${un.ss?ic('link',12,2.4):''}</button>`}).join('');const mm=$('#mm');if(MMAP())mm.innerHTML=bodySVG(muscleSets(),'bm-mini bm-session');
   el.scrollLeft=left;   
   if(CHIP_CUR!==S.cur){const first=CHIP_CUR<0;CHIP_CUR=S.cur;const c=el.querySelector('.cur');if(c)el.scrollTo({left:c.offsetLeft-(el.clientWidth-c.offsetWidth)/2,behavior:first?'auto':'smooth'})}}
 document.addEventListener('click',e=>{const c=e.target.closest('[data-chip]');if(c)ON_CHIP(+c.dataset.chip)});
@@ -375,14 +419,14 @@ function chrome(){
     <div class="screen" id="screen"><header class="whdr"><div class="whdr-row"><div><div class="wt">Push A</div>
       <div class="wsub"><span id="clk"></span> · <span class="cnt" aria-live="polite"></span></div></div>
       <button class="fpill" data-act="finish">Finish</button><button class="ibtn" data-act="menu" aria-label="Workout menu" aria-haspopup="true">${ic('dots',22)}</button></div>
-      <div class="wprog" role="progressbar"><i></i></div><div class="chiprow"><nav class="chips" id="chips" aria-label="Workout exercises"></nav><button class="mmini" id="mm" data-act="mmap" aria-haspopup="dialog" aria-label="Muscle map: done and planned sets per muscle" hidden></button></div><div id="hx"></div></header><main id="view"></main></div>
+      <div class="wprog" role="progressbar"><i></i></div><div class="chiprow"><nav class="chips" id="chips" aria-label="Workout exercises"></nav><button class="mmini iconbtn whdr-map" id="mm" data-act="mmap" aria-haspopup="dialog" aria-label="Muscle map: done and planned sets per muscle" hidden></button></div><div id="hx"></div></header><main id="view"></main></div>
     <div class="menu" id="menu" hidden><button data-act="wset">${ic('set',18)}Workout settings</button><button data-act="addex">${ic('plus',18)}Add exercise</button><button data-act="note">${ic('pencil',18)}Session note</button><div class="mh">View</div>${MODES.map(([k,n])=>`<a href="${k}.html" class="${k===mode?'on':''}">${n}${k===mode?ic('check',16,2.4):''}</a>`).join('')}<button class="dng" data-act="discard">${ic('trash',18)}Discard workout</button></div>
     <div class="rest" id="rest" hidden><button class="rest-handle" data-r="toggle" aria-expanded="false" aria-label="Rest details"><span></span></button>
       <div class="rest-detail" id="rd"></div>
       <div class="rest-main"><button class="rest-t" data-act="rtime" aria-label="Change the time left"><b id="rt">0:00</b><small id="rl">rest</small></button><div class="rest-prog"><i id="rp"></i></div>
         <button class="rbtn" data-r="-15" aria-label="Subtract 15 seconds">−15</button><button class="rbtn" data-r="15" aria-label="Add 15 seconds">+15</button><button class="rbtn" data-r="pause" aria-label="Pause"></button><button class="rbtn pri" data-r="skip">Skip</button></div></div>
   </div>
-  <aside class="aside"><h3>${name}</h3><p class="muted">openGym 1.4.3 · Progression Engine v2</p><ul>${notes}<li>Try reps, timed holds, cardio, supersets and intensifiers. Set menus expose planned targets and recorded effort.</li><li>Exercise information includes equipment, records, plate loading and estimated 1RM.</li></ul>
+  <aside class="aside"><h3>${name}</h3><p class="muted">openGym 1.4.5 · Progression Engine v2</p><ul>${notes}<li>Try reps, timed holds, cardio, supersets and intensifiers. Set menus expose planned targets and recorded effort.</li><li>Exercise information includes equipment, records, plate loading and estimated 1RM.</li></ul>
     <div class="ctl"><label>Rest bar<select id="rmode"><option value="collapsed">Always collapsed</option><option value="remember">Remember last choice</option><option value="expanded">Always expanded</option></select></label>
       <label>Exercise animations<select id="mmode"><option value="full">Full</option><option value="mini">Small</option><option value="off">Hidden</option></select></label>
       <label>Exercise chips<select id="chmode"><option value="1">Shown</option><option value="0">Hidden</option></select></label>
@@ -415,6 +459,7 @@ document.addEventListener('click',e=>{
   if(a==='plsheet'){openSheet(`<h3>${EX[id].name}</h3><div class="pchips">${esc(chipTxt(id))}</div>${planBody(id,3)}`);return}
   if(a==='logref'){ss('og-logref',refBest()?'last':'best');RENDER();return}
   if(a==='smenu'){setMenu(id,i);return}
+  if(a==='runs'){runsSheet(id);return}
   if(a==='oopinfo'){oopSheet(id);return}
   if(a==='mmap'){mapSheet();return}
   if(a==='excfg'){exCfgSheet(id);return}
@@ -431,7 +476,7 @@ document.addEventListener('click',e=>{
     save();RENDER();return}
   if(a==='finish'){finishSheet();return}if(a==='discard'){m.hidden=true;confirmDiscard();return}if(a==='wset'){m.hidden=true;wsetSheet();return}if(a==='rtime'){restTimeSheet();return}
   if(a==='note'){m.hidden=true;noteSheet();return}if(a==='addex'){addExSheet();return}if(a==='effpick'){effPicker(id,i,b.dataset.side);return}
-  if(a==='inc'||a==='dec')adjust(id,i,b.dataset.f,a==='inc'?1:-1,b.dataset.side);else if(a==='tick')toggle(id,i,b.dataset.side);else return;
+  if(a==='inc'||a==='dec')adjust(id,i,b.dataset.f,a==='inc'?1:-1,b.dataset.side);else if(a==='tick'){if(typoTick(id,i,b.dataset.side))return;toggle(id,i,b.dataset.side)}else return;
   RENDER()});
 document.addEventListener('pointerdown',e=>{if(Rest.open&&Rest.on&&!e.target.closest('#rest'))Rest.setOpen(false)});   
 document.addEventListener('change',e=>{const t=e.target;if(!t.matches?.('input.num')||!t.dataset.ex)return;
@@ -466,26 +511,26 @@ function effCell(id,i,o={},side){const s0=S.sets[id][i],s=side?s0.sides[side]:s0
   const c=effColor(v),b=()=>'';   
   
   return`<div class="stp effcell-stp plain" style="color:${c};border-color:${c};background:color-mix(in srgb,${c} 20%,var(--surface-2))">${b('dec','minus')}<button class="val" data-act="effpick" ${a} aria-label="${H}">${fmt(r1(effShow(v)))}</button>${b('inc','plus')}</div>`}
-function effPicker(id,i,side){const s0=S.sets[id][i],s=side?s0.sides[side]:s0,kind=EF(),H=hd(),orig=s.e??null;let v=orig,dismissed=false;
-  const apply=nv=>{if(nv==null)delete s.e;else s.e=nv;s.t=1;if(side)syncSide(s0);save();if(nv!=null&&!s.d)toggle(id,i,side);RENDER()};   
+function effPicker(id,i,side){const s0=S.sets[id][i],s=side?s0.sides[side]:s0,cardio=modeOf(id)==='cardio',kind=cardio?'rpe':EF(),H=kind.toUpperCase(),orig=cardio?(s.rpe==null?null:10-s.rpe):(s.e??null);let v=orig,dismissed=false;
+  const apply=nv=>{if(cardio){if(nv==null)delete s.rpe;else s.rpe=10-nv}else{if(nv==null)delete s.e;else s.e=nv}s.t=1;if(side)syncSide(s0);save();if(!cardio&&nv!=null&&!s.d)toggle(id,i,side);RENDER()};
   const lab=r=>fmt(r1(kind==='rpe'?10-r:r));
   const rows=EB.map((p,k)=>{const on=v!=null&&effColor(v)===p.color&&(v===p.rir||(k===5&&v>=4)||(k<5&&v>p.rir-.01&&v<=p.max));
-    return`<div class="item menu-item${v===p.rir?' on':''}" style="--bc:${p.color}" tabindex="0" role="button" data-p="${p.rir}"><span class="lrow-i effpick-n">${k===5&&kind==='rpe'?'≤':''}${lab(p.rir)}${k===5&&kind!=='rpe'?'+':''}</span><div class="grow"><div class="tt">${p.feel}</div></div><span class="menu-on${v===p.rir?' is-on':''}">${ic('check',16,2.4)}</span></div>`}).join('');
-  openSheet(`<h3 style="margin-bottom:2px">How hard was that set?</h3><div class="muted small" style="margin-bottom:10px">${kind==='rpe'?'Choose how hard the set felt':'Choose how many reps you had left'}, or enter an exact ${H} rating.</div>
+    return`<div class="item menu-item${v===p.rir?' on':''}" style="--bc:${p.color}" tabindex="0" role="button" data-p="${p.rir}"><span class="lrow-i effpick-n">${k===5&&kind==='rpe'?'≤':''}${lab(p.rir)}${k===5&&kind!=='rpe'?'+':''}</span><div class="grow"><div class="tt">${cardio?['Maximum effort','Extremely hard','Very hard','Hard','Challenging','Easy'][k]:p.feel}</div></div><span class="menu-on${v===p.rir?' is-on':''}">${ic('check',16,2.4)}</span></div>`}).join('');
+  openSheet(`<h3 style="margin-bottom:2px">${cardio?'How hard did that feel?':'How hard was that set?'}</h3><div class="muted small" style="margin-bottom:10px">${cardio?'Choose how hard it felt':kind==='rpe'?'Choose how hard the set felt':'Choose how many reps you had left'}, or enter an exact ${H} rating.</div>
     <div class="list menu-list effpick">${rows}<div class="item menu-item effpick-free"><div class="grow"><div class="tt">${H} rating</div></div>
       <div class="stp effcell-stp" id="epf"><button data-d="-1" aria-label="Decrease">${ic('minus',16,2.2)}</button><span class="val"><input class="num" id="epv" inputmode="decimal" placeholder="–"></span><button data-d="1" aria-label="Increase">${ic('plus',16,2.2)}</button></div></div></div>
     <div id="epfoot"></div>`,(sh,close)=>{
     const inp=$('#epv',sh),box=$('#epf',sh),foot=$('#epfoot',sh);
     const finish=nv=>{dismissed=true;close();apply(nv)};
-    const paint=()=>{const c=effColor(v);inp.value=v==null?'':fmt(r1(effShow(v)));box.style.cssText=c?`color:${c};background:color-mix(in srgb,${c} 20%,var(--surface-2))`:'';
+    const paint=()=>{const c=effColor(v);inp.value=v==null?'':lab(v);box.style.cssText=c?`color:${c};background:color-mix(in srgb,${c} 20%,var(--surface-2))`:'';
       $$('.menu-item[data-p]',sh).forEach(r=>{const on=v!=null&&+r.dataset.p===v;r.classList.toggle('on',on);$('.menu-on',r).classList.toggle('is-on',on)});
       foot.innerHTML=v==null?'':`<div style="height:10px"></div>${v!==orig?`<button class="btn primary" style="width:100%" data-f="done">${ic('check',18,2.4)}Done</button>`:''}<button class="btn ghost" style="width:100%" data-f="clear">${ic('x',16)}Clear rating</button>`};
     sh.addEventListener('click',e=>{const p=e.target.closest('[data-p]'),d=e.target.closest('[data-d]'),f=e.target.closest('[data-f]');
-      if(p)finish(+p.dataset.p);else if(d){v=stepE(v,+d.dataset.d);paint()}
+      if(p)finish(+p.dataset.p);else if(d){v=cardio?(v==null?(+d.dataset.d>0?4:null):10-Math.min(10,Math.max(6,10-v+(+d.dataset.d)*.5))):stepE(v,+d.dataset.d);paint()}
       else if(f)finish(f.dataset.f==='done'?v:null)});
     sh.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.p){e.preventDefault();e.target.click()}});
-    inp.addEventListener('input',()=>{const n=parseFloat(inp.value.replace(',','.'));v=isNaN(n)?null:capE(n);foot.innerHTML=v==null?'':foot.innerHTML});
-    inp.addEventListener('change',()=>{const n=parseFloat(inp.value.replace(',','.'));v=isNaN(n)?null:capE(n);paint()});paint()},
+    inp.addEventListener('input',()=>{const n=parseFloat(inp.value.replace(',','.'));v=isNaN(n)?null:cardio?10-Math.min(10,Math.max(6,n)):capE(n);foot.innerHTML=v==null?'':foot.innerHTML});
+    inp.addEventListener('change',()=>{const n=parseFloat(inp.value.replace(',','.'));v=isNaN(n)?null:cardio?10-Math.min(10,Math.max(6,n)):capE(n);paint()});paint()},
     ()=>{if(!dismissed&&v!==orig)apply(v)})}                       
 
 
@@ -505,13 +550,18 @@ function swapBackup(id,k){const x=EX[id],b=x.backups[k],was={name:x.name,equip:x
 const exExtra=id=>{const x=EX[id],seg=(k,o,v)=>`<div class="sgm" data-xk="${k}" data-id="${id}">${o.map(([a,l])=>`<button data-xv="${a}" class="${a===v?'on':''}">${l}</button>`).join('')}</div>`;
   return`<div class="wecfg xcfg" data-id="${id}">
     ${x.backups?`<div class="tt">Machine taken?</div><div class="muted small" style="margin-bottom:8px">A backup takes the slot with its sets, reps, rest and warm-ups. ${esc(x.name)} becomes its backup.</div><div class="list menu-list">${x.backups.map((b,k)=>`<div class="item menu-item" tabindex="0" role="button" data-bk="${k}"><span class="lrow-i">${ic('dumb',16)}</span><div class="grow"><div class="tt">${esc(b.name)}</div><div class="muted small">${b.equip} · ${b.tags.join(', ')}</div></div>${ic('chevR',14,2)}</div>`).join('')}</div>`:''}
+    ${modeOf(id)==='reps'?`<div class="tt" style="margin-top:14px">Tempo</div><div class="muted small" style="margin-bottom:8px">Lower, pause, lift, squeeze. A guide counts every rep with a tone per phase.</div>${seg('tempo',[['',"Off"],['2-0-1-0',"2-0-1-0"],['3-1-1-0',"3-1-1-0"]],S.tempo[id]||'')}`:''}
     <div class="tt" style="margin-top:14px">Rest for this exercise</div>${seg('rest',[['def',"Default"],['no',"No timer"]],S.noRest[id]?'no':'def')}
+    <div class="list menu-list" style="margin-top:14px"><div class="item menu-item" tabindex="0" role="button" data-coach="${id}"><span class="lrow-i">${ic('bolt',16)}</span><div class="grow"><div class="tt">Ask the Coach</div><div class="muted small">It hurts, machine taken, short on time</div></div>${ic('chevR',14,2)}</div>
+      <div class="item menu-item" tabindex="0" role="button" data-yt="${id}"><span class="lrow-i">${ic('play',16)}</span><div class="grow"><div class="tt">Watch on YouTube</div><div class="muted small">How-to for ${esc(x.name)}</div></div>${ic('chevR',14,2)}</div></div>
     ${STK_EQ(id)?`<div class="tt" style="margin-top:14px">Weight stack</div><div class="muted small" style="margin-bottom:8px">List the weights this machine really has. The + and − buttons, progression, deloads and warm-ups land only on those.</div>${seg('stk',[['off',"Any weight"],['on',"My stack"]],stkOn(id)?'on':'off')}
     ${stkOn(id)?`<div class="rmchips stk">${stkAll(id).map(w=>`<button class="chip${stkW(id).includes(w)?' on':''}" data-sw="${w}" aria-pressed="${stkW(id).includes(w)}">${fmt(w)}</button>`).join('')}</div><div class="muted small" style="margin-top:6px">Tap a weight to add or remove it. At the top of the stack the weight holds.</div>`:''}`:''}</div>`};
 function exCfgSheet(ids){openSheet(`<h3 style="margin-bottom:10px">Exercise settings</h3>${ids.split(',').map(i=>weRow(i)+exExtra(i)).join('')}<div style="height:14px"></div><button class="btn primary" style="width:100%" data-x>Done</button>`,(sh,close)=>
   sh.addEventListener('click',e=>{if(e.target.closest('[data-x]')){close();return}const bk=e.target.closest('[data-bk]');if(bk){const id=bk.closest('.xcfg').dataset.id;swapBackup(id,+bk.dataset.bk);close();RENDER();return}
+    const co=e.target.closest('[data-coach]');if(co){close();coachSheet(co.dataset.coach);return}
+    const yt=e.target.closest('[data-yt]');if(yt){toast("Opens the how-to video");return}
     const xv=e.target.closest('[data-xv]');if(xv){const g=xv.closest('[data-xk]'),id=g.dataset.id,v=xv.dataset.xv;
-      if(g.dataset.xk==='rest')S.noRest[id]=v==='no';else(S.stk[id]=S.stk[id]||{}).on=v==='on';save();const box=xv.closest('.xcfg');box.outerHTML=exExtra(id);RENDER();return}
+      if(g.dataset.xk==='tempo'){if(v)S.tempo[id]=v;else delete S.tempo[id]}else if(g.dataset.xk==='rest')S.noRest[id]=v==='no';else(S.stk[id]=S.stk[id]||{}).on=v==='on';save();const box=xv.closest('.xcfg');box.outerHTML=exExtra(id);RENDER();return}
     const sw=e.target.closest('[data-sw]');if(sw){const box=sw.closest('.xcfg'),id=box.dataset.id,w=+sw.dataset.sw,a=stkW(id),n=a.includes(w)?a.filter(x=>x!==w):[...a,w];if(!n.length)return;S.stk[id].w=n;save();box.outerHTML=exExtra(id);return}
     const b=e.target.closest('[data-we]');if(!b)return;const box=b.closest('.wecfg'),id=box.dataset.id;
     S.weightEntry[id]={mode:b.dataset.we,_ts:Date.now()};save();box.outerHTML=weRow(id);RENDER()}))}
@@ -602,6 +652,9 @@ function rmPrompt(id){const ex=EX[id],b=ex.best,r=b&&rmRange(b[0],b[1]);
     $('[data-f=save]',sh).onclick=()=>{const v=parseFloat(inp.value.replace(',','.'));if(v>0){(S.oneRm=S.oneRm||{})[id]=v;save();toast("1RM saved")}close();RENDER()}})}
 
 
+function setNoteSheet(id,i){const s=S.sets[id][i];
+  openSheet(`<h3>Set note</h3><textarea class="input" id="setnote" rows="3" maxlength="140" aria-label="Set note" placeholder="Grip slipped, a little twinge, felt easy…">${esc(s.note||'')}</textarea><div style="height:18px"></div><button class="btn primary" style="width:100%" data-f="save">Save</button>`,
+    (sh,close)=>sh.addEventListener('click',e=>{if(!e.target.closest('[data-f="save"]'))return;const note=$('#setnote',sh).value.replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,140);if(note)s.note=note;else delete s.note;save();close();RENDER()}))}
 function noteSheet(){openSheet(`<h3>Session note</h3><textarea class="input" id="sn" rows="4" maxlength="500" placeholder="How the session went as a whole.">${esc(S.note||'')}</textarea><div style="height:18px"></div><button class="btn primary" style="width:100%" data-f="save">Save</button>`,
   (sh,close)=>{$('[data-f=save]',sh).onclick=()=>{const t=$('#sn',sh).value.trim().slice(0,500);if(t)S.note=t;else delete S.note;save();close();RENDER()};setTimeout(()=>$('#sn',sh).focus(),50)})}
 const noteBtn=(cls,short)=>`<button class="btn ${S.note?'tinted':''} ${cls||''}" data-act="note">${ic('pencil',16)}${short?"Note":(S.note?"Edit session note":"Add session note")}</button>`;
@@ -673,6 +726,8 @@ function wsetSheet(){const sw=(k,d)=>sg(k,d)==='1',seg=(k,v,o)=>`<div class="sgm
     ${row('View','',seg('mode',document.body.dataset.mode,MODES))}${row("Effort per set",'',seg('og-effort',EF(),[['off',"Off"],['rir','RIR'],['rpe','RPE']]))}
     ${row("Collapse completed exercises","In List and Compact, a completed exercise collapses to one row",tg('og-collapse','1',"Collapse completed exercises"))}
     ${row("Muscle map","A tiny body at the end of the exercise chips. Tap it for sets per muscle",tg('og-mmap','1',"Muscle map"))}${row("Last time means",'',seg('og-lastany',sg('og-lastany','same'),[['same',"Same workout"],['any',"Any workout"]]))}
+    ${row("Compare sets with last time","A small ↑, = or ↓ on every finished set",tg('og-vs','1',"Compare sets with last time"))}${row("Automatic warm-ups","Built from the work weight",seg('og-autowu',sg('og-autowu','off'),[['off',"Off"],['compound',"Compound"],['all',"Every lift"]]))}
+    ${row("Timed holds start by themselves","3, 2, 1, hold, log, rest, repeat",tg('og-autohold','0',"Timed holds start by themselves"))}${row("Spoken cues","Says the next exercise and the countdown",tg('og-spoken','0',"Spoken cues"))}${row("Count body weight in bodyweight lifts","Adds your nearest weigh-in (80 kg here) to every rep",tg('og-bwvol','0',"Count body weight"))}
     ${row("Swipe gestures","Sets, routines and rounds: swipe left to remove, right to copy",tg('og-swipe','1',"Swipe gestures"))}${row("Exercise animations",'',seg('og-media',MS(),[['full',"Full"],['mini',"Small"],['off',"Hidden"]]))}</div>`,(sh,close)=>{
     sh.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
       if(b.dataset.x!=null){close();return}

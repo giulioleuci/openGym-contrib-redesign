@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>openGym — Valutazione delle attivazioni</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="bodymap-app.css">
+<style>
+body{background:var(--bg)} 
+.frame{position:relative;width:min(410px,100vw);height:min(844px,calc(100dvh - 90px));margin:18px auto;border-radius:46px;border:10px solid #000;box-shadow:0 30px 80px -20px #000;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
+@media (max-width:520px){.frame{width:100vw;height:100dvh;margin:0;border:none;border-radius:0;box-shadow:none}}
+.hdr{display:flex;align-items:center;gap:8px;padding:10px 14px 8px;border-bottom:.5px solid var(--sep-op)}
+.hdr h1{font-size:17px;margin:0;flex:1}
+.screen{flex:1;overflow:auto;padding:12px 16px 20px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border-radius:var(--r);overflow:hidden}
+.pad{padding:12px}
+.bodywrap{display:flex;gap:16px;align-items:flex-start;justify-content:center;padding:14px 10px}
+.bodywrap .bodymap{gap:16px;--bm-base:color-mix(in srgb,var(--label) 11%,var(--surface))}
+.bodywrap .bodymap .bm-v{flex:1;min-width:0;height:auto;max-height:min(42vh,320px)}
+.bodywrap .bodymap .bm-ph{height:200px}
+.bodywrap .bodymap .bm-sil{fill:color-mix(in srgb,var(--label) 18%,var(--surface));stroke:var(--surface);stroke-width:2.5;stroke-linejoin:round}
+.bodywrap .bodymap .bm-m{fill:var(--bm-base);stroke:var(--surface);stroke-width:2.5;stroke-linejoin:round;transition:fill var(--med) var(--ease)}
+.bodywrap .bodymap .bm-m.l1{fill:color-mix(in srgb,var(--acc) 32%,var(--bm-base))}
+.bodywrap .bodymap .bm-m.l2{fill:color-mix(in srgb,var(--acc) 56%,var(--bm-base))}
+.bodywrap .bodymap .bm-m.l3{fill:color-mix(in srgb,var(--acc) 78%,var(--bm-base))}
+.bodywrap .bodymap .bm-m.l4{fill:var(--acc)}
+.exlist{display:flex;flex-direction:column}
+.exrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:.5px solid var(--sep-op)}
+.exrow:first-child{border-top:none}
+.exrow .name{flex:1;min-width:0;font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--label-2);font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.muscle{display:flex;align-items:center;gap:8px;background:var(--surface-2);border-radius:var(--r-sm);padding:8px 10px}
+.muscle .dot{width:10px;height:10px;border-radius:50%}
+.muscle .lbl{flex:1}
+.muscle .val{color:var(--label-2);font-variant-numeric:tabular-nums}
+.l0{background:color-mix(in srgb,var(--label) 11%,var(--surface))}.l1{background:color-mix(in srgb,var(--acc) 32%,var(--surface))}.l2{background:color-mix(in srgb,var(--acc) 56%,var(--surface))}.l3{background:color-mix(in srgb,var(--acc) 78%,var(--surface))}.l4{background:var(--acc)}
+.legend{display:flex;align-items:center;gap:6px;justify-content:center;color:var(--label-2);font-size:12px;padding:0 10px 10px}
+.legend .c{width:12px;height:12px;border-radius:3px}
+.section{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--label-3);padding:4px 4px 0}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="hdr">
+    <button class="ibtn" onclick="location.href='index.html'" aria-label="Back">${ic('chevL',18)}</button>
+    <h1>Valutazione delle attivazioni</h1>
+    <button class="ibtn" aria-label="Settings">${ic('dots',18)}</button>
+  </div>
+  <div class="screen">
+    <div class="card">
+      <div class="pad" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600">Sessione corrente</div>
+          <div class="muted small">Push A</div>
+        </div>
+        <span class="pill">3 esercizi</span>
+      </div>
+      <div class="bodywrap">
+        <div id="body" class="bodymap"></div>
+      </div>
+      <div class="legend">
+        Meno
+        <div class="c l0"></div><div class="c l1"></div><div class="c l2"></div><div class="c l3"></div><div class="c l4"></div>
+        Più
+      </div>
+    </div>
+    <div class="section">Esercizi</div>
+    <div class="card">
+      <div class="exlist">
+        <div class="exrow"><span class="name">Panca piana con bilanciere</span><span class="pill">Petto · Tricipiti</span></div>
+        <div class="exrow"><span class="name">Rematore bilanciere</span><span class="pill">Dorso · Bicipiti</span></div>
+        <div class="exrow"><span class="name">Shoulder press manubri</span><span class="pill">Spalle · Tricipiti</span></div>
+      </div>
+    </div>
+    <div class="section">Attivazione per muscolo</div>
+    <div class="grid">
+      <div class="muscle"><span class="dot l4"></span><span class="lbl">Petto</span><span class="val">Alto</span></div>
+      <div class="muscle"><span class="dot l3"></span><span class="lbl">Tricipiti</span><span class="val">Medio-Alto</span></div>
+      <div class="muscle"><span class="dot l3"></span><span class="lbl">Dorso</span><span class="val">Medio-Alto</span></div>
+      <div class="muscle"><span class="dot l2"></span><span class="lbl">Bicipiti</span><span class="val">Medio</span></div>
+      <div class="muscle"><span class="dot l2"></span><span class="lbl">Spalle</span><span class="val">Medio</span></div>
+      <div class="muscle"><span class="dot l1"></span><span class="lbl">Trapezi</span><span class="val">Basso</span></div>
+    </div>
+  </div>
+</div>
+<script src="bodypaths.js"></script>
+<script src="shared.js"></script>
+<script>
+const MUSCLES=['trapezius','deltoids','chest','upper-back','serratus','biceps','triceps','forearm','abs','obliques','lower-back','gluteal','quadriceps','hamstring','adductors','hip-flexors','calves','tibialis'];
+const INERT=['head','hair','neck','hands','feet','knees','ankles'];
+const levels={chest:4,triceps:3,'upper-back':3,biceps:2,deltoids:2,trapezius:1};
+const paths=window.BODYPATHS;
+const g=paths&&(paths.male||paths[Object.keys(paths)[0]]);
+function view(v){
+  let out=`<svg class="bm-v" viewBox="${v.vb}" preserveAspectRatio="xMidYMid meet" role="img">`;
+  INERT.forEach(slug=>{(v.p&&v.p[slug]||[]).forEach(d=>{out+=`<path class="bm-sil" d="${d}"/>`;});});
+  MUSCLES.forEach(slug=>{(v.p&&v.p[slug]||[]).forEach(d=>{const lv=levels[slug]||0;out+=`<path class="bm-m l${lv}" d="${d}"/>`;});});
+  out+=`</svg>`;
+  return out;
+}
+$('#body').innerHTML=g?(view(g.front)+view(g.back)):'<div class="bm-ph"></div>';
+</script>
+</body></html>

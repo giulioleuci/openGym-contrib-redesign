@@ -401,6 +401,45 @@ input[type=range],input[type=checkbox]{accent-color:var(--acc)}
 
 .chip.on{background:var(--acc);color:var(--on-acc,#fff)}.chip{border:0;cursor:pointer;gap:4px}.stk .chip{min-width:44px;justify-content:center;height:32px}
 .chiprow{display:flex;align-items:center;margin:0 -16px}.chiprow .chips{flex:1;min-width:0;margin:0}.mmini{flex:none;border:0;background:none;padding:0 16px 0 4px;display:flex;align-items:center;cursor:pointer;min-width:44px;min-height:44px}.mmini[hidden]{display:none}
-.mapsm{height:32px;width:auto}.mapbig{width:100%;max-height:230px;margin:4px 0 10px}
-.mb{fill:var(--surface-2)}.mr{fill:var(--surface-2);stroke:none}.mr.pl{fill:var(--acc);fill-opacity:var(--q)}.mr.dn{stroke:var(--acc);stroke-width:.8}
 .mbar{height:5px;border-radius:3px;background:var(--surface-2);margin-top:6px;overflow:hidden}.mbar i{display:block;height:100%;background:var(--acc)}
+/* BodyMap: same geometry and styles as the app (components/BodyMap.jsx, SessionMuscles.jsx) */
+.bodymap{display:flex;gap:6px;justify-content:center;align-items:flex-start;--bm-base:color-mix(in srgb,var(--label) 11%,var(--surface))}
+.bm-v{flex:1;min-width:0;height:auto;max-height:min(46vh,340px)}
+.bm-ph{height:200px}
+.bodymap.bm-mini{gap:2px;--bm-base:color-mix(in srgb,var(--label) 26%,var(--surface))}
+.bodymap.bm-mini .bm-v{flex:none;height:46px;width:auto;max-height:none}
+.bodymap.bm-mini .bm-ph{height:46px;width:44px}
+.bodymap.bm-mini .bm-sil{fill:color-mix(in srgb,var(--label) 34%,var(--surface))}
+.bodymap.bm-mini .bm-v path{stroke-width:3}
+.iconbtn.whdr-map{width:auto;height:32px;padding:0 2px;border-radius:10px}
+.whdr-map .bodymap.bm-mini{gap:1px}
+.whdr-map .bodymap.bm-mini .bm-v{height:30px}
+.whdr-map .bodymap.bm-mini .bm-ph{height:30px;width:29px}
+.bm-session .bm-m.l1{fill:color-mix(in srgb,var(--acc) 20%,var(--bm-base))}
+.hm-legend{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--label-2)}
+.hm-c{width:12px;height:12px;border-radius:3px;background:color-mix(in srgb,var(--label) 11%,var(--surface-2))}
+.hm-c.l1{background:color-mix(in srgb,var(--acc) 20%,var(--surface-2))}.hm-c.l4{background:var(--acc)}
+.sm-legend{justify-content:center;gap:6px;margin:10px 0 6px}
+.sm-legend .hm-c:not(:first-child){margin-inline-start:8px}
+.bm-sil{fill:color-mix(in srgb,var(--label) 18%,var(--surface))}
+.bm-m{fill:var(--bm-base);transition:fill var(--med,.2s) var(--ease,ease)}
+.bm-m.l1{fill:color-mix(in srgb,var(--acc) 32%,var(--bm-base))}
+.bm-m.l2{fill:color-mix(in srgb,var(--acc) 56%,var(--bm-base))}
+.bm-m.l3{fill:color-mix(in srgb,var(--acc) 78%,var(--bm-base))}
+.bm-m.l4{fill:var(--acc)}
+.bm-v path{stroke:var(--surface);stroke-width:2.5;stroke-linejoin:round}
+.mrow{display:flex;align-items:center;gap:9px;padding:5px 0}
+.mrow .nm{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .bar{width:74px;height:5px;border-radius:3px;background:var(--surface-2);flex:none;overflow:hidden}
+.mrow .bar i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.mrow .v{font-size:12px;color:var(--label-2);min-width:64px;text-align:end;flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.setnote-line{display:flex;align-items:center;gap:6px;width:100%;min-height:44px;padding:6px 12px;border:0;background:none;color:var(--label-2);text-align:start;font:inherit;font-size:12px;cursor:pointer}
+.setnote-line span{overflow-wrap:anywhere;min-width:0}
+
+.setrow .chk{position:relative}
+.vs{position:absolute;top:-4px;right:-4px;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;background:var(--surface-3);color:var(--label-2);box-shadow:0 0 0 2px var(--bg);pointer-events:none}
+.vs.up{background:var(--acc);color:var(--on-acc)}.vs.dn{background:var(--orange);color:#000}.vs .ic{width:9px;height:9px}
+.runp{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:8px 0 4px}.rp-k{color:var(--label-2);font-size:var(--fs-label)}
+.rp-t{font-size:72px;font-weight:700;letter-spacing:-.03em;line-height:1.05}.rp-s{font-size:22px;font-weight:600}.runp-b{display:flex;gap:8px;margin:14px 0 8px;width:100%}.runp-b .btn{flex:1;min-height:46px}
+@media (prefers-reduced-motion:reduce){.vs{transition:none}}
