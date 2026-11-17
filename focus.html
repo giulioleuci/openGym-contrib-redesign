@@ -15,7 +15,7 @@
 .fhd{display:flex;align-items:flex-start;gap:8px;padding-bottom:8px;border-bottom:.5px solid var(--sep)}.fhd>div{flex:1;min-width:0}
 .fhd .ibtn{margin:-6px -8px -6px 0}
 .fsub{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:14px;color:var(--label-2);margin-top:2px}
-.fsub .wu{color:var(--orange);display:inline-flex;align-items:center;gap:4px}
+.fsub .wu{color:var(--orange-ink);display:inline-flex;align-items:center;gap:4px}
 .fctx{display:flex;flex-direction:column;gap:6px}
 .presc{font-size:15px;color:var(--label-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}.presc b{color:var(--label);font-weight:600}
 details.det{background:var(--surface-2);border-radius:var(--r);padding:0 12px}
@@ -24,7 +24,7 @@ details.det summary::-webkit-details-marker{display:none}details.det[open] summa
 .dbody{display:grid;gap:10px;padding:0 0 12px;font-size:14px}
 .kvb{display:flex;justify-content:space-between;gap:10px;text-align:left;width:100%;color:var(--label);font-variant-numeric:tabular-nums;min-height:32px;align-items:center}
 .kvb span:first-child{color:var(--label-3)}
-.stat{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;height:28px;padding:0 10px;border-radius:99px;background:var(--acc-soft);color:var(--acc);font-size:13px;font-weight:600}
+.stat{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;height:28px;padding:0 10px;border-radius:99px;background:var(--acc-soft);color:var(--acc-ink);font-size:13px;font-weight:600}
 .stat.lock{background:var(--surface-2);color:var(--label-2)}
 
 .nbs{display:flex;flex-direction:column;gap:6px}
@@ -53,12 +53,12 @@ details.det summary::-webkit-details-marker{display:none}details.det[open] summa
 .dots button.wu::after{background:var(--orange)}.dots button.wu.done::after{box-shadow:0 0 0 2px color-mix(in srgb,var(--orange) 45%,transparent)}   
 
 .focus-card.wu .btn.primary{background:var(--orange);color:#000}.focus-card.wu .dots button.cur::after{background:var(--orange)}
-.focus-card.wu .sctl.cur .btn.sm{color:var(--orange)}
+.focus-card.wu .sctl.cur .btn.sm{color:var(--orange-ink)}
 .fact{display:flex;gap:8px;align-items:center}
 .fact .btn.lg{flex:1;height:52px;font-size:17px;border-radius:var(--r-lg)}
 .fact .btn.sk{height:52px;width:52px;padding:0;border-radius:var(--r-lg);border:1px solid var(--sep)}
 .then{text-align:center;font-size:13px;color:var(--label-2);margin-top:-4px}
-</style></head>
+</style><script src="theme.js"></script></head>
 <body data-mode="focus">
 <div id="notes" hidden><li>Design concept: one set at a time, with large values and a fixed completion action.</li><li>Use the exercise pager to move through the same shared session.</li></div>
 <script src="bodypaths.js"></script>
@@ -85,7 +85,7 @@ function render(){
   $('#view').innerHTML=`${noteCard()}<div class="focus-card${enter}${s.wu?' wu':''}">
     ${un.ss?`<div class="ssline"><span class="ss-hd">${ic('link',13,2)}${esc(un.name||'Superset')}</span><span class="muted">${ex.name} · ${k+1}/${un.ex.length}</span>
       <span class="ssnav"><button data-fst="-1" ${k?'':'disabled'} aria-label="Previous exercise in superset">${ic('chevL',20)}</button><button data-fst="1" ${k<un.ex.length-1?'':'disabled'} aria-label="Next exercise in superset">${ic('chevR',20)}</button></span></div>`:''}
-    <header class="fhd"><div><h2 class="ex-name">${ex.name}${infoBtn(e)}</h2><div class="fsub"><span aria-live="polite">${s.wu?`<span class="wu">${ic('flame',15)}Warm-ups</span>`:where}</span><span>· ${ex.equip}</span>${s.f?`<span style="color:var(--purple);font-weight:600">· ${FI(13)}To failure</span>`:''}${s.d?`<span style="color:var(--acc);font-weight:600">· Completed</span>`:locked?"<span>· Complete earlier sets first</span>":''}</div></div>
+    <header class="fhd"><div><h2 class="ex-name">${ex.name}${infoBtn(e)}</h2><div class="fsub"><span aria-live="polite">${s.wu?`<span class="wu">${ic('flame',15)}Warm-ups</span>`:where}</span><span>· ${ex.equip}</span>${s.f?`<span style="color:var(--purple);font-weight:600">· ${FI(13)}To failure</span>`:''}${s.d?`<span style="color:var(--acc-ink);font-weight:600">· Completed</span>`:locked?"<span>· Complete earlier sets first</span>":''}</div></div>
       <button class="ibtn" data-act="excfg" data-ex="${un.ex.join(',')}" aria-label="Exercise settings">${ic('dots',22)}</button></header>
     ${mediaHTML(e,un.ss)}
     <div class="fctx">${ex.pin?`<div class="note pin">${ic('note',16)}<span>${ex.pin}</span></div>`:''}

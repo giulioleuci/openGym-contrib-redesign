@@ -15,7 +15,7 @@
 .uhd .tap{flex:1;min-width:0;min-height:48px;display:flex;align-items:center;gap:10px;text-align:left}   
 .uhd .tap:active{opacity:.7}
 .ubadge{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:12px;font-weight:600;background:var(--surface-2);color:var(--label-2)}
-.done .ubadge{background:var(--acc);color:var(--on-acc)}.cur .ubadge{background:var(--acc-soft);color:var(--acc)}
+.done .ubadge{background:var(--acc);color:var(--on-acc)}.cur .ubadge{background:var(--acc-soft);color:var(--acc-ink)}
 .uname{font-size:17px;font-weight:600;letter-spacing:-.015em;text-wrap:balance}
 .usub{font-size:var(--fs-label);color:var(--label-2);margin-top:1px;font-variant-numeric:tabular-nums}
 .ubody{display:flex;flex-direction:column;gap:8px;padding-top:2px}
@@ -24,7 +24,7 @@
 .jump{position:absolute;right:14px;bottom:calc(var(--tab-h) + var(--rest-h) + 12px);z-index:15;height:44px;padding:0 16px;border-radius:99px;background:var(--acc);color:var(--on-acc);
   font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 8px 20px -6px #000;transition:transform var(--fast) var(--ease),opacity var(--fast)}
 .jump[hidden]{display:none}
-</style></head>
+</style><script src="theme.js"></script></head>
 <body data-mode="list">
 <div id="notes" hidden><li>See the full session in one list, with the current exercise expanded.</li><li>Completed exercises can collapse; each exercise keeps its own settings.</li></div>
 <script src="bodypaths.js"></script>

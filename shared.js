@@ -480,7 +480,7 @@ function chrome(){
         <button class="rbtn" data-r="-15" aria-label="Subtract 15 seconds">−15</button><button class="rbtn" data-r="15" aria-label="Add 15 seconds">+15</button><button class="rbtn" data-r="pause" aria-label="Pause"></button><button class="rbtn pri" data-r="skip">Skip</button></div></div>
   </div>
   <aside class="aside"><h3>${name}</h3><p class="muted">openGym 1.4.5 · Progression Engine v2</p><ul>${notes}<li>Try reps, timed holds, cardio, supersets and intensifiers. Set menus expose planned targets and recorded effort.</li><li>Exercise information includes equipment, records, plate loading and estimated 1RM.</li></ul>
-    <div class="ctl"><label>Rest bar<select id="rmode"><option value="collapsed">Always collapsed</option><option value="remember">Remember last choice</option><option value="expanded">Always expanded</option></select></label>
+    <div class="ctl"><label>Theme${OGTheme.themeHTML()}</label><div class="acrow"><span>Accent color</span>${OGTheme.pickerHTML()}</div><label>Rest bar<select id="rmode"><option value="collapsed">Always collapsed</option><option value="remember">Remember last choice</option><option value="expanded">Always expanded</option></select></label>
       <label>Exercise animations<select id="mmode"><option value="full">Full</option><option value="mini">Small</option><option value="off">Hidden</option></select></label>
       <label>Exercise chips<select id="chmode"><option value="1">Shown</option><option value="0">Hidden</option></select></label>
       <label>Effort<select id="emode"><option value="off">Off</option><option value="rir">RIR</option><option value="rpe">RPE</option></select></label>
@@ -565,7 +565,7 @@ function effCell(id,i,o={},side){const s0=S.sets[id][i],s=side?s0.sides[side]:s0
   if(v==null)return`<button class="effcell is-empty${s0.f?' fail':''}" data-act="effpick" ${a} aria-label="${H}"${s0.f?` title="To failure: counts as ${H} ${effShow(0)} if unrated"`:''}>${H}</button>`;
   const c=effColor(v),b=()=>'';   
   
-  return`<div class="stp effcell-stp plain" style="color:${c};border-color:${c};background:color-mix(in srgb,${c} 20%,var(--surface-2))">${b('dec','minus')}<button class="val" data-act="effpick" ${a} aria-label="${H}">${fmt(r1(effShow(v)))}</button>${b('inc','plus')}</div>`}
+  return`<div class="stp effcell-stp plain" style="color:color-mix(in srgb,${c},var(--mixto) var(--efx));border-color:${c};background:color-mix(in srgb,${c} 20%,var(--surface-2))">${b('dec','minus')}<button class="val" data-act="effpick" ${a} aria-label="${H}">${fmt(r1(effShow(v)))}</button>${b('inc','plus')}</div>`}
 function effPicker(id,i,side){const s0=S.sets[id][i],s=side?s0.sides[side]:s0,cardio=modeOf(id)==='cardio',kind=cardio?'rpe':EF(),H=kind.toUpperCase(),orig=cardio?(s.rpe==null?null:10-s.rpe):(s.e??null);let v=orig,dismissed=false;
   const apply=nv=>{if(cardio){if(nv==null)delete s.rpe;else s.rpe=10-nv}else{if(nv==null)delete s.e;else s.e=nv}s.t=1;if(side)syncSide(s0);save();if(!cardio&&nv!=null&&!s.d)toggle(id,i,side);RENDER()};
   const lab=r=>fmt(r1(kind==='rpe'?10-r:r));
@@ -776,6 +776,7 @@ const RS=()=>+sg('og-rest-sec',DEF_REST);
 function wsetSheet(){const sw=(k,d)=>sg(k,d)==='1',seg=(k,v,o)=>`<div class="sgm" data-k="${k}">${o.map(([x,l])=>`<button data-v="${x}" class="${x===v?'on':''}">${l}</button>`).join('')}</div>`,
   row=(t,sub,c)=>`<div class="wrow"><div class="grow"><div class="tt">${t}</div>${sub?`<div class="muted small">${sub}</div>`:''}</div>${c}</div>`,tg=(k,d,l)=>`<button class="sw${sw(k,d)?' on':''}" role="switch" aria-checked="${sw(k,d)}" aria-label="${l}" data-sw="${k}"></button>`;
   openSheet(`<div class="wsh"><h3>Workout settings</h3><button class="btn sm primary" data-x>Done</button></div><div class="muted small" style="margin-bottom:8px">Changes also apply to your next workouts.</div><div class="list wlist">
+    ${row("Theme",'',OGTheme.themeHTML())}<div class="wrow" style="flex-direction:column;align-items:stretch"><div class="tt">Accent color</div>${OGTheme.pickerHTML()}</div>
     ${row("Rest timer",fmtRest(RS()),`<button class="btn sm" data-w="1" aria-label="Change rest timer">${ic('chevR',14,2)}</button>`)}
     ${row("Rest end sound",SND[sndKind()][0],`<button class="btn sm" data-snd aria-label="Choose sound">${ic('chevR',14,2)}</button>${tg('og-snd','1',"Rest end sound")}`)}${row("Vibrate",'',tg('og-vib','1',"Vibrate"))}${row("Flash screen",'',tg('og-fl','0',"Flash screen"))}${row("Keep screen awake","Stops the screen from turning off during a workout",tg('og-awake','1',"Keep screen awake"))}
     ${row('View','',seg('mode',document.body.dataset.mode,MODES))}${row("Effort per set",'',seg('og-effort',EF(),[['off',"Off"],['rir','RIR'],['rpe','RPE']]))}
@@ -784,7 +785,7 @@ function wsetSheet(){const sw=(k,d)=>sg(k,d)==='1',seg=(k,v,o)=>`<div class="sgm
     ${row("Compare sets with last time","A small ↑, = or ↓ on every finished set",tg('og-vs','1',"Compare sets with last time"))}${row("Automatic warm-ups","Built from the work weight",seg('og-autowu',sg('og-autowu','off'),[['off',"Off"],['compound',"Compound"],['all',"Every lift"]]))}
     ${row("Timed holds start by themselves","3, 2, 1, hold, log, rest, repeat",tg('og-autohold','0',"Timed holds start by themselves"))}${row("Spoken cues","Says the next exercise and the countdown",tg('og-spoken','0',"Spoken cues"))}${row("Count body weight in bodyweight lifts","Adds your nearest weigh-in (80 kg here) to every rep",tg('og-bwvol','0',"Count body weight"))}
     ${row("Swipe gestures","Sets, routines and rounds: swipe left to remove, right to copy",tg('og-swipe','1',"Swipe gestures"))}${row("Exercise animations",'',seg('og-media',MS(),[['full',"Full"],['mini',"Small"],['off',"Hidden"]]))}</div>`,(sh,close)=>{
-    sh.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    sh.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.th||b.dataset.ac)return;
       if(b.dataset.x!=null){close();return}
       if(b.dataset.sw){const k=b.dataset.sw,on=!b.classList.contains('on');ss(k,on?'1':'0');b.classList.toggle('on',on);b.setAttribute('aria-checked',on);RENDER();return}
       if(b.dataset.snd!=null){close();soundSheet();return}

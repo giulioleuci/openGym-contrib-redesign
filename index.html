@@ -1,14 +1,16 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>openGym — Workout design mocks</title>
-<style>
-body{margin:0;background:#0b0b0d;color:#fff;font:15px/1.4 -apple-system,system-ui,sans-serif;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px}
-h1{font-size:26px;letter-spacing:-.02em;margin:0}p{color:#a0a0a8;max-width:560px;text-align:center;margin:0}
+<link rel="stylesheet" href="theme.css"><style>
+body{margin:0;background:var(--page);color:var(--page-fg);font:15px/1.4 -apple-system,system-ui,sans-serif;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px}
+h1{font-size:26px;letter-spacing:-.02em;margin:0}p{color:var(--chrome-ink);max-width:560px;text-align:center;margin:0}
 .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;max-width:620px;width:100%}
-a{background:#1c1c1e;border-radius:14px;padding:16px;color:#fff;text-decoration:none;display:flex;flex-direction:column;gap:4px}
-a:hover{background:#2c2c2e}a:focus-visible{outline:2px solid #30d158;outline-offset:2px}:root{color-scheme:dark}a b{font-size:17px}a span{color:#a0a0a8;font-size:13px}
-</style></head><body>
+a{background:var(--chrome);border-radius:14px;padding:16px;color:var(--page-fg);text-decoration:none;display:flex;flex-direction:column;gap:4px}
+a:hover{background:var(--chrome-3)}a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}a b{font-size:17px}a span{color:var(--chrome-ink);font-size:13px}
+.tc{display:flex;flex-direction:column;align-items:center;gap:12px}.sgm{display:inline-flex;background:var(--chrome);border-radius:10px;padding:2px}.sgm button{padding:6px 14px;border-radius:8px;border:0;background:none;color:var(--chrome-ink);font:inherit;cursor:pointer}.sgm button.on{background:var(--chrome-3);color:var(--page-fg)}.swatches{justify-content:center}
+</style><script src="theme.js"></script></head><body>
 <h1>openGym design mocks</h1>
+<div class="tc"><div id="tp"></div></div>
 <p>Phone-only interactive mocks for <b>openGym 1.4.5</b> and <b>Progression Engine v2</b>. Explore the shared workout session in Cards, List, Compact and the Focus design concept. All data is illustrative.</p>
 <div class="g">
 <a href="cards.html"><b>Cards</b><span>One exercise at a time, a collapsible header and swipe navigation</span></a>
@@ -17,4 +19,4 @@ a:hover{background:#2c2c2e}a:focus-visible{outline:2px solid #30d158;outline-off
 <a href="focus.html"><b>Focus</b><span>Design concept: large values, a fixed action and exercise paging</span></a>
 <a href="activation.html"><b>Valutazione attivazioni</b><span>Muscle map identico a openGym con valutazione attivazioni per esercizio</span></a>
 </div>
-</body></html>
+<script>document.getElementById('tp').innerHTML='<div class="sgm">'+[['system','System'],['light','Light'],['dark','Dark']].map(([v,l])=>`<button data-th="${v}">${l}</button>`).join('')+'</div>'+OGTheme.pickerHTML();OGTheme.apply()</script></body></html>

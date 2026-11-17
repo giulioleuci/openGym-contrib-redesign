@@ -1,0 +1,53 @@
+/* Theme and accent tokens, copied from the app's index.css (openGym 1.4.5): light theme, the nine
+   accent presets, the text-ink shades and the swatch picker. The mocks keep their own dark surfaces. */
+:root{
+  --teal:#40c8e0; --indigo:#5e5ce6; --pink:#ff375f; --mint:#63e6e2; --brown:#ac8e68; --grey:#8e8e93;
+  --acc-ink:var(--acc); --green-ink:var(--green); --orange-ink:var(--orange); --red-ink:var(--red); --blue-ink:var(--blue); --purple-ink:var(--purple); --yellow-ink:var(--yellow);
+  --knob-ring:transparent; --mixto:#fff; --efx:0%;
+  /* page chrome around the phone (nav, side panel) */
+  --page:#050506; --chrome:#1a1a1d; --chrome-el:#121214; --chrome-3:#26262a; --chrome-ink:#a0a0a8; --page-fg:#fff; --shadow-c:#000;
+  --oop-lo:var(--orange-ink); --oop-hi:var(--blue-ink);
+}
+:root[data-theme="light"]{
+  --bg:#f2f2f7; --bg-el:#f7f7fa; --surface:#ffffff; --surface-2:#ececef; --surface-3:#e3e3e8;
+  --label:#000000; --label-2:rgba(60,60,67,.80); --label-3:rgba(60,60,67,.80); --label-4:rgba(60,60,67,.16);
+  --sep:rgba(60,60,67,.29); --sep-op:rgba(60,60,67,.20);
+  --blue:#007aff; --green:#34c759; --red:#ff3b30; --orange:#ff9500; --yellow:#ffcc00; --teal:#30b0c7; --indigo:#5856d6; --pink:#ff2d55; --purple:#af52de; --mint:#00c7be; --brown:#a2845e;
+  --acc-2:#248a3d; --on-acc:#ffffff;
+  --green-ink:#1a7f37; --orange-ink:#a85200; --red-ink:#d70015; --blue-ink:#0058c4; --purple-ink:#8944ab; --yellow-ink:#8f5e00;
+  --mixto:#000; --efx:48%;
+  --page:#dcdce2; --chrome:#ffffff; --chrome-el:#f1f1f5; --chrome-3:#e3e3e8; --chrome-ink:#55555c; --page-fg:#000; --shadow-c:rgba(0,0,0,.28);
+}
+:root[data-accent="brand"] { --acc:#a3e635; --acc-2:#84cc16; --on-acc:#0c0e12; --knob-ring:rgba(0,0,0,.28); --green:#a3e635; --on-green:#0c0e12 }
+:root[data-theme="light"][data-accent="brand"] { --acc:#84cc16; --acc-2:#65a30d; --green:#84cc16; --green-ink:#4a7a0e }
+:root[data-accent="lime"]  { --acc:var(--green);  --acc-2:#248a3d; --on-acc:#000 }
+:root[data-accent="sky"]   { --acc:var(--blue);   --acc-2:#0060df; --on-acc:#fff }
+:root[data-accent="orange"]{ --acc:var(--orange); --acc-2:#c76b00; --on-acc:#000 }
+:root[data-accent="violet"]{ --acc:var(--purple); --acc-2:#8944ab; --on-acc:#fff }
+:root[data-accent="pink"]  { --acc:var(--pink);   --acc-2:#d70036; --on-acc:#fff }
+:root[data-accent="red"]   { --acc:var(--red);    --acc-2:#d70015; --on-acc:#fff }
+:root[data-accent="teal"]  { --acc:var(--teal);   --acc-2:#0071a4; --on-acc:#000 }
+:root[data-accent="gold"]  { --acc:var(--yellow); --acc-2:#b25000; --on-acc:#000; --knob-ring:rgba(0,0,0,.28) }
+:root[data-theme="light"][data-accent="brand"] { --acc-ink:#4a7a0e }
+:root[data-theme="light"][data-accent="lime"]  { --acc-ink:#1a7f37 }
+:root[data-theme="light"][data-accent="sky"]   { --acc-ink:#0062cc }
+:root[data-theme="light"][data-accent="orange"]{ --acc-ink:#a85200 }
+:root[data-theme="light"][data-accent="violet"]{ --acc-ink:#8944ab }
+:root[data-theme="light"][data-accent="pink"]  { --acc-ink:#d70036 }
+:root[data-theme="light"][data-accent="red"]   { --acc-ink:#d70015 }
+:root[data-theme="light"][data-accent="teal"]  { --acc-ink:#0071a4 }
+:root[data-theme="light"][data-accent="gold"]  { --acc-ink:#8f5e00 }
+:root[data-theme="light"][data-accent="lime"],:root[data-theme="light"][data-accent="teal"]{ --on-acc:#000 }
+:root[data-theme="light"][data-accent="brand"]{ --on-acc:#0c0e12 }
+:root[data-theme="light"][data-accent="sky"],:root[data-theme="light"][data-accent="violet"],:root[data-theme="light"][data-accent="pink"],:root[data-theme="light"][data-accent="red"]{ --on-acc:#fff }
+:root{color-scheme:dark;caret-color:var(--acc-ink)}:root[data-theme="light"]{color-scheme:light}
+::selection{background:var(--acc-line);color:inherit}
+/* swatch picker (Settings → Look & Home in the app) */
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.swatch{width:32px;height:32px;border-radius:50%;flex:none;position:relative;transition:transform var(--fast,140ms);border:0;cursor:pointer}
+.swatch:active{transform:scale(.92)}
+.swatch.on::after{content:'';position:absolute;inset:-4px;border-radius:50%;box-shadow:0 0 0 2px var(--label,var(--page-fg));pointer-events:none}
+.swatch-own{display:inline-flex;align-items:center;justify-content:center;font-size:15px}
+.swatch-own.unset{background:radial-gradient(circle,var(--surface,#1c1c1e) 0 52%,transparent 54%),conic-gradient(#ff453a,#ff9f0a,#ffd60a,#30d158,#40c8e0,#0a84ff,#bf5af2,#ff375f,#ff453a);color:var(--label-2)}
+.swatch-input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;border-radius:50%;cursor:pointer;-webkit-appearance:none;appearance:none}
+.swatch-note{font-size:12px;color:var(--label-2);flex-basis:100%}
