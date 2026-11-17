@@ -316,7 +316,8 @@ button.rest-t{text-align:left}
 .wsh .btn{background:none;color:var(--acc-ink);font-weight:600;font-size:17px}
 
 
-:root{--oop-lo:var(--orange-ink);--oop-hi:var(--blue-ink)}
+/* Plan = blue whichever way it points (the arrow says which); history = green / grey / amber on the tick, with a clock. */
+:root{--oop-lo:var(--blue-ink);--oop-hi:var(--blue-ink)}
 .oop-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .stp,.nb{position:relative}
 .oopline{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px 6px}
@@ -439,8 +440,8 @@ input[type=range],input[type=checkbox]{accent-color:var(--acc)}
 .setnote-line span{overflow-wrap:anywhere;min-width:0}
 
 .setrow .chk{position:relative}
-.vs{position:absolute;top:-4px;right:-4px;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;background:var(--surface-3);color:var(--label-2);box-shadow:0 0 0 2px var(--bg);pointer-events:none}
-.vs.up{background:var(--acc);color:var(--on-acc)}.vs.dn{background:var(--orange);color:#000}.vs .ic{width:9px;height:9px}
+.vs{position:absolute;top:-6px;right:-6px;height:15px;padding:0 3px;gap:0;border-radius:99px;display:flex;align-items:center;place-items:center;background:var(--surface-3);color:var(--label-2);box-shadow:0 0 0 2px var(--bg);pointer-events:none}
+.vs.up{background:var(--acc);color:var(--on-acc)}.vs.dn{background:var(--orange);color:#000}.vs.eq .ic:last-child{display:none}.vs .ic{width:9px;height:9px}
 .runp{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:8px 0 4px}.rp-k{color:var(--label-2);font-size:var(--fs-label)}
 .rp-t{font-size:72px;font-weight:700;letter-spacing:-.03em;line-height:1.05}.rp-s{font-size:22px;font-weight:600}.runp-b{display:flex;gap:8px;margin:14px 0 8px;width:100%}.runp-b .btn{flex:1;min-height:46px}
 @media (prefers-reduced-motion:reduce){.vs{transition:none}}

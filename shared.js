@@ -3,7 +3,7 @@
 
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const fmt=n=>String(n);
-const IC={video:'M3 7h12v10H3zM15 11l6-3v8l-6-3',plus:'M12 5v14M5 12h14',minus:'M5 12h14',check:'M5 12.5l4.5 4.5L19 7.5',chevR:'M9 5l7 7-7 7',chevL:'M15 5l-7 7 7 7',chevD:'M5 9l7 7 7-7',chevU:'M5 15l7-7 7 7',
+const IC={hist:'M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4M12 8v4l3 2',video:'M3 7h12v10H3zM15 11l6-3v8l-6-3',plus:'M12 5v14M5 12h14',minus:'M5 12h14',check:'M5 12.5l4.5 4.5L19 7.5',chevR:'M9 5l7 7-7 7',chevL:'M15 5l-7 7 7 7',chevD:'M5 9l7 7 7-7',chevU:'M5 15l7-7 7 7',
   dots:'M12 5.5v.01M12 12v.01M12 18.5v.01',flame:'M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z',
   link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   note:'M6 3h9l4 4v14H6zM9 12h7M9 16h7',x:'M6 6l12 12M18 6L6 18',skip:'M5 5l9 7-9 7zM18 5v14',pause:'M8 5v14M16 5v14',play:'M7 5l12 7-12 7z',
@@ -328,7 +328,7 @@ function vsLast(id,i){if(sg('og-vs','1')!=='1')return null;const s=S.sets[id][i]
   return c>0?['up',"better than last time"]:c<0?['dn',"below last time"]:['eq',"same as last time"]}
 function setRow(id,i,o={}){const s=S.sets[id][i],nx=nextOpen(),next=nx&&!s.d&&((nx.e===id&&nx.i===i)||(UNITS[nx.u].ss&&unitOf(id)===nx.u&&i===nx.i)),pop=S.pop===id+':'+i,m=modeOf(id),a=`data-ex="${id}" data-i="${i}"`,
   num=!o.letter?'':`<button class="n" data-act="smenu" ${a} aria-label="Set options ${s.wu?"warm-up":wn(id,i)}">${o.letter}</button>`,
-  vs=s.d?vsLast(id,i):null,chk=(side,d)=>`<button class="chk${pop?' pop':''}" data-act="tick" ${a}${side?` data-side="${side}"`:''} aria-pressed="${!!d}" aria-label="Complete ${side?(side==='L'?"left":"right")+" side of ":''}${s.wu?"warm-up":"set "+wn(id,i)}${s.f?", to failure":''}${vs?', '+vs[1]:''}">${ic('check',20,2.6)}${vs?`<i class="vs ${vs[0]}" aria-hidden="true">${ic(vs[0]==='up'?'up':vs[0]==='dn'?'down':'minus',9,3)}</i>`:''}</button>`,
+  vs=s.d?vsLast(id,i):null,chk=(side,d)=>`<button class="chk${pop?' pop':''}" data-act="tick" ${a}${side?` data-side="${side}"`:''} aria-pressed="${!!d}" aria-label="Complete ${side?(side==='L'?"left":"right")+" side of ":''}${s.wu?"warm-up":"set "+wn(id,i)}${s.f?", to failure":''}${vs?', '+vs[1]:''}">${ic('check',20,2.6)}${vs?`<i class="vs ${vs[0]}" aria-hidden="true">${ic('hist',9,3)}${ic(vs[0]==='up'?'up':vs[0]==='dn'?'down':'minus',9,3)}</i>`:''}</button>`,
   more=`<button class="more" data-act="smenu" ${a} aria-label="More about ${s.wu?"warm-up":"set "+wn(id,i)}: drop set, rest-pause, remove" title="${s.sides||m!=='reps'?"Remove":"Drops · Rest-pause · Remove"}">${ic('dots',20,3.4)}</button>`,
   fm='',cr=modeOf(id)==='cardio'?' c3':'',
   cls=`setrow${cr}${s.d?' done':''}${next?' is-next':''}${s.wu?' wu':''}${s.sides?' sidewrap':''}`;
