@@ -93,7 +93,7 @@ const DEF_REST=90;
 const EX={
   bench:{name:"Barbell bench press",equip:"Barbell",tags:["Chest","Triceps"],plan:PLAN('linear',4,8,2,60,120,{warm:"Automatic · 1 set"}),bar:20,step:2.5,
     pin:"Retract your shoulder blades and plant your feet.",note:"Pause for 1 second at the chest.",ref:[[57.5,8],[57.5,8],[57.5,8],[57.5,8]],best:[62.5,8]},
-  fly:{name:"Cable fly",equip:"Cables",tags:["Chest"],plan:PLAN('manual',3,12,1,15,90),step:2.5,note:"Keep elbows slightly bent.",ref:[[15,12],[15,12],[12.5,13]],best:[17.5,10]},
+  fly:{name:"Cable fly",equip:"Cables",tags:["Chest"],plan:PLAN('manual',3,12,1,15,90),step:2.5,note:"Keep elbows slightly bent.",ref:[[20,10],[17.5,12],[15,13]],best:[20,10]},
   push:{name:"Cable pushdown",equip:"Cables",tags:["Triceps"],plan:PLAN('linear',3,12,1,25,120,{deload:{stalls:3,from:27.5,to:25},fail:1,kv:[["Last set to failure","Selected"]]}),step:2.5,ref:[[27.5,10],[27.5,9],[27.5,8]],best:[27.5,10]},
   ohp:{name:'Military press',equip:"Barbell",tags:["Shoulders"],plan:PLAN('five_three_one',3,5,null,[30,37.5],150,{rows:[[30,5],[35,5],[37.5,5]]}),bar:20,step:2.5,note:"Brace your glutes without arching your back.",ref:[[27.5,5],[32.5,5],[35,5]],best:[42.5,6]},
   legp:{name:'Leg press',equip:"Machine",tags:["Legs"],plan:PLAN('double',3,[10,15],[1,2],120,120,{warm:"Automatic · 2 sets",kv:[["Back-off sets","Each set one step lighter (−5 kg)"]]}),step:5,ref:[[115,15],[110,15],[105,15]],best:[130,10]},
@@ -177,7 +177,7 @@ const UNITS=SCN_ALL[SCN].units;
 const SKEY='og-demo5-'+SCN;
 function INIT0(){return{cur:0,pop:null,sets:{
   bench:[{w:40,r:10,wu:1,d:1,t:1},{w:60,r:8,d:1,t:1,e:3},{w:60,r:6,d:1,t:1,e:1},{w:65,r:11,d:1,t:1,e:0,f:1},{w:60,r:8}],
-  fly:[{w:15,r:12},{w:15,r:12},{w:12.5,r:14}],push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;a[0].d=a[0].t=1;return a})(),ohp:[{w:30,r:5},{w:35,r:5},{w:37.5,r:5}],lat:withInt('lat',mk(8,12,1)),
+  fly:[{w:17.5,r:12,d:1,t:1},{w:15,r:12},{w:12.5,r:14}],push:(()=>{const a=withInt('push',mk(25,12,3));a[2].f=1;a[0].d=a[0].t=1;return a})(),ohp:[{w:30,r:5},{w:35,r:5},{w:37.5,r:5}],lat:withInt('lat',mk(8,12,1)),
   legp:[{w:60,r:10,wu:1},{w:90,r:6,wu:1},{w:120,r:12},{w:115,r:12},{w:110,r:12}],
   incl:[{w:16,r:8},{w:20,r:8},{w:24,r:8}],latm:[{w:40,r:12},{w:45,r:10},{w:50,r:8},{w:50,r:0,max:1}],
   rdl:[{w:40,r:8,wu:1},{w:70,r:4,wu:1},{w:100,r:6,ph:'top'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'},{w:90,r:8,ph:'bo'}],rowb:mk(52.5,10,3),crunch:mk(30,10,3),squat:mk(0,5,3),
